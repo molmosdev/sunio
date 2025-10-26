@@ -87,7 +87,7 @@ interface NewEvent {
       </span>
     }
 
-    <button b-button (click)="submitForm()" class="w-full max-w-xs">
+    <button b-button (click)="submitForm()" class="w-full max-w-xs b-variant-outlined">
       <ng-icon name="lucideRocket" size="16" color="currentColor" />
       {{ 'create-event.create' | translate }}
     </button>
