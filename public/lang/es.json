@@ -1,0 +1,23 @@
+{
+  "home": {
+    "create-event": "Crear evento",
+    "load-event": "Cargar evento"
+  },
+  "load-event": {
+    "event-code": "Código del evento",
+    "errors": {
+      "code-required": "El código del evento es obligatorio"
+    }
+  },
+  "create-event": {
+    "event-name": "Nombre del evento",
+    "participant-name": "Nombre del participante",
+    "add-participant": "Agregar participante",
+    "create": "Crear evento",
+    "errors": {
+      "name-required": "El nombre del evento es obligatorio",
+      "too-few-participants": "Se requieren al menos 2 participantes",
+      "empty-participant": "Todos los participantes deben tener un nombre"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "home": {
+    "create-event": "Create event",
+    "load-event": "Load event"
+  },
+  "load-event": {
+    "event-code": "Event code",
+    "errors": {
+      "code-required": "Event code is required"
+    }
+  },
+  "create-event": {
+    "event-name": "Event name",
+    "participant-name": "Participant name",
+    "add-participant": "Add participant",
+    "create": "Create event",
+    "errors": {
+      "name-required": "Event name is required",
+      "too-few-participants": "At least 2 participants are required",
+      "empty-participant": "All participants must have a name"
+    }
+  }
+}

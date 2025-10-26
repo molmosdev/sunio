@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { customError, Field, form, required, validate } from '@angular/forms/signals';
-import { Button, Input, InputGroup } from '@basis-ng/primitives';
+import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucideTrash } from '@ng-icons/lucide';
@@ -13,24 +13,34 @@ interface NewEvent {
 
 @Component({
   selector: 's-create-event',
-  imports: [Field, Button, Input, InputGroup, RouterLink, NgIcon],
+  imports: [Field, Button, Input, InputGroup, RouterLink, NgIcon, TranslatePipe],
   template: `
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
     </button>
 
     <b-input-group>
-      <input b-input type="text" [field]="form.name" placeholder="Event Name" />
+      <input
+        b-input
+        type="text"
+        [field]="form.name"
+        [placeholder]="'create-event.event-name' | translate"
+      />
     </b-input-group>
     @if (form.name().errors().length > 0 && form.name().dirty()) {
-      <span class="text-destructive dark:text-destructive-dark">
+      <span class="text-sm text-destructive dark:text-destructive-dark">
         {{ form.name().errors()[0].message }}
       </span>
     }
 
     @for (participant of form.participants; track $index) {
       <b-input-group>
-        <input b-input type="text" [field]="participant" placeholder="Participant Name" />
+        <input
+          b-input
+          type="text"
+          [field]="participant"
+          [placeholder]="'create-event.participant-name' | translate"
+        />
         <button
           b-button
           class="b-size-sm b-squared b-variant-outlined"
@@ -41,15 +51,17 @@ interface NewEvent {
       </b-input-group>
     }
 
-    <button b-button class="b-variant-outlined" (click)="addParticipant()">Add Participant</button>
+    <button b-button class="b-variant-outlined" (click)="addParticipant()">
+      {{ 'create-event.add-participant' | translate }}
+    </button>
 
     @if (form.participants().errors().length > 0 && form.participants().dirty()) {
-      <span class="text-destructive dark:text-destructive-dark">
+      <span class="text-sm text-destructive dark:text-destructive-dark">
         {{ form.participants().errors()[0].message }}
       </span>
     }
 
-    <button b-button (click)="submitForm()">Create Event</button>
+    <button b-button (click)="submitForm()">{{ 'create-event.create' | translate }}</button>
   `,
   host: {
     class: 'flex flex-col gap-4 items-center justify-center h-full',
@@ -57,21 +69,25 @@ interface NewEvent {
   providers: [provideIcons({ lucideTrash, lucideArrowLeft })],
 })
 export class CreateEvent {
+  translationManager = inject(TranslationManager);
+
   form = form(signal<NewEvent>({ name: '', participants: [] }), (path) => {
-    required(path.name, { message: 'Event name is required' });
+    required(path.name, {
+      message: this.translationManager.translate('create-event.errors.name-required'),
+    });
     required(path.participants);
     validate(path.participants, (ctx) => {
       const value = ctx.value();
       if (value.length < 2) {
         return customError({
           kind: 'too_few_participants',
-          message: 'At least 2 participants are required',
+          message: this.translationManager.translate('create-event.errors.too-few-participants'),
         });
       }
       if (value.some((participant) => participant.trim() === '')) {
         return customError({
           kind: 'empty_participant',
-          message: 'All participants must have a name',
+          message: this.translationManager.translate('create-event.errors.empty-participant'),
         });
       }
       return null;

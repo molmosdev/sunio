@@ -1,0 +1,23 @@
+{
+  "home": {
+    "create-event": "Crear esdeveniment",
+    "load-event": "Carregar esdeveniment"
+  },
+  "load-event": {
+    "event-code": "Codi de l'esdeveniment",
+    "errors": {
+      "code-required": "El codi de l'esdeveniment és obligatori"
+    }
+  },
+  "create-event": {
+    "event-name": "Nom de l'esdeveniment",
+    "participant-name": "Nom del participant",
+    "add-participant": "Afegir participant",
+    "create": "Crear esdeveniment",
+    "errors": {
+      "name-required": "El nom de l'esdeveniment és obligatori",
+      "too-few-participants": "Es requereixen almenys 2 participants",
+      "empty-participant": "Tots els participants han de tenir un nom"
+    }
+  }
+}
