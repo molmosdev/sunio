@@ -5,15 +5,17 @@ import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucideRocket, lucideTrash, lucideUserRoundPlus } from '@ng-icons/lucide';
 import { ApiEvents } from '../../core/services/api-events';
+import { Participants } from '../../shared/components/participants/participants';
+import { Participant } from '../../shared/interfaces/participant.interface';
 
 interface NewEvent {
   name: string;
-  participants: string[];
+  participants: Participant[];
 }
 
 @Component({
   selector: 's-create-event',
-  imports: [Field, Button, Input, InputGroup, RouterLink, NgIcon, TranslatePipe],
+  imports: [Field, Button, Input, InputGroup, RouterLink, NgIcon, TranslatePipe, Participants],
   template: `
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
@@ -55,29 +57,10 @@ interface NewEvent {
       </span>
     }
     @if (form.participants.length > 0) {
-      <div class="flex gap-4 mt-2">
-        @for (participant of form.participants; track $index) {
-          <div class="flex flex-col gap-1 items-center">
-            <div class="relative">
-              <div
-                class="w-10 h-10 rounded-full flex items-center justify-center text-sm inset-ring-1 inset-ring-ring dark:inset-ring-ring-dark"
-              >
-                {{ ((participant().value() || '') + '').trim().charAt(0).toUpperCase() }}
-              </div>
-              <button
-                b-button
-                class="absolute -top-2 -right-2 b-size-sm b-squared b-variant-secondary b-rounded-full"
-                (click)="removeParticipant($index)"
-                aria-label="Remove participant"
-                title="Remove"
-              >
-                <ng-icon name="lucideTrash" size="12" color="currentColor" />
-              </button>
-            </div>
-            <span class="text-sm">{{ participant().value() }}</span>
-          </div>
-        }
-      </div>
+      <s-participants
+        [participants]="form.participants().value()"
+        (participantRemoved)="onparticipantRemoved($event)"
+      />
     }
     @if (participantsError()) {
       <span class="text-sm text-destructive dark:text-destructive-dark">
@@ -111,7 +94,7 @@ export class CreateEvent {
           message: this.translationManager.translate('create-event.errors.too-few-participants'),
         });
       }
-      if (value.some((participant) => participant.trim() === '')) {
+      if (value.some((participant) => (participant.name || '').trim() === '')) {
         return customError({
           kind: 'empty_participant',
           message: this.translationManager.translate('create-event.errors.empty-participant'),
@@ -134,7 +117,7 @@ export class CreateEvent {
         if (!name) return null;
         const normalized = name.toLowerCase();
         const participants = this.form.participants().value();
-        if (participants.some((p) => (p || '').trim().toLowerCase() === normalized)) {
+        if (participants.some((p) => (p.name || '').trim().toLowerCase() === normalized)) {
           return customError({
             kind: 'duplicate_participant',
             message: this.translationManager.translate('create-event.errors.duplicate-participant'),
@@ -162,6 +145,13 @@ export class CreateEvent {
       : null;
   });
 
+  onparticipantRemoved(participant: Participant) {
+    if (!participant || !participant.name) return;
+    const currentParticipants = this.form.participants().value();
+    const idx = currentParticipants.findIndex((p) => p.id === participant.id);
+    if (idx !== -1) this.participantRemoved(idx);
+  }
+
   async submitForm() {
     this.form.name().markAsDirty();
     this.form.participants().markAsDirty();
@@ -170,7 +160,11 @@ export class CreateEvent {
       return;
     }
 
-    const data: NewEvent = this.form().value();
+    const dataRaw = this.form().value();
+    const data: { name: string; participants: string[] } = {
+      name: dataRaw.name,
+      participants: (dataRaw.participants || []).map((p) => p.name),
+    };
     const response = await this.apiEvents.createEvent(data);
     this.router.navigate(['/', response.eventId]);
   }
@@ -182,13 +176,20 @@ export class CreateEvent {
     }
     const name = (this.addParticipantForm.participantName().value() || '').trim();
     const currentParticipants = this.form.participants().value();
-    this.form.participants().value.set([...currentParticipants, name]);
+    const newParticipant: Participant = {
+      id: `__new_${currentParticipants.length}`,
+      event_id: '',
+      name,
+      pin: null,
+      created_at: new Date().toISOString(),
+    };
+    this.form.participants().value.set([...currentParticipants, newParticipant]);
     this.form.participants().markAsDirty();
     this.addParticipantForm.participantName().value.set('');
     this.addParticipantForm.participantName().reset();
   }
 
-  removeParticipant(index: number) {
+  participantRemoved(index: number) {
     const currentParticipants = this.form.participants().value();
     this.form.participants().value.set(currentParticipants.filter((_, i) => i !== index));
   }
