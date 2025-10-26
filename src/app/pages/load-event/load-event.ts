@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { Field, form, required } from '@angular/forms/signals';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { Router, RouterLink } from '@angular/router';
@@ -23,10 +23,8 @@ import { lucideArrowLeft, lucideCloudDownload } from '@ng-icons/lucide';
         <ng-icon name="lucideCloudDownload" size="16" color="currentColor" />
       </button>
     </b-input-group>
-    @if (form.eventId().errors().length > 0 && form.eventId().dirty()) {
-      <span class="text-sm text-destructive dark:text-destructive-dark">{{
-        form.eventId().errors()[0].message
-      }}</span>
+    @if (eventIdError()) {
+      <span class="text-sm text-destructive dark:text-destructive-dark">{{ eventIdError() }}</span>
     }
   `,
   host: {
@@ -41,6 +39,12 @@ export class LoadEvent {
     required(path.eventId, {
       message: this.translationManager.translate('load-event.errors.code-required'),
     });
+  });
+
+  eventIdError = computed(() => {
+    return this.form.eventId().dirty() && this.form.eventId().errors().length > 0
+      ? this.form.eventId().errors()[0].message
+      : null;
   });
 
   submitForm() {
