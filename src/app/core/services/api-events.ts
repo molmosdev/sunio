@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { Settlement } from '../../shared/interfaces/balance.interface';
 import { Event } from '../../shared/interfaces/event.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
