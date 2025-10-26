@@ -25,7 +25,6 @@
     }
   },
   "event": {
-    "loading": "Loading event...",
     "notFound.title": "Error: Event not found",
     "notFound": "Event does not exist",
     "goHome": "Go home",

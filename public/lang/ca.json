@@ -25,7 +25,6 @@
     }
   },
   "event": {
-    "loading": "Carregant esdeveniment...",
     "notFound.title": "Error: Esdeveniment no trobat",
     "notFound": "L'esdeveniment no existeix",
     "goHome": "Tornar a l'inici",

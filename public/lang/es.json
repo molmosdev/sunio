@@ -25,7 +25,6 @@
     }
   },
   "event": {
-    "loading": "Cargando evento...",
     "notFound.title": "Error: Evento no encontrado",
     "notFound": "El evento no existe",
     "goHome": "Volver al inicio",
