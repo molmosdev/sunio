@@ -1,16 +1,21 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { Button } from '@basis-ng/primitives';
 
 @Component({
   selector: 's-root',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, Button],
   template: `
-    <ul>
-      <li><a routerLink="/create-event">Create Event</a></li>
-      <li><a routerLink="/">Load Event</a></li>
-    </ul>
     <router-outlet />
+    <div class="flex gap-4">
+      <button b-button routerLink="/create-event" class="flex-1 b-variant-outlined">
+        Create Event
+      </button>
+      <button b-button routerLink="/" class="flex-1 b-variant-outlined">Load Event</button>
+    </div>
   `,
-  styles: [],
+  host: {
+    class: 'h-dvh flex flex-col p-6',
+  },
 })
 export class App {}

@@ -1,4 +1,4 @@
-import { DecimalPipe, JsonPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, resource, signal, computed } from '@angular/core';
 import { Field, form, required, validate, customError } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { Settlement } from '../../shared/interfaces/balance.interface';
 
 @Component({
   selector: 's-event',
-  imports: [JsonPipe, Field, DecimalPipe],
+  imports: [Field, DecimalPipe],
   template: `
     @if (
       event.isLoading() || participants.isLoading() || expenses.isLoading() || balances.isLoading()
