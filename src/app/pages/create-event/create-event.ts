@@ -3,7 +3,7 @@ import { customError, Field, form, required, validate } from '@angular/forms/sig
 import { Button, Input, InputGroup } from '@basis-ng/primitives';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideTrash } from '@ng-icons/lucide';
+import { lucideArrowLeft, lucideTrash } from '@ng-icons/lucide';
 import { ApiEvents } from '../../core/services/api-events';
 
 interface NewEvent {
@@ -15,7 +15,9 @@ interface NewEvent {
   selector: 's-create-event',
   imports: [Field, Button, Input, InputGroup, RouterLink, NgIcon],
   template: `
-    <button b-button routerLink="/home" class="b-variant-outlined">Back to Home</button>
+    <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
+      <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
+    </button>
 
     <b-input-group>
       <input b-input type="text" [field]="form.name" placeholder="Event Name" />
@@ -52,7 +54,7 @@ interface NewEvent {
   host: {
     class: 'flex flex-col gap-4 items-center justify-center h-full',
   },
-  providers: [provideIcons({ lucideTrash })],
+  providers: [provideIcons({ lucideTrash, lucideArrowLeft })],
 })
 export class CreateEvent {
   form = form(signal<NewEvent>({ name: '', participants: [] }), (path) => {
