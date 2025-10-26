@@ -1,14 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { Field, form, required } from '@angular/forms/signals';
 import { Button, Input, InputGroup } from '@basis-ng/primitives';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePlay } from '@ng-icons/lucide';
 
 @Component({
   selector: 's-load-event',
-  imports: [Field, Input, Button, InputGroup, NgIcon],
+  imports: [Field, Input, Button, InputGroup, NgIcon, RouterLink],
   template: `
+    <button b-button routerLink="/home" class="b-variant-outlined">Back to Home</button>
     <b-input-group>
       <input b-input type="text" [field]="form.eventId" placeholder="Event code" />
       <button b-button class="b-size-sm b-squared b-variant-outlined" (click)="submitForm()">
@@ -16,7 +17,9 @@ import { lucidePlay } from '@ng-icons/lucide';
       </button>
     </b-input-group>
     @if (form.eventId().errors().length > 0 && form.eventId().dirty()) {
-      <span>{{ form.eventId().errors()[0].message }}</span>
+      <span class="text-destructive dark:text-destructive-dark">{{
+        form.eventId().errors()[0].message
+      }}</span>
     }
   `,
   host: {

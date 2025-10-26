@@ -1,7 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { customError, Field, form, required, validate } from '@angular/forms/signals';
+import { Button, Input, InputGroup } from '@basis-ng/primitives';
+import { Router, RouterLink } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideTrash } from '@ng-icons/lucide';
 import { ApiEvents } from '../../core/services/api-events';
-import { Router } from '@angular/router';
 
 interface NewEvent {
   name: string;
@@ -10,31 +13,46 @@ interface NewEvent {
 
 @Component({
   selector: 's-create-event',
-  imports: [Field],
+  imports: [Field, Button, Input, InputGroup, RouterLink, NgIcon],
   template: `
-    <input type="text" [field]="form.name" placeholder="Event Name" />
+    <button b-button routerLink="/home" class="b-variant-outlined">Back to Home</button>
+
+    <b-input-group>
+      <input b-input type="text" [field]="form.name" placeholder="Event Name" />
+    </b-input-group>
     @if (form.name().errors().length > 0 && form.name().dirty()) {
-      <span>{{ form.name().errors()[0].message }}</span>
+      <span class="text-destructive dark:text-destructive-dark">
+        {{ form.name().errors()[0].message }}
+      </span>
     }
+
     @for (participant of form.participants; track $index) {
-      <div>
-        <input type="text" [field]="participant" placeholder="Participant Name" />
-        <button (click)="removeParticipant($index)">Remove</button>
-      </div>
+      <b-input-group>
+        <input b-input type="text" [field]="participant" placeholder="Participant Name" />
+        <button
+          b-button
+          class="b-size-sm b-squared b-variant-outlined"
+          (click)="removeParticipant($index)"
+        >
+          <ng-icon name="lucideTrash" size="13" color="currentColor" />
+        </button>
+      </b-input-group>
     }
-    <button (click)="addParticipant()">Add Participant</button>
+
+    <button b-button class="b-variant-outlined" (click)="addParticipant()">Add Participant</button>
+
     @if (form.participants().errors().length > 0 && form.participants().dirty()) {
-      <span>{{ form.participants().errors()[0].message }}</span>
+      <span class="text-destructive dark:text-destructive-dark">
+        {{ form.participants().errors()[0].message }}
+      </span>
     }
-    <button (click)="submitForm()">Create Event</button>
+
+    <button b-button (click)="submitForm()">Create Event</button>
   `,
-  styles: `
-    :host {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-  `,
+  host: {
+    class: 'flex flex-col gap-4 items-center justify-center h-full',
+  },
+  providers: [provideIcons({ lucideTrash })],
 })
 export class CreateEvent {
   form = form(signal<NewEvent>({ name: '', participants: [] }), (path) => {
