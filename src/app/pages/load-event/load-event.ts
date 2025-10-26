@@ -9,7 +9,7 @@ import { lucidePlay } from '@ng-icons/lucide';
   selector: 's-load-event',
   imports: [Field, Input, Button, InputGroup, NgIcon],
   template: `
-    <b-input-group class="w-full sm:max-w-xs">
+    <b-input-group>
       <input b-input type="text" [field]="form.eventId" placeholder="Event code" />
       <button b-button class="b-size-sm b-squared b-variant-outlined" (click)="submitForm()">
         <ng-icon name="lucidePlay" size="16" color="currentColor" />
