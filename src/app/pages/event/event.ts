@@ -49,9 +49,9 @@ import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-i
             <button b-button class="b-variant-outlined" (click)="cancelEditEvent()">
               {{ 'event.cancel' | translate }}
             </button>
-            @if (editEventError()) {
+            @if (editEventErrorMessage()) {
               <p class="text-sm text-destructive dark:text-destructive-dark">
-                {{ editEventError() }}
+                {{ editEventErrorMessage() }}
               </p>
             }
           </div>
@@ -138,9 +138,9 @@ import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-i
                     >
                       {{ 'event.cancel' | translate }}
                     </button>
-                    @if (editParticipantError()) {
+                    @if (editParticipantErrorMessage()) {
                       <p class="text-sm text-destructive dark:text-destructive-dark">
-                        {{ editParticipantError() }}
+                        {{ editParticipantErrorMessage() }}
                       </p>
                     }
                   </div>
@@ -196,9 +196,9 @@ import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-i
                 <button b-button (click)="createExpense()">
                   {{ 'event.expenses.create.button' | translate }}
                 </button>
-                @if (newExpenseError()) {
+                @if (newExpenseErrorMessage()) {
                   <p class="text-sm text-destructive dark:text-destructive-dark">
-                    {{ newExpenseError() }}
+                    {{ newExpenseErrorMessage() }}
                   </p>
                 }
               </div>
@@ -238,9 +238,9 @@ import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-i
                         <button b-button class="b-variant-outlined" (click)="cancelEditExpense()">
                           {{ 'event.cancel' | translate }}
                         </button>
-                        @if (editExpenseError()) {
+                        @if (editExpenseErrorMessage()) {
                           <p class="text-sm text-destructive dark:text-destructive-dark">
-                            {{ editExpenseError() }}
+                            {{ editExpenseErrorMessage() }}
                           </p>
                         }
                       </div>
@@ -412,6 +412,94 @@ export class Event {
     required(path.name, {
       message: this.translationManager.translate('event.errors.participant-name-required'),
     });
+  });
+
+  // computed helpers to show first validation error for forms (prefer validation messages over generic signals)
+  newExpenseFormError = computed(() => {
+    // priority: payer_id -> amount -> consumers
+    if (
+      this.newExpenseForm.payer_id().dirty() &&
+      this.newExpenseForm.payer_id().errors().length > 0
+    ) {
+      return this.newExpenseForm.payer_id().errors()[0].message;
+    }
+    if (this.newExpenseForm.amount().dirty() && this.newExpenseForm.amount().errors().length > 0) {
+      return this.newExpenseForm.amount().errors()[0].message;
+    }
+    if (
+      this.newExpenseForm.consumers().dirty() &&
+      this.newExpenseForm.consumers().errors().length > 0
+    ) {
+      return this.newExpenseForm.consumers().errors()[0].message;
+    }
+    return null;
+  });
+
+  editExpenseFormError = computed(() => {
+    if (
+      this.editExpenseForm.payer_id().dirty() &&
+      this.editExpenseForm.payer_id().errors().length > 0
+    ) {
+      return this.editExpenseForm.payer_id().errors()[0].message;
+    }
+    if (
+      this.editExpenseForm.amount().dirty() &&
+      this.editExpenseForm.amount().errors().length > 0
+    ) {
+      return this.editExpenseForm.amount().errors()[0].message;
+    }
+    if (
+      this.editExpenseForm.consumers().dirty() &&
+      this.editExpenseForm.consumers().errors().length > 0
+    ) {
+      return this.editExpenseForm.consumers().errors()[0].message;
+    }
+    return null;
+  });
+
+  newParticipantFormError = computed(() => {
+    return this.newParticipantForm.name().dirty() &&
+      this.newParticipantForm.name().errors().length > 0
+      ? this.newParticipantForm.name().errors()[0].message
+      : null;
+  });
+
+  editParticipantFormError = computed(() => {
+    return this.editParticipantForm.name().dirty() &&
+      this.editParticipantForm.name().errors().length > 0
+      ? this.editParticipantForm.name().errors()[0].message
+      : null;
+  });
+
+  editEventFormError = computed(() => {
+    return this.editEventForm.name().dirty() && this.editEventForm.name().errors().length > 0
+      ? this.editEventForm.name().errors()[0].message
+      : null;
+  });
+
+  // Combined error messages (prefer form validation error when present, otherwise server-side error)
+  newExpenseErrorMessage = computed(() => {
+    return this.newExpenseFormError() ? this.newExpenseFormError() : this.newExpenseError();
+  });
+
+  editExpenseErrorMessage = computed(() => {
+    return this.editExpenseFormError() ? this.editExpenseFormError() : this.editExpenseError();
+  });
+
+  newParticipantErrorMessage = computed(() => {
+    return this.newParticipantFormError()
+      ? this.newParticipantFormError()
+      : this.newParticipantError();
+  });
+
+  editParticipantErrorMessage = computed(() => {
+    return this.editParticipantFormError()
+      ? this.editParticipantFormError()
+      : this.editParticipantError();
+  });
+
+  editEventErrorMessage = computed(() => {
+    return this.editEventFormError() ? this.editEventFormError() : this.editEventError();
   });
 
   // Edit event name
