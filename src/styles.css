@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+@import '@basis-ng/styles';
+
+@theme {
+  /* Font family */
+  --font-display: 'Geist', sans-serif;
+  --font-display-mono: 'Geist Mono', monospace;
+
+  /* Rounded sizes */
+  --radius-size-xs: 0.25rem;
+  --radius-size-sm: 0.375rem;
+  --radius-size-md: 0.5rem;
+  --radius-size-lg: 0.75rem;
+
+  /* Light theme colors */
+  --color-background: #fff;
+  --color-font: #0a0a0a;
+  --color-primary: #0a0a0a;
+  --color-primary-foreground: #fff;
+  --color-secondary: #f5f5f5;
+  --color-secondary-foreground: #0a0a0a;
+  --color-ring: #e0e0e0;
+  --color-destructive: #e53935;
+  --color-destructive-foreground: #fff;
+  --color-success: #b7e4c7;
+  --color-success-foreground: #22543d;
+  --color-warning: #fff3cd;
+  --color-warning-foreground: #856404;
+  --color-info: #e0e0e0;
+  --color-info-foreground: #333;
+
+  /* Dark theme colors */
+  --color-background-dark: #0a0a0a;
+  --color-font-dark: #fff;
+  --color-bg-dark: #0a0a0a;
+  --color-primary-dark: #fff;
+  --color-primary-foreground-dark: #0a0a0a;
+  --color-secondary-dark: #262626;
+  --color-secondary-foreground-dark: #fff;
+  --color-ring-dark: #ffffff26;
+  --color-destructive-dark: #ff6659;
+  --color-destructive-foreground-dark: #0a0a0a;
+  --color-success-dark: #22543d;
+  --color-success-foreground-dark: #d1fae5;
+  --color-warning-dark: #856404;
+  --color-warning-foreground-dark: #ffe066;
+  --color-info-dark: #424242;
+  --color-info-foreground-dark: #e0e0e0;
+}
