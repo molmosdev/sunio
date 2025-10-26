@@ -5,13 +5,13 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   selector: 's-root',
   imports: [RouterOutlet, RouterLink],
   template: `
-    <header class="font-semibold flex justify-center">
+    <header class="font-semibold flex justify-center items-center h-8">
       <a routerLink="/home">sunio</a>
     </header>
     <router-outlet />
   `,
   host: {
-    class: 'h-dvh flex flex-col p-6',
+    class: 'h-dvh flex flex-col p-4 gap-2',
   },
 })
 export class App {}
