@@ -12,7 +12,7 @@ import { lucideArrowLeft, lucideCloudDownload } from '@ng-icons/lucide';
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
     </button>
-    <b-input-group>
+    <b-input-group class="w-full max-w-xs">
       <input
         b-input
         type="text"
