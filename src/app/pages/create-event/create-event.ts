@@ -3,7 +3,7 @@ import { customError, Field, form, required, validate } from '@angular/forms/sig
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideTrash, lucideUserRoundPlus } from '@ng-icons/lucide';
+import { lucideArrowLeft, lucideRocket, lucideTrash, lucideUserRoundPlus } from '@ng-icons/lucide';
 import { ApiEvents } from '../../core/services/api-events';
 
 interface NewEvent {
@@ -88,13 +88,14 @@ interface NewEvent {
     }
 
     <button b-button (click)="submitForm()" class="w-full max-w-xs">
+      <ng-icon name="lucideRocket" size="16" color="currentColor" />
       {{ 'create-event.create' | translate }}
     </button>
   `,
   host: {
     class: 'flex flex-col gap-4 items-center justify-center h-full',
   },
-  providers: [provideIcons({ lucideTrash, lucideArrowLeft, lucideUserRoundPlus })],
+  providers: [provideIcons({ lucideTrash, lucideArrowLeft, lucideUserRoundPlus, lucideRocket })],
 })
 export class CreateEvent {
   translationManager = inject(TranslationManager);
