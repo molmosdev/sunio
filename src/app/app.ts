@@ -1,10 +1,15 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 's-root',
-  imports: [RouterOutlet],
-  template: ` <router-outlet /> `,
+  imports: [RouterOutlet, RouterLink],
+  template: `
+    <header class="font-semibold flex justify-center">
+      <a routerLink="/home">sunio</a>
+    </header>
+    <router-outlet />
+  `,
   host: {
     class: 'h-dvh flex flex-col p-6',
   },
