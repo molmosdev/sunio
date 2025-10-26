@@ -7,21 +7,42 @@ import { Participant } from '../../shared/interfaces/participant.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
 import { Settlement } from '../../shared/interfaces/balance.interface';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
+import { Participants } from '../../shared/components/participants/participants';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-icons/lucide';
+import {
+  lucideArrowLeft,
+  lucidePencil,
+  lucideTrash,
+  lucideForward,
+  lucideLoader,
+} from '@ng-icons/lucide';
 
 @Component({
   selector: 's-event',
-  imports: [Field, DecimalPipe, Button, TranslatePipe, RouterLink, NgIcon, Input, InputGroup],
+  imports: [
+    Field,
+    DecimalPipe,
+    Button,
+    TranslatePipe,
+    RouterLink,
+    NgIcon,
+    Input,
+    InputGroup,
+    Participants,
+  ],
   template: `
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
     </button>
-
     @if (
       event.isLoading() || participants.isLoading() || expenses.isLoading() || balances.isLoading()
     ) {
-      <p>{{ 'event.loading' | translate }}</p>
+      <ng-icon
+        name="lucideLoader"
+        size="23"
+        color="currentColor"
+        class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      />
     } @else if (event.error()) {
       <div>
         <h2>{{ 'event.notFound.title' | translate }}</h2>
@@ -62,88 +83,41 @@ import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-i
           @if (participants.error()) {
             <p>{{ 'event.participants.load-error' | translate }}</p>
           } @else {
-            @for (participant of participants.value(); track participant.id) {
-              <div class="mb-4 flex flex-col gap-2">
-                <span>{{ participant.name }}</span>
-                <div class="flex gap-2">
-                  <button
-                    b-button
-                    class="b-size-sm b-variant-outlined"
-                    (click)="selectParticipant(participant)"
-                  >
-                    {{ 'event.participants.select' | translate }}
-                  </button>
-                  <button
-                    b-button
-                    class="b-size-sm b-variant-outlined b-squared"
-                    (click)="startEditParticipant(participant)"
-                  >
-                    <ng-icon name="lucidePencil" size="13" color="currentColor" />
-                  </button>
-                  <button
-                    b-button
-                    class="b-size-sm b-variant-outlined b-squared"
-                    (click)="deleteParticipantConfirm(participant)"
-                  >
-                    <ng-icon name="lucideTrash" size="13" color="currentColor" />
-                  </button>
-                </div>
+            <s-participants
+              [participants]="participants.value()"
+              (participantRemoved)="deleteParticipantConfirm($event)"
+              (participantSelected)="selectParticipant($event)"
+              [selectable]="true"
+            />
 
-                @if (selectedParticipantId() === participant.id) {
-                  <div>
-                    <b-input-group>
-                      <input
-                        b-input
-                        type="password"
-                        [value]="pin()"
-                        (input)="pin.set($any($event.target).value)"
-                        maxLength="4"
-                        [placeholder]="
-                          !participant.pin
-                            ? ('event.participants.pin.setup' | translate)
-                            : ('event.participants.pin.prompt' | translate)
-                        "
-                      />
-                      <button
-                        b-button
-                        class="b-size-sm b-squared b-variant-outlined"
-                        (click)="submitPin(participant)"
-                        [disabled]="isSubmittingPin()"
-                      >
-                        <ng-icon name="lucideForward" size="13" color="currentColor" />
-                      </button>
-                    </b-input-group>
-                    @if (authError()) {
-                      <p class="text-sm text-destructive dark:text-destructive-dark">
-                        {{ authError() }}
-                      </p>
-                    }
-                  </div>
-                }
-
-                @if (participantEditId() === participant.id) {
-                  <div>
-                    <input
-                      type="text"
-                      [field]="editParticipantForm.name"
-                      [placeholder]="'event.participants.participant-name' | translate"
-                    />
-                    <button b-button (click)="submitEditParticipant()">
-                      {{ 'event.save' | translate }}
-                    </button>
-                    <button
-                      b-button
-                      class="b-variant-outlined"
-                      (click)="participantEditId.set(null)"
-                    >
-                      {{ 'event.cancel' | translate }}
-                    </button>
-                    @if (editParticipantErrorMessage()) {
-                      <p class="text-sm text-destructive dark:text-destructive-dark">
-                        {{ editParticipantErrorMessage() }}
-                      </p>
-                    }
-                  </div>
+            @if (selectedParticipant()) {
+              <div>
+                <b-input-group class="mt-2">
+                  <input
+                    b-input
+                    type="password"
+                    [value]="pin()"
+                    (input)="pin.set($any($event.target).value)"
+                    maxLength="4"
+                    [placeholder]="
+                      !selectedParticipant()!.pin
+                        ? ('event.participants.pin.setup' | translate)
+                        : ('event.participants.pin.prompt' | translate)
+                    "
+                  />
+                  <button
+                    b-button
+                    class="b-size-sm b-squared b-variant-outlined"
+                    (click)="submitPin(selectedParticipant()!)"
+                    [disabled]="isSubmittingPin()"
+                  >
+                    <ng-icon name="lucideForward" size="13" color="currentColor" />
+                  </button>
+                </b-input-group>
+                @if (authError()) {
+                  <p class="text-sm text-destructive dark:text-destructive-dark">
+                    {{ authError() }}
+                  </p>
                 }
               </div>
             }
@@ -302,9 +276,11 @@ import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-i
   `,
   styles: ``,
   host: {
-    class: 'flex flex-col gap-4 items-center justify-center h-full',
+    class: 'flex flex-col gap-4 items-center h-full',
   },
-  providers: [provideIcons({ lucideArrowLeft, lucidePencil, lucideTrash, lucideForward })],
+  providers: [
+    provideIcons({ lucideLoader, lucideArrowLeft, lucidePencil, lucideTrash, lucideForward }),
+  ],
 })
 export class Event {
   translationManager = inject(TranslationManager);
@@ -569,6 +545,13 @@ export class Event {
       const p = parts.find((x) => x.id === id);
       return { id, name: p ? p.name : id, balance };
     });
+  });
+
+  // Currently selected participant object (derived from selectedParticipantId)
+  selectedParticipant = computed(() => {
+    const id = this.selectedParticipantId();
+    if (!id) return null;
+    return this.participants.value()?.find((p) => p.id === id) ?? null;
   });
 
   // Settlements UI state
