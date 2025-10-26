@@ -18,34 +18,32 @@ interface NewEvent {
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
     </button>
-    <div class="flex flex-col gap-2 w-full items-center">
-      <b-input-group class="w-full max-w-xs">
-        <input
-          b-input
-          type="text"
-          [field]="form.name"
-          [placeholder]="'create-event.event-name' | translate"
-        />
-      </b-input-group>
+    <b-input-group class="w-full max-w-xs">
+      <input
+        b-input
+        type="text"
+        [field]="form.name"
+        [placeholder]="'create-event.event-name' | translate"
+      />
+    </b-input-group>
 
-      <!-- Inline add-participant input group -->
-      <b-input-group class="w-full max-w-xs">
-        <input
-          b-input
-          type="text"
-          [field]="addParticipantForm.participantName"
-          [placeholder]="'create-event.participant-name' | translate"
-          (keydown.enter)="confirmAddParticipant()"
-        />
-        <button
-          b-button
-          class="b-size-sm b-squared b-variant-outlined"
-          (click)="confirmAddParticipant()"
-        >
-          <ng-icon name="lucideUserRoundPlus" size="14" color="currentColor" />
-        </button>
-      </b-input-group>
-    </div>
+    <!-- Inline add-participant input group -->
+    <b-input-group class="w-full max-w-xs">
+      <input
+        b-input
+        type="text"
+        [field]="addParticipantForm.participantName"
+        [placeholder]="'create-event.participant-name' | translate"
+        (keydown.enter)="confirmAddParticipant()"
+      />
+      <button
+        b-button
+        class="b-size-sm b-squared b-variant-outlined"
+        (click)="confirmAddParticipant()"
+      >
+        <ng-icon name="lucideUserRoundPlus" size="14" color="currentColor" />
+      </button>
+    </b-input-group>
     @if (addParticipantError()) {
       <span class="text-sm text-destructive dark:text-destructive-dark">{{
         addParticipantError()
@@ -93,7 +91,7 @@ interface NewEvent {
     </button>
   `,
   host: {
-    class: 'flex flex-col gap-4 items-center justify-center h-full',
+    class: 'flex flex-col gap-3 items-center justify-center h-full',
   },
   providers: [provideIcons({ lucideTrash, lucideArrowLeft, lucideUserRoundPlus, lucideRocket })],
 })
