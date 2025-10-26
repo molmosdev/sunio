@@ -19,6 +19,7 @@
     "errors": {
       "name-required": "El nom de l'esdeveniment és obligatori",
       "participant-name-required": "El nom del participant és obligatori",
+      "duplicate-participant": "Ja existeix un participant amb aquest nom",
       "too-few-participants": "Es requereixen almenys 2 participants",
       "empty-participant": "Tots els participants han de tenir un nom"
     }

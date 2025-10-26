@@ -19,6 +19,7 @@
     "errors": {
       "name-required": "Event name is required",
       "participant-name-required": "Participant name is required",
+      "duplicate-participant": "A participant with that name already exists",
       "too-few-participants": "At least 2 participants are required",
       "empty-participant": "All participants must have a name"
     }

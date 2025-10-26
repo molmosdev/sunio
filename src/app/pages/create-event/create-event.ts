@@ -1,19 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { customError, Field, form, required, validate } from '@angular/forms/signals';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  Dialog,
-  DialogManager,
-  Input,
-  InputGroup,
-  TranslatePipe,
-  TranslationManager,
-} from '@basis-ng/primitives';
+import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucideTrash, lucideUserRoundPlus } from '@ng-icons/lucide';
@@ -26,27 +13,13 @@ interface NewEvent {
 
 @Component({
   selector: 's-create-event',
-  imports: [
-    Field,
-    Button,
-    Input,
-    InputGroup,
-    RouterLink,
-    NgIcon,
-    TranslatePipe,
-    Dialog,
-    Card,
-    CardHeader,
-    CardDescription,
-    CardContent,
-    CardFooter,
-  ],
+  imports: [Field, Button, Input, InputGroup, RouterLink, NgIcon, TranslatePipe],
   template: `
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
     </button>
-    <div class="flex gap-2">
-      <b-input-group>
+    <div class="flex flex-col gap-2 w-full items-center">
+      <b-input-group class="w-full max-w-xs">
         <input
           b-input
           type="text"
@@ -54,10 +27,30 @@ interface NewEvent {
           [placeholder]="'create-event.event-name' | translate"
         />
       </b-input-group>
-      <button b-button class="b-variant-outlined b-squared" (click)="openAddParticipantDialog()">
-        <ng-icon name="lucideUserRoundPlus" size="16" color="currentColor" />
-      </button>
+
+      <!-- Inline add-participant input group -->
+      <b-input-group class="w-full max-w-xs">
+        <input
+          b-input
+          type="text"
+          [field]="addParticipantForm.participantName"
+          [placeholder]="'create-event.participant-name' | translate"
+          (keydown.enter)="confirmAddParticipant()"
+        />
+        <button
+          b-button
+          class="b-size-sm b-squared b-variant-outlined"
+          (click)="confirmAddParticipant()"
+        >
+          <ng-icon name="lucideUserRoundPlus" size="14" color="currentColor" />
+        </button>
+      </b-input-group>
     </div>
+    @if (addParticipantError()) {
+      <span class="text-sm text-destructive dark:text-destructive-dark">{{
+        addParticipantError()
+      }}</span>
+    }
     @if (nameError()) {
       <span class="text-sm text-destructive dark:text-destructive-dark">
         {{ nameError() }}
@@ -94,42 +87,9 @@ interface NewEvent {
       </span>
     }
 
-    <button b-button (click)="submitForm()" class="absolute bottom-4 right-4">
+    <button b-button (click)="submitForm()" class="w-full max-w-xs">
       {{ 'create-event.create' | translate }}
     </button>
-
-    <ng-template bDialog="addParticipantDialog">
-      <b-card class="max-w-[80vw]">
-        <b-card-header>
-          <b-card-description>
-            {{ 'create-event.add-participant-description' | translate }}
-          </b-card-description>
-        </b-card-header>
-        <b-card-content>
-          <b-input-group>
-            <input
-              b-input
-              type="text"
-              [field]="addParticipantForm.participantName"
-              [placeholder]="'create-event.participant-name' | translate"
-            />
-          </b-input-group>
-          @if (dialogParticipantError()) {
-            <span class="text-sm text-destructive dark:text-destructive-dark">
-              {{ dialogParticipantError() }}
-            </span>
-          }
-        </b-card-content>
-        <b-card-footer>
-          <button b-button class="b-variant-outlined" (click)="closeAddParticipantDialog()">
-            {{ 'create-event.close' | translate }}
-          </button>
-          <button b-button (click)="confirmAddParticipant()">
-            {{ 'create-event.add' | translate }}
-          </button>
-        </b-card-footer>
-      </b-card>
-    </ng-template>
   `,
   host: {
     class: 'flex flex-col gap-4 items-center justify-center h-full',
@@ -138,7 +98,7 @@ interface NewEvent {
 })
 export class CreateEvent {
   translationManager = inject(TranslationManager);
-  dialogManager = inject(DialogManager);
+
   form = form(signal<NewEvent>({ name: '', participants: [] }), (path) => {
     required(path.name, {
       message: this.translationManager.translate('create-event.errors.name-required'),
@@ -170,10 +130,23 @@ export class CreateEvent {
       required(path.participantName, {
         message: this.translationManager.translate('create-event.errors.participant-name-required'),
       });
+      validate(path.participantName, (ctx) => {
+        const name = (ctx.value() || '').trim();
+        if (!name) return null;
+        const normalized = name.toLowerCase();
+        const participants = this.form.participants().value();
+        if (participants.some((p) => (p || '').trim().toLowerCase() === normalized)) {
+          return customError({
+            kind: 'duplicate_participant',
+            message: this.translationManager.translate('create-event.errors.duplicate-participant'),
+          });
+        }
+        return null;
+      });
     },
   );
 
-  dialogParticipantError = computed(() => {
+  addParticipantError = computed(() => {
     const field = this.addParticipantForm.participantName();
     return field.dirty() && field.errors().length > 0 ? field.errors()[0].message : null;
   });
@@ -203,26 +176,17 @@ export class CreateEvent {
     this.router.navigate(['/', response.eventId]);
   }
 
-  openAddParticipantDialog() {
-    this.addParticipantForm.participantName().value.set('');
-    this.addParticipantForm.participantName().reset();
-    this.dialogManager.openDialog('addParticipantDialog');
-  }
-
-  closeAddParticipantDialog() {
-    this.dialogManager.closeDialog('addParticipantDialog');
-  }
-
   confirmAddParticipant() {
-    const name = (this.addParticipantForm.participantName().value() || '').trim();
-    if (!name) {
-      this.addParticipantForm.participantName().markAsDirty();
+    this.addParticipantForm.participantName().markAsDirty();
+    if (!this.addParticipantForm().valid()) {
       return;
     }
+    const name = (this.addParticipantForm.participantName().value() || '').trim();
     const currentParticipants = this.form.participants().value();
     this.form.participants().value.set([...currentParticipants, name]);
     this.form.participants().markAsDirty();
-    this.closeAddParticipantDialog();
+    this.addParticipantForm.participantName().value.set('');
+    this.addParticipantForm.participantName().reset();
   }
 
   removeParticipant(index: number) {
