@@ -8,11 +8,11 @@ import { lucideCirclePlus, lucideCloudDownload } from '@ng-icons/lucide';
   selector: 's-home',
   imports: [RouterLink, Button, TranslatePipe, NgIcon],
   template: `
-    <button b-button routerLink="/create-event" class="b-variant-outlined">
+    <button b-button routerLink="/create-event" class="b-variant-outlined w-full max-w-xs">
       <ng-icon name="lucideCirclePlus" size="16" />
       {{ 'home.create-event' | translate }}
     </button>
-    <button b-button routerLink="/load-event" class="b-variant-outlined">
+    <button b-button routerLink="/load-event" class="b-variant-outlined w-full max-w-xs">
       <ng-icon name="lucideCloudDownload" size="16" />
       {{ 'home.load-event' | translate }}
     </button>
