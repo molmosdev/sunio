@@ -12,10 +12,13 @@
   "create-event": {
     "event-name": "Nom de l'esdeveniment",
     "participant-name": "Nom del participant",
-    "add-participant": "Afegir participant",
+    "add-participant-description": "Introdueix el nom del participant que vols afegir",
+    "close": "Tancar",
+    "add": "Afegir",
     "create": "Crear esdeveniment",
     "errors": {
       "name-required": "El nom de l'esdeveniment és obligatori",
+      "participant-name-required": "El nom del participant és obligatori",
       "too-few-participants": "Es requereixen almenys 2 participants",
       "empty-participant": "Tots els participants han de tenir un nom"
     }

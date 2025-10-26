@@ -12,10 +12,13 @@
   "create-event": {
     "event-name": "Event name",
     "participant-name": "Participant name",
-    "add-participant": "Add participant",
+    "add-participant-description": "Type the participant name you want to add",
+    "close": "Close",
+    "add": "Add",
     "create": "Create event",
     "errors": {
       "name-required": "Event name is required",
+      "participant-name-required": "Participant name is required",
       "too-few-participants": "At least 2 participants are required",
       "empty-participant": "All participants must have a name"
     }
