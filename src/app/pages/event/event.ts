@@ -6,13 +6,13 @@ import { ApiEvents } from '../../core/services/api-events';
 import { Participant } from '../../shared/interfaces/participant.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
 import { Settlement } from '../../shared/interfaces/balance.interface';
-import { Button, Input, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
+import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft } from '@ng-icons/lucide';
+import { lucideArrowLeft, lucidePencil, lucideTrash, lucideForward } from '@ng-icons/lucide';
 
 @Component({
   selector: 's-event',
-  imports: [Field, DecimalPipe, Button, TranslatePipe, RouterLink, NgIcon, Input],
+  imports: [Field, DecimalPipe, Button, TranslatePipe, RouterLink, NgIcon, Input, InputGroup],
   template: `
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
@@ -31,15 +31,16 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
     } @else {
       <div>
         @if (!editingEventName()) {
-          <h2>
+          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
             {{ event.value()?.name }}
-            <button b-button class="b-variant-outlined" (click)="startEditEvent()">
-              {{ 'event.edit' | translate }}
+            <button b-button class="b-variant-outlined b-squared" (click)="startEditEvent()">
+              <ng-icon name="lucidePencil" size="13" color="currentColor" />
             </button>
           </h2>
         } @else {
-          <div>
+          <div class="flex gap-4 mb-4">
             <input
+              b-input
               type="text"
               [field]="editEventForm.name"
               [placeholder]="'event.event-name' | translate"
@@ -49,64 +50,73 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
               {{ 'event.cancel' | translate }}
             </button>
             @if (editEventError()) {
-              <p class="text-destructive dark:text-destructive-dark">{{ editEventError() }}</p>
+              <p class="text-sm text-destructive dark:text-destructive-dark">
+                {{ editEventError() }}
+              </p>
             }
           </div>
         }
 
         @if (!loggedInParticipantId()) {
-          <h3>{{ 'event.participants.title' | translate }}</h3>
+          <h3 class="text-lg font-medium mb-2">{{ 'event.participants.title' | translate }}</h3>
           @if (participants.error()) {
             <p>{{ 'event.participants.load-error' | translate }}</p>
           } @else {
             @for (participant of participants.value(); track participant.id) {
-              <div>
+              <div class="mb-4 flex flex-col gap-2">
                 <span>{{ participant.name }}</span>
-                <button
-                  b-button
-                  class="b-size-sm b-variant-outlined"
-                  (click)="selectParticipant(participant)"
-                >
-                  {{ 'event.participants.select' | translate }}
-                </button>
-                <button
-                  b-button
-                  class="b-size-sm b-variant-outlined"
-                  (click)="startEditParticipant(participant)"
-                >
-                  {{ 'event.participants.edit' | translate }}
-                </button>
-                <button
-                  b-button
-                  class="b-size-sm b-variant-outlined"
-                  (click)="deleteParticipantConfirm(participant)"
-                >
-                  {{ 'event.participants.delete' | translate }}
-                </button>
+                <div class="flex gap-2">
+                  <button
+                    b-button
+                    class="b-size-sm b-variant-outlined"
+                    (click)="selectParticipant(participant)"
+                  >
+                    {{ 'event.participants.select' | translate }}
+                  </button>
+                  <button
+                    b-button
+                    class="b-size-sm b-variant-outlined b-squared"
+                    (click)="startEditParticipant(participant)"
+                  >
+                    <ng-icon name="lucidePencil" size="13" color="currentColor" />
+                  </button>
+                  <button
+                    b-button
+                    class="b-size-sm b-variant-outlined b-squared"
+                    (click)="deleteParticipantConfirm(participant)"
+                  >
+                    <ng-icon name="lucideTrash" size="13" color="currentColor" />
+                  </button>
+                </div>
 
                 @if (selectedParticipantId() === participant.id) {
                   <div>
-                    @if (!participant.pin) {
-                      <p>{{ 'event.participants.pin.setup' | translate }}</p>
-                    } @else {
-                      <p>{{ 'event.participants.pin.prompt' | translate }}</p>
-                    }
-                    <input
-                      b-input
-                      type="password"
-                      [value]="pin()"
-                      (input)="pin.set($any($event.target).value)"
-                      maxLength="4"
-                    />
-                    <button
-                      b-button
-                      (click)="submitPin(participant)"
-                      [disabled]="isSubmittingPin()"
-                    >
-                      {{ 'event.participants.pin.submit' | translate }}
-                    </button>
+                    <b-input-group>
+                      <input
+                        b-input
+                        type="password"
+                        [value]="pin()"
+                        (input)="pin.set($any($event.target).value)"
+                        maxLength="4"
+                        [placeholder]="
+                          !participant.pin
+                            ? ('event.participants.pin.setup' | translate)
+                            : ('event.participants.pin.prompt' | translate)
+                        "
+                      />
+                      <button
+                        b-button
+                        class="b-size-sm b-squared b-variant-outlined"
+                        (click)="submitPin(participant)"
+                        [disabled]="isSubmittingPin()"
+                      >
+                        <ng-icon name="lucideForward" size="13" color="currentColor" />
+                      </button>
+                    </b-input-group>
                     @if (authError()) {
-                      <p class="text-destructive dark:text-destructive-dark">{{ authError() }}</p>
+                      <p class="text-sm text-destructive dark:text-destructive-dark">
+                        {{ authError() }}
+                      </p>
                     }
                   </div>
                 }
@@ -129,7 +139,7 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
                       {{ 'event.cancel' | translate }}
                     </button>
                     @if (editParticipantError()) {
-                      <p class="text-destructive dark:text-destructive-dark">
+                      <p class="text-sm text-destructive dark:text-destructive-dark">
                         {{ editParticipantError() }}
                       </p>
                     }
@@ -187,7 +197,9 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
                   {{ 'event.expenses.create.button' | translate }}
                 </button>
                 @if (newExpenseError()) {
-                  <p class="text-destructive dark:text-destructive-dark">{{ newExpenseError() }}</p>
+                  <p class="text-sm text-destructive dark:text-destructive-dark">
+                    {{ newExpenseError() }}
+                  </p>
                 }
               </div>
 
@@ -227,7 +239,7 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
                           {{ 'event.cancel' | translate }}
                         </button>
                         @if (editExpenseError()) {
-                          <p class="text-destructive dark:text-destructive-dark">
+                          <p class="text-sm text-destructive dark:text-destructive-dark">
                             {{ editExpenseError() }}
                           </p>
                         }
@@ -239,17 +251,17 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
                       {{ e.description }}
                       <button
                         b-button
-                        class="b-size-sm b-variant-outlined"
+                        class="b-size-sm b-variant-outlined b-squared"
                         (click)="startEditExpense(e)"
                       >
-                        {{ 'event.edit' | translate }}
+                        <ng-icon name="lucidePencil" size="13" color="currentColor" />
                       </button>
                       <button
                         b-button
-                        class="b-size-sm b-variant-outlined"
+                        class="b-size-sm b-variant-outlined b-squared"
                         (click)="deleteExpense(e)"
                       >
-                        {{ 'event.delete' | translate }}
+                        <ng-icon name="lucideTrash" size="13" color="currentColor" />
                       </button>
                     </p>
                   }
@@ -277,7 +289,9 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
                 </p>
               }
             } @else if (settlementsError()) {
-              <p class="text-destructive dark:text-destructive-dark">{{ settlementsError() }}</p>
+              <p class="text-sm text-destructive dark:text-destructive-dark">
+                {{ settlementsError() }}
+              </p>
             }
           }
         } @else {
@@ -290,7 +304,7 @@ import { lucideArrowLeft } from '@ng-icons/lucide';
   host: {
     class: 'flex flex-col gap-4 items-center justify-center h-full',
   },
-  providers: [provideIcons({ lucideArrowLeft })],
+  providers: [provideIcons({ lucideArrowLeft, lucidePencil, lucideTrash, lucideForward })],
 })
 export class Event {
   translationManager = inject(TranslationManager);
@@ -746,9 +760,8 @@ export class Event {
       } catch {
         // ignore reload errors
       }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      this.authError.set(msg || this.translationManager.translate('event.errors.auth-pin'));
+    } catch {
+      this.authError.set(this.translationManager.translate('event.errors.auth-pin'));
     } finally {
       this.isSubmittingPin.set(false);
     }

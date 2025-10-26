@@ -38,8 +38,8 @@
       "edit": "Edit",
       "delete": "Delete",
       "pin": {
-        "setup": "This participant has no PIN. Set it:",
-        "prompt": "Enter your PIN:",
+        "setup": "Create PIN",
+        "prompt": "Enter PIN",
         "submit": "Submit"
       },
       "participant-name": "Participant name"

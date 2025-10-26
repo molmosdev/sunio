@@ -38,8 +38,8 @@
       "edit": "Editar",
       "delete": "Esborrar",
       "pin": {
-        "setup": "Aquest participant no té PIN. Registra'l:",
-        "prompt": "Introdueix el teu PIN:",
+        "setup": "Crea un PIN",
+        "prompt": "Introdueix el teu PIN",
         "submit": "Enviar"
       },
       "participant-name": "Nom del participant"
