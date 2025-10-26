@@ -19,5 +19,69 @@
       "too-few-participants": "At least 2 participants are required",
       "empty-participant": "All participants must have a name"
     }
+  },
+  "event": {
+    "loading": "Loading event...",
+    "notFound.title": "Error: Event not found",
+    "notFound": "Event does not exist",
+    "goHome": "Go home",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "logout": "Log out",
+    "event-name": "Event name",
+    "participants": {
+      "title": "Participants",
+      "load-error": "Error loading participants",
+      "select": "Select",
+      "edit": "Edit",
+      "delete": "Delete",
+      "pin": {
+        "setup": "This participant has no PIN. Set it:",
+        "prompt": "Enter your PIN:",
+        "submit": "Submit"
+      },
+      "participant-name": "Participant name"
+    },
+    "expenses": {
+      "title": "Expenses",
+      "load-error": "Error loading expenses",
+      "create": {
+        "title": "Create expense",
+        "button": "Create"
+      },
+      "payer": "Payer",
+      "select": "Select",
+      "amount": "Amount",
+      "consumers": "Consumers",
+      "description": "Description",
+      "list": { "title": "Expenses list" }
+    },
+    "balances": {
+      "title": "Balances",
+      "calculate": "Calculate settlements",
+      "load-error": "Error loading balances",
+      "settlements": "Settlements"
+    },
+    "auth": { "required": "Select a participant and authenticate to see expenses and balances." },
+    "errors": {
+      "payer-required": "Payer is required",
+      "invalid-amount": "Amount must be > 0",
+      "select-consumer": "Select at least one consumer",
+      "participant-name-required": "Participant name is required",
+      "event-name-required": "Event name is required",
+      "calculate-settlements": "Error calculating settlements",
+      "fix-fields": "Please fix the fields",
+      "create-participant": "Error creating participant",
+      "edit-participant": "Error editing participant",
+      "delete-participant": "Error deleting participant",
+      "update-event": "Error updating event",
+      "create-expense": "Error creating expense",
+      "update-expense": "Error updating expense",
+      "delete-expense": "Error deleting expense",
+      "auth-pin": "Error verifying PIN",
+      "invalid-pin": "Invalid PIN"
+    }
   }
 }

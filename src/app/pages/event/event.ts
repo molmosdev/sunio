@@ -1,85 +1,137 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, resource, signal, computed } from '@angular/core';
 import { Field, form, required, validate, customError } from '@angular/forms/signals';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiEvents } from '../../core/services/api-events';
 import { Participant } from '../../shared/interfaces/participant.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
 import { Settlement } from '../../shared/interfaces/balance.interface';
+import { Button, Input, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideArrowLeft } from '@ng-icons/lucide';
 
 @Component({
   selector: 's-event',
-  imports: [Field, DecimalPipe],
+  imports: [Field, DecimalPipe, Button, TranslatePipe, RouterLink, NgIcon, Input],
   template: `
+    <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
+      <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
+    </button>
+
     @if (
       event.isLoading() || participants.isLoading() || expenses.isLoading() || balances.isLoading()
     ) {
-      <p>Cargando evento...</p>
+      <p>{{ 'event.loading' | translate }}</p>
     } @else if (event.error()) {
       <div>
-        <h2>Error: Evento no encontrado</h2>
-        <p>El evento "{{ eventId() }}" no existe.</p>
-        <button (click)="goHome()">Volver al inicio</button>
+        <h2>{{ 'event.notFound.title' | translate }}</h2>
+        <p>{{ 'event.notFound' | translate }} "{{ eventId() }}"</p>
+        <button b-button routerLink="/home">{{ 'event.goHome' | translate }}</button>
       </div>
     } @else {
       <div>
         @if (!editingEventName()) {
           <h2>
             {{ event.value()?.name }}
-            <button (click)="startEditEvent()">Editar</button>
+            <button b-button class="b-variant-outlined" (click)="startEditEvent()">
+              {{ 'event.edit' | translate }}
+            </button>
           </h2>
         } @else {
           <div>
-            <input type="text" [field]="editEventForm.name" />
-            <button (click)="submitEditEvent()">Guardar</button>
-            <button (click)="cancelEditEvent()">Cancelar</button>
+            <input
+              type="text"
+              [field]="editEventForm.name"
+              [placeholder]="'event.event-name' | translate"
+            />
+            <button b-button (click)="submitEditEvent()">{{ 'event.save' | translate }}</button>
+            <button b-button class="b-variant-outlined" (click)="cancelEditEvent()">
+              {{ 'event.cancel' | translate }}
+            </button>
             @if (editEventError()) {
-              <p style="color:red">{{ editEventError() }}</p>
+              <p class="text-destructive dark:text-destructive-dark">{{ editEventError() }}</p>
             }
           </div>
         }
 
         @if (!loggedInParticipantId()) {
-          <h3>Participantes</h3>
+          <h3>{{ 'event.participants.title' | translate }}</h3>
           @if (participants.error()) {
-            <p>Error cargando participantes</p>
+            <p>{{ 'event.participants.load-error' | translate }}</p>
           } @else {
             @for (participant of participants.value(); track participant.id) {
               <div>
                 <span>{{ participant.name }}</span>
-                <button (click)="selectParticipant(participant)">Seleccionar</button>
-                <button (click)="startEditParticipant(participant)">Editar</button>
-                <button (click)="deleteParticipantConfirm(participant)">Borrar</button>
+                <button
+                  b-button
+                  class="b-size-sm b-variant-outlined"
+                  (click)="selectParticipant(participant)"
+                >
+                  {{ 'event.participants.select' | translate }}
+                </button>
+                <button
+                  b-button
+                  class="b-size-sm b-variant-outlined"
+                  (click)="startEditParticipant(participant)"
+                >
+                  {{ 'event.participants.edit' | translate }}
+                </button>
+                <button
+                  b-button
+                  class="b-size-sm b-variant-outlined"
+                  (click)="deleteParticipantConfirm(participant)"
+                >
+                  {{ 'event.participants.delete' | translate }}
+                </button>
 
                 @if (selectedParticipantId() === participant.id) {
                   <div>
                     @if (!participant.pin) {
-                      <p>Este participante no tiene PIN. Regístralo:</p>
+                      <p>{{ 'event.participants.pin.setup' | translate }}</p>
                     } @else {
-                      <p>Introduce tu PIN:</p>
+                      <p>{{ 'event.participants.pin.prompt' | translate }}</p>
                     }
                     <input
+                      b-input
                       type="password"
                       [value]="pin()"
                       (input)="pin.set($any($event.target).value)"
                       maxLength="4"
                     />
-                    <button (click)="submitPin(participant)" [disabled]="isSubmittingPin()">
-                      Enviar
+                    <button
+                      b-button
+                      (click)="submitPin(participant)"
+                      [disabled]="isSubmittingPin()"
+                    >
+                      {{ 'event.participants.pin.submit' | translate }}
                     </button>
                     @if (authError()) {
-                      <p style="color: red">{{ authError() }}</p>
+                      <p class="text-destructive dark:text-destructive-dark">{{ authError() }}</p>
                     }
                   </div>
                 }
 
                 @if (participantEditId() === participant.id) {
                   <div>
-                    <input type="text" [field]="editParticipantForm.name" />
-                    <button (click)="submitEditParticipant()">Guardar</button>
-                    <button (click)="participantEditId.set(null)">Cancelar</button>
+                    <input
+                      type="text"
+                      [field]="editParticipantForm.name"
+                      [placeholder]="'event.participants.participant-name' | translate"
+                    />
+                    <button b-button (click)="submitEditParticipant()">
+                      {{ 'event.save' | translate }}
+                    </button>
+                    <button
+                      b-button
+                      class="b-variant-outlined"
+                      (click)="participantEditId.set(null)"
+                    >
+                      {{ 'event.cancel' | translate }}
+                    </button>
                     @if (editParticipantError()) {
-                      <p style="color:red">{{ editParticipantError() }}</p>
+                      <p class="text-destructive dark:text-destructive-dark">
+                        {{ editParticipantError() }}
+                      </p>
                     }
                   </div>
                 }
@@ -88,32 +140,34 @@ import { Settlement } from '../../shared/interfaces/balance.interface';
           }
         } @else {
           <div>
-            <button (click)="logout()">Cerrar sesión</button>
+            <button b-button (click)="logout()">{{ 'event.logout' | translate }}</button>
           </div>
         }
 
         @if (loggedInParticipantId()) {
-          <h3>Gastos</h3>
+          <h3>{{ 'event.expenses.title' | translate }}</h3>
           @if (expenses.error()) {
-            <p>Error cargando gastos</p>
+            <p>{{ 'event.expenses.load-error' | translate }}</p>
           } @else {
             <div>
-              <h4>Crear gasto</h4>
+              <h4>{{ 'event.expenses.create.title' | translate }}</h4>
               <div>
-                <label>Payer</label>
+                <label>{{ 'event.expenses.payer' | translate }}</label>
                 <select [field]="newExpenseForm.payer_id">
-                  <option value="">-- Selecciona --</option>
+                  <option value="">
+                    {{ '-- ' + ('event.expenses.select' | translate) + ' --' }}
+                  </option>
                   @for (p of participants.value(); track p.id) {
                     <option value="{{ p.id }}">{{ p.name }}</option>
                   }
                 </select>
               </div>
               <div>
-                <label>Monto</label>
-                <input type="number" [field]="newExpenseForm.amount" />
+                <label>{{ 'event.expenses.amount' | translate }}</label>
+                <input b-inputtype="number" [field]="newExpenseForm.amount" />
               </div>
               <div>
-                <label>Consumidores</label>
+                <label>{{ 'event.expenses.consumers' | translate }}</label>
                 @for (p of participants.value(); track p.id) {
                   <label>
                     <input
@@ -125,30 +179,32 @@ import { Settlement } from '../../shared/interfaces/balance.interface';
                 }
               </div>
               <div>
-                <label>Descripción</label>
-                <input type="text" [field]="newExpenseForm.description" />
+                <label>{{ 'event.expenses.description' | translate }}</label>
+                <input b-input type="text" [field]="newExpenseForm.description" />
               </div>
               <div>
-                <button (click)="createExpense()">Crear</button>
+                <button b-button (click)="createExpense()">
+                  {{ 'event.expenses.create.button' | translate }}
+                </button>
                 @if (newExpenseError()) {
-                  <p style="color:red">{{ newExpenseError() }}</p>
+                  <p class="text-destructive dark:text-destructive-dark">{{ newExpenseError() }}</p>
                 }
               </div>
 
-              <h4>Lista de gastos</h4>
+              <h4>{{ 'event.expenses.list.title' | translate }}</h4>
               @for (e of expenses.value(); track e.id) {
                 <div>
                   @if (editingExpenseId() === e.id) {
                     <div>
-                      <label>Payer</label>
+                      <label>{{ 'event.expenses.payer' | translate }}</label>
                       <select [field]="editExpenseForm.payer_id">
                         @for (p of participants.value(); track p.id) {
                           <option value="{{ p.id }}">{{ p.name }}</option>
                         }
                       </select>
-                      <label>Monto</label>
-                      <input type="number" [field]="editExpenseForm.amount" />
-                      <label>Consumidores</label>
+                      <label>{{ 'event.expenses.amount' | translate }}</label>
+                      <input b-input type="number" [field]="editExpenseForm.amount" />
+                      <label>{{ 'event.expenses.consumers' | translate }}</label>
                       @for (p of participants.value(); track p.id) {
                         <label>
                           <input
@@ -161,13 +217,19 @@ import { Settlement } from '../../shared/interfaces/balance.interface';
                           {{ p.name }}
                         </label>
                       }
-                      <label>Descripción</label>
-                      <input type="text" [field]="editExpenseForm.description" />
+                      <label>{{ 'event.expenses.description' | translate }}</label>
+                      <input b-input type="text" [field]="editExpenseForm.description" />
                       <div>
-                        <button (click)="submitEditExpense()">Guardar</button>
-                        <button (click)="cancelEditExpense()">Cancelar</button>
+                        <button b-button (click)="submitEditExpense()">
+                          {{ 'event.save' | translate }}
+                        </button>
+                        <button b-button class="b-variant-outlined" (click)="cancelEditExpense()">
+                          {{ 'event.cancel' | translate }}
+                        </button>
                         @if (editExpenseError()) {
-                          <p style="color:red">{{ editExpenseError() }}</p>
+                          <p class="text-destructive dark:text-destructive-dark">
+                            {{ editExpenseError() }}
+                          </p>
                         }
                       </div>
                     </div>
@@ -175,8 +237,20 @@ import { Settlement } from '../../shared/interfaces/balance.interface';
                     <p>
                       <strong>{{ getParticipantName(e.payer_id) }}</strong> - {{ e.amount }} -
                       {{ e.description }}
-                      <button (click)="startEditExpense(e)">Editar</button>
-                      <button (click)="deleteExpense(e)">Borrar</button>
+                      <button
+                        b-button
+                        class="b-size-sm b-variant-outlined"
+                        (click)="startEditExpense(e)"
+                      >
+                        {{ 'event.edit' | translate }}
+                      </button>
+                      <button
+                        b-button
+                        class="b-size-sm b-variant-outlined"
+                        (click)="deleteExpense(e)"
+                      >
+                        {{ 'event.delete' | translate }}
+                      </button>
                     </p>
                   }
                 </div>
@@ -184,18 +258,18 @@ import { Settlement } from '../../shared/interfaces/balance.interface';
             </div>
           }
 
-          <h3>Balances</h3>
-          <button (click)="calculateSettlements()" [disabled]="isCalculatingSettlements()">
-            Calcular liquidaciones
+          <h3>{{ 'event.balances.title' | translate }}</h3>
+          <button b-button (click)="calculateSettlements()" [disabled]="isCalculatingSettlements()">
+            {{ 'event.balances.calculate' | translate }}
           </button>
           @if (balances.error()) {
-            <p>Error cargando balances</p>
+            <p>{{ 'event.balances.load-error' | translate }}</p>
           } @else {
             @for (item of balancesWithNames(); track item.id) {
               <p>{{ item.name }}: {{ item.balance | number: '1.2-2' }}</p>
             }
             @if (settlements()) {
-              <h4>Liquidaciones</h4>
+              <h4>{{ 'event.balances.settlements' | translate }}</h4>
               @for (s of settlements(); track s.from + '-' + s.to) {
                 <p>
                   {{ getParticipantName(s.from) }} → {{ getParticipantName(s.to) }}:
@@ -203,18 +277,23 @@ import { Settlement } from '../../shared/interfaces/balance.interface';
                 </p>
               }
             } @else if (settlementsError()) {
-              <p style="color:red">{{ settlementsError() }}</p>
+              <p class="text-destructive dark:text-destructive-dark">{{ settlementsError() }}</p>
             }
           }
         } @else {
-          <p>Selecciona un participante y autentícate para ver los gastos y balances.</p>
+          <p>{{ 'event.auth.required' | translate }}</p>
         }
       </div>
     }
   `,
   styles: ``,
+  host: {
+    class: 'flex flex-col gap-4 items-center justify-center h-full',
+  },
+  providers: [provideIcons({ lucideArrowLeft })],
 })
 export class Event {
+  translationManager = inject(TranslationManager);
   activatedRoute = inject(ActivatedRoute);
   router = inject(Router);
   eventId = signal(this.activatedRoute.snapshot.params['eventId']);
@@ -238,18 +317,26 @@ export class Event {
       description: '',
     }),
     (path) => {
-      required(path.payer_id, { message: 'Payer is required' });
+      required(path.payer_id, {
+        message: this.translationManager.translate('event.errors.payer-required'),
+      });
       validate(path.amount, (ctx) => {
         const v = ctx.value();
         if (!v || v <= 0) {
-          return customError({ kind: 'invalid_amount', message: 'Amount must be > 0' });
+          return customError({
+            kind: 'invalid_amount',
+            message: this.translationManager.translate('event.errors.invalid-amount'),
+          });
         }
         return null;
       });
       validate(path.consumers, (ctx) => {
         const v = ctx.value();
         if (!v || v.length === 0) {
-          return customError({ kind: 'no_consumers', message: 'Select at least one consumer' });
+          return customError({
+            kind: 'no_consumers',
+            message: this.translationManager.translate('event.errors.select-consumer'),
+          });
         }
         return null;
       });
@@ -268,17 +355,25 @@ export class Event {
       description: '',
     }),
     (path) => {
-      required(path.payer_id);
+      required(path.payer_id, {
+        message: this.translationManager.translate('event.errors.payer-required'),
+      });
       validate(path.amount, (ctx) => {
         const v = ctx.value();
         if (!v || v <= 0)
-          return customError({ kind: 'invalid_amount', message: 'Amount must be > 0' });
+          return customError({
+            kind: 'invalid_amount',
+            message: this.translationManager.translate('event.errors.invalid-amount'),
+          });
         return null;
       });
       validate(path.consumers, (ctx) => {
         const v = ctx.value();
         if (!v || v.length === 0)
-          return customError({ kind: 'no_consumers', message: 'Select at least one consumer' });
+          return customError({
+            kind: 'no_consumers',
+            message: this.translationManager.translate('event.errors.select-consumer'),
+          });
         return null;
       });
     },
@@ -294,11 +389,15 @@ export class Event {
 
   // form-based participant create/edit
   newParticipantForm = form(signal<{ name: string }>({ name: '' }), (path) => {
-    required(path.name, { message: 'Participant name is required' });
+    required(path.name, {
+      message: this.translationManager.translate('event.errors.participant-name-required'),
+    });
   });
 
   editParticipantForm = form(signal<{ name: string }>({ name: '' }), (path) => {
-    required(path.name, { message: 'Participant name is required' });
+    required(path.name, {
+      message: this.translationManager.translate('event.errors.participant-name-required'),
+    });
   });
 
   // Edit event name
@@ -306,7 +405,9 @@ export class Event {
   editEventName = signal('');
   editEventError = signal<string | null>(null);
   editEventForm = form(signal<{ name: string }>({ name: '' }), (path) => {
-    required(path.name, { message: 'Event name is required' });
+    required(path.name, {
+      message: this.translationManager.translate('event.errors.event-name-required'),
+    });
   });
 
   event = resource({
@@ -383,7 +484,9 @@ export class Event {
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.settlementsError.set(msg || 'Error calculando liquidaciones');
+      this.settlementsError.set(
+        msg || this.translationManager.translate('event.errors.calculate-settlements'),
+      );
     } finally {
       this.isCalculatingSettlements.set(false);
     }
@@ -417,7 +520,7 @@ export class Event {
   async createParticipant() {
     this.newParticipantForm.name().markAsDirty();
     if (!this.newParticipantForm().valid()) {
-      this.newParticipantError.set('Por favor corrige los campos');
+      this.newParticipantError.set(this.translationManager.translate('event.errors.fix-fields'));
       return;
     }
     const data = this.newParticipantForm().value();
@@ -428,7 +531,9 @@ export class Event {
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.newParticipantError.set(msg || 'Error creando participante');
+      this.newParticipantError.set(
+        msg || this.translationManager.translate('event.errors.create-participant'),
+      );
     }
   }
 
@@ -443,7 +548,7 @@ export class Event {
     if (!id) return;
     this.editParticipantForm.name().markAsDirty();
     if (!this.editParticipantForm().valid()) {
-      this.editParticipantError.set('Por favor corrige los campos');
+      this.editParticipantError.set(this.translationManager.translate('event.errors.fix-fields'));
       return;
     }
     const data = this.editParticipantForm().value();
@@ -455,7 +560,9 @@ export class Event {
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.editParticipantError.set(msg || 'Error editando participante');
+      this.editParticipantError.set(
+        msg || this.translationManager.translate('event.errors.edit-participant'),
+      );
     }
   }
 
@@ -467,7 +574,9 @@ export class Event {
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.newParticipantError.set(msg || 'Error borrando participante');
+      this.newParticipantError.set(
+        msg || this.translationManager.translate('event.errors.delete-participant'),
+      );
     }
   }
 
@@ -486,7 +595,7 @@ export class Event {
   async submitEditEvent() {
     this.editEventForm.name().markAsDirty();
     if (!this.editEventForm().valid()) {
-      this.editEventError.set('Por favor corrige los campos');
+      this.editEventError.set(this.translationManager.translate('event.errors.fix-fields'));
       return;
     }
     const data = this.editEventForm().value();
@@ -497,7 +606,9 @@ export class Event {
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.editEventError.set(msg || 'Error actualizando evento');
+      this.editEventError.set(
+        msg || this.translationManager.translate('event.errors.update-event'),
+      );
     }
   }
 
@@ -506,7 +617,7 @@ export class Event {
     this.newExpenseForm.amount().markAsDirty();
     this.newExpenseForm.consumers().markAsDirty();
     if (!this.newExpenseForm().valid()) {
-      this.newExpenseError.set('Por favor corrige los campos');
+      this.newExpenseError.set(this.translationManager.translate('event.errors.fix-fields'));
       return;
     }
 
@@ -526,7 +637,9 @@ export class Event {
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.newExpenseError.set(msg || 'Error creando gasto');
+      this.newExpenseError.set(
+        msg || this.translationManager.translate('event.errors.create-expense'),
+      );
     }
   }
 
@@ -549,7 +662,7 @@ export class Event {
     this.editExpenseForm.amount().markAsDirty();
     this.editExpenseForm.consumers().markAsDirty();
     if (!this.editExpenseForm().valid()) {
-      this.editExpenseError.set('Corrige los campos');
+      this.editExpenseError.set(this.translationManager.translate('event.errors.fix-fields'));
       return;
     }
 
@@ -566,7 +679,9 @@ export class Event {
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.editExpenseError.set(msg || 'Error actualizando gasto');
+      this.editExpenseError.set(
+        msg || this.translationManager.translate('event.errors.update-expense'),
+      );
     }
   }
 
@@ -577,7 +692,9 @@ export class Event {
     } catch (err: unknown) {
       // attach to newExpenseError for simplicity
       const msg = err instanceof Error ? err.message : String(err);
-      this.newExpenseError.set(msg || 'Error borrando gasto');
+      this.newExpenseError.set(
+        msg || this.translationManager.translate('event.errors.delete-expense'),
+      );
     }
   }
 
@@ -613,7 +730,7 @@ export class Event {
           pin: this.pin(),
         });
         if (!res || !res.success) {
-          throw new Error('PIN inválido');
+          throw new Error(this.translationManager.translate('event.errors.invalid-pin'));
         }
       }
 
@@ -631,7 +748,7 @@ export class Event {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.authError.set(msg || 'Error al verificar PIN');
+      this.authError.set(msg || this.translationManager.translate('event.errors.auth-pin'));
     } finally {
       this.isSubmittingPin.set(false);
     }

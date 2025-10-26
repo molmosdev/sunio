@@ -19,5 +19,71 @@
       "too-few-participants": "Se requieren al menos 2 participantes",
       "empty-participant": "Todos los participantes deben tener un nombre"
     }
+  },
+  "event": {
+    "loading": "Cargando evento...",
+    "notFound.title": "Error: Evento no encontrado",
+    "notFound": "El evento no existe",
+    "goHome": "Volver al inicio",
+    "edit": "Editar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Borrar",
+    "logout": "Cerrar sesión",
+    "event-name": "Nombre del evento",
+    "participants": {
+      "title": "Participantes",
+      "load-error": "Error cargando participantes",
+      "select": "Seleccionar",
+      "edit": "Editar",
+      "delete": "Borrar",
+      "pin": {
+        "setup": "Este participante no tiene PIN. Regístralo:",
+        "prompt": "Introduce tu PIN:",
+        "submit": "Enviar"
+      },
+      "participant-name": "Nombre del participante"
+    },
+    "expenses": {
+      "title": "Gastos",
+      "load-error": "Error cargando gastos",
+      "create": {
+        "title": "Crear gasto",
+        "button": "Crear"
+      },
+      "payer": "Pagador",
+      "select": "Selecciona",
+      "amount": "Monto",
+      "consumers": "Consumidores",
+      "description": "Descripción",
+      "list": { "title": "Lista de gastos" }
+    },
+    "balances": {
+      "title": "Balances",
+      "calculate": "Calcular liquidaciones",
+      "load-error": "Error cargando balances",
+      "settlements": "Liquidaciones"
+    },
+    "auth": {
+      "required": "Selecciona un participante y autentícate para ver los gastos y balances."
+    },
+    "errors": {
+      "payer-required": "El pagador es obligatorio",
+      "invalid-amount": "El monto debe ser > 0",
+      "select-consumer": "Selecciona al menos un consumidor",
+      "participant-name-required": "El nombre del participante es obligatorio",
+      "event-name-required": "El nombre del evento es obligatorio",
+      "calculate-settlements": "Error calculando liquidaciones",
+      "fix-fields": "Por favor corrige los campos",
+      "create-participant": "Error creando participante",
+      "edit-participant": "Error editando participante",
+      "delete-participant": "Error borrando participante",
+      "update-event": "Error actualizando evento",
+      "create-expense": "Error creando gasto",
+      "update-expense": "Error actualizando gasto",
+      "delete-expense": "Error borrando gasto",
+      "auth-pin": "Error al verificar PIN",
+      "invalid-pin": "PIN inválido"
+    }
   }
 }
