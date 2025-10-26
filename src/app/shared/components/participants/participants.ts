@@ -19,13 +19,15 @@ import { Button } from '@basis-ng/primitives';
           >
             {{ participant.name.charAt(0).toUpperCase() }}
           </div>
-          <button
-            b-button
-            class="absolute -top-2 -right-2 b-size-sm b-squared b-variant-secondary b-rounded-full"
-            (click)="participantRemoved.emit(participant)"
-          >
-            <ng-icon name="lucideTrash" size="12" color="currentColor" />
-          </button>
+          @if (removable()) {
+            <button
+              b-button
+              class="absolute -top-2 -right-2 b-size-sm b-squared b-variant-secondary b-rounded-full"
+              (click)="participantRemoved.emit(participant)"
+            >
+              <ng-icon name="lucideTrash" size="12" color="currentColor" />
+            </button>
+          }
         </div>
         <span class="text-sm text-center">{{ participant.name }}</span>
       </div>
@@ -39,6 +41,7 @@ import { Button } from '@basis-ng/primitives';
 export class Participants {
   participants = input<Participant[]>();
   selectable = input<boolean>();
+  removable = input<boolean>(false);
   participantRemoved = output<Participant>();
   participantSelected = output<Participant>();
   selectedParticipant = signal<Participant | null>(null);

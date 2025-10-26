@@ -60,6 +60,7 @@ interface NewEvent {
       <s-participants
         [participants]="form.participants().value()"
         (participantRemoved)="onparticipantRemoved($event)"
+        [removable]="true"
       />
     }
     @if (participantsError()) {
