@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, JsonPipe } from '@angular/common';
 import { Component, inject, resource, signal, computed } from '@angular/core';
 import { Field, form, required, validate, customError } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -15,6 +15,8 @@ import {
   lucideTrash,
   lucideForward,
   lucideLoader,
+  lucideSave,
+  lucideX,
 } from '@ng-icons/lucide';
 
 @Component({
@@ -29,6 +31,7 @@ import {
     Input,
     InputGroup,
     Participants,
+    JsonPipe,
   ],
   template: `
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
@@ -44,242 +47,260 @@ import {
         class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       />
     } @else if (event.error()) {
-      <div>
-        <h2>{{ 'event.notFound.title' | translate }}</h2>
-        <p>{{ 'event.notFound' | translate }} "{{ eventId() }}"</p>
-        <button b-button routerLink="/home">{{ 'event.goHome' | translate }}</button>
+      <div
+        class="flex flex-col gap-4 items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
+      >
+        <h2>{{ 'event.not-found-title' | translate }}</h2>
+        <button b-button routerLink="/home" class="b-variant-secondary">
+          {{ 'event.goHome' | translate }}
+        </button>
       </div>
     } @else {
-      <div>
-        @if (!editingEventName()) {
-          <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+      @if (!editingEventName()) {
+        <div class="flex gap-2 items-center">
+          <h2 class="text-2xl font-bold flex items-center gap-2">
             {{ event.value()?.name }}
-            <button b-button class="b-variant-outlined b-squared" (click)="startEditEvent()">
-              <ng-icon name="lucidePencil" size="13" color="currentColor" />
-            </button>
           </h2>
-        } @else {
-          <div class="flex gap-4 mb-4">
+          @if (logged()) {
+            <button
+              b-button
+              class="b-variant-outlined b-squared b-size-sm"
+              (click)="startEditEvent()"
+            >
+              <ng-icon name="lucidePencil" size="10" color="currentColor" />
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="flex gap-4">
+          <b-input-group>
             <input
               b-input
               type="text"
               [field]="editEventForm.name"
               [placeholder]="'event.event-name' | translate"
             />
-            <button b-button (click)="submitEditEvent()">{{ 'event.save' | translate }}</button>
-            <button b-button class="b-variant-outlined" (click)="cancelEditEvent()">
-              {{ 'event.cancel' | translate }}
+            <button
+              b-button
+              (click)="submitEditEvent()"
+              class="b-variant-outlined b-squared b-size-sm"
+            >
+              <ng-icon name="lucideSave" size="14" color="currentColor" />
             </button>
-            @if (editEventErrorMessage()) {
+            <button
+              b-button
+              class="b-variant-outlined  b-squared b-size-sm"
+              (click)="cancelEditEvent()"
+            >
+              <ng-icon name="lucideX" size="15" color="currentColor" />
+            </button>
+          </b-input-group>
+
+          @if (editEventErrorMessage()) {
+            <p class="text-sm text-destructive dark:text-destructive-dark">
+              {{ editEventErrorMessage() }}
+            </p>
+          }
+        </div>
+      }
+
+      @if (!logged()) {
+        @if (participants.error()) {
+          <p>{{ 'event.participants.load-error' | translate }}</p>
+        } @else {
+          <s-participants
+            [participants]="participants.value()"
+            (participantRemoved)="deleteParticipantConfirm($event)"
+            (participantSelected)="selectParticipant($event)"
+            [selectable]="true"
+          />
+          @if (selectedParticipant() && !logged()) {
+            <b-input-group class="mt-2">
+              <input
+                b-input
+                type="password"
+                [field]="pinForm.pin"
+                maxLength="4"
+                [placeholder]="
+                  !selectedParticipant()!.pin
+                    ? ('event.participants.pin.setup' | translate)
+                    : ('event.participants.pin.prompt' | translate)
+                "
+              />
+              <button
+                b-button
+                class="b-size-sm b-squared b-variant-outlined"
+                (click)="submitPin(selectedParticipant()!)"
+                [disabled]="isSubmittingPin()"
+              >
+                <ng-icon name="lucideForward" size="13" color="currentColor" />
+              </button>
+            </b-input-group>
+            @if (pinForm.pin().errors().length > 0 && pinForm.pin().dirty()) {
               <p class="text-sm text-destructive dark:text-destructive-dark">
-                {{ editEventErrorMessage() }}
+                {{ pinForm.pin().errors()[0].message }}
+              </p>
+            }
+          }
+        }
+      }
+
+      @if (logged()) {
+        @if (expenses.error()) {
+          <p>{{ 'event.expenses.load-error' | translate }}</p>
+        } @else {
+          <h4>{{ 'event.expenses.create.title' | translate }}</h4>
+          <div>
+            <label>{{ 'event.expenses.payer' | translate }}</label>
+            <select [field]="newExpenseForm.payer_id">
+              <option value="">
+                {{ '-- ' + ('event.expenses.select' | translate) + ' --' }}
+              </option>
+              @for (p of participants.value(); track p.id) {
+                <option value="{{ p.id }}">{{ p.name }}</option>
+              }
+            </select>
+          </div>
+          <div>
+            <label>{{ 'event.expenses.amount' | translate }}</label>
+            <input b-inputtype="number" [field]="newExpenseForm.amount" />
+          </div>
+          <div>
+            <label>{{ 'event.expenses.consumers' | translate }}</label>
+            @for (p of participants.value(); track p.id) {
+              <label>
+                <input
+                  type="checkbox"
+                  (change)="toggleConsumer(newExpenseForm, p.id, $any($event.target).checked)"
+                />
+                {{ p.name }}
+              </label>
+            }
+          </div>
+          <div>
+            <label>{{ 'event.expenses.description' | translate }}</label>
+            <input b-input type="text" [field]="newExpenseForm.description" />
+          </div>
+          <div>
+            <button b-button (click)="createExpense()">
+              {{ 'event.expenses.create.button' | translate }}
+            </button>
+            @if (newExpenseErrorMessage()) {
+              <p class="text-sm text-destructive dark:text-destructive-dark">
+                {{ newExpenseErrorMessage() }}
               </p>
             }
           </div>
-        }
 
-        @if (!loggedInParticipantId()) {
-          <h3 class="text-lg font-medium mb-2">{{ 'event.participants.title' | translate }}</h3>
-          @if (participants.error()) {
-            <p>{{ 'event.participants.load-error' | translate }}</p>
-          } @else {
-            <s-participants
-              [participants]="participants.value()"
-              (participantRemoved)="deleteParticipantConfirm($event)"
-              (participantSelected)="selectParticipant($event)"
-              [selectable]="true"
-            />
-
-            @if (selectedParticipant()) {
-              <div>
-                <b-input-group class="mt-2">
-                  <input
-                    b-input
-                    type="password"
-                    [value]="pin()"
-                    (input)="pin.set($any($event.target).value)"
-                    maxLength="4"
-                    [placeholder]="
-                      !selectedParticipant()!.pin
-                        ? ('event.participants.pin.setup' | translate)
-                        : ('event.participants.pin.prompt' | translate)
-                    "
-                  />
+          <h4>{{ 'event.expenses.list.title' | translate }}</h4>
+          @for (e of expenses.value(); track e.id) {
+            <div>
+              @if (editingExpenseId() === e.id) {
+                <div>
+                  <label>{{ 'event.expenses.payer' | translate }}</label>
+                  <select [field]="editExpenseForm.payer_id">
+                    @for (p of participants.value(); track p.id) {
+                      <option value="{{ p.id }}">{{ p.name }}</option>
+                    }
+                  </select>
+                  <label>{{ 'event.expenses.amount' | translate }}</label>
+                  <input b-input type="number" [field]="editExpenseForm.amount" />
+                  <label>{{ 'event.expenses.consumers' | translate }}</label>
+                  @for (p of participants.value(); track p.id) {
+                    <label>
+                      <input
+                        type="checkbox"
+                        (change)="
+                          toggleConsumer(editExpenseForm, p.id, $any($event.target).checked)
+                        "
+                        [checked]="editExpenseForm.consumers().value().includes(p.id)"
+                      />
+                      {{ p.name }}
+                    </label>
+                  }
+                  <label>{{ 'event.expenses.description' | translate }}</label>
+                  <input b-input type="text" [field]="editExpenseForm.description" />
+                  <div>
+                    <button b-button (click)="submitEditExpense()">
+                      {{ 'event.save' | translate }}
+                    </button>
+                    <button b-button class="b-variant-outlined" (click)="cancelEditExpense()">
+                      {{ 'event.cancel' | translate }}
+                    </button>
+                    @if (editExpenseErrorMessage()) {
+                      <p class="text-sm text-destructive dark:text-destructive-dark">
+                        {{ editExpenseErrorMessage() }}
+                      </p>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <p>
+                  <strong>{{ getParticipantName(e.payer_id) }}</strong> - {{ e.amount }} -
+                  {{ e.description }}
                   <button
                     b-button
-                    class="b-size-sm b-squared b-variant-outlined"
-                    (click)="submitPin(selectedParticipant()!)"
-                    [disabled]="isSubmittingPin()"
+                    class="b-size-sm b-variant-outlined b-squared"
+                    (click)="startEditExpense(e)"
                   >
-                    <ng-icon name="lucideForward" size="13" color="currentColor" />
+                    <ng-icon name="lucidePencil" size="13" color="currentColor" />
                   </button>
-                </b-input-group>
-                @if (authError()) {
-                  <p class="text-sm text-destructive dark:text-destructive-dark">
-                    {{ authError() }}
-                  </p>
-                }
-              </div>
-            }
-          }
-        } @else {
-          <div>
-            <button b-button (click)="logout()">{{ 'event.logout' | translate }}</button>
-          </div>
-        }
-
-        @if (loggedInParticipantId()) {
-          <h3>{{ 'event.expenses.title' | translate }}</h3>
-          @if (expenses.error()) {
-            <p>{{ 'event.expenses.load-error' | translate }}</p>
-          } @else {
-            <div>
-              <h4>{{ 'event.expenses.create.title' | translate }}</h4>
-              <div>
-                <label>{{ 'event.expenses.payer' | translate }}</label>
-                <select [field]="newExpenseForm.payer_id">
-                  <option value="">
-                    {{ '-- ' + ('event.expenses.select' | translate) + ' --' }}
-                  </option>
-                  @for (p of participants.value(); track p.id) {
-                    <option value="{{ p.id }}">{{ p.name }}</option>
-                  }
-                </select>
-              </div>
-              <div>
-                <label>{{ 'event.expenses.amount' | translate }}</label>
-                <input b-inputtype="number" [field]="newExpenseForm.amount" />
-              </div>
-              <div>
-                <label>{{ 'event.expenses.consumers' | translate }}</label>
-                @for (p of participants.value(); track p.id) {
-                  <label>
-                    <input
-                      type="checkbox"
-                      (change)="toggleConsumer(newExpenseForm, p.id, $any($event.target).checked)"
-                    />
-                    {{ p.name }}
-                  </label>
-                }
-              </div>
-              <div>
-                <label>{{ 'event.expenses.description' | translate }}</label>
-                <input b-input type="text" [field]="newExpenseForm.description" />
-              </div>
-              <div>
-                <button b-button (click)="createExpense()">
-                  {{ 'event.expenses.create.button' | translate }}
-                </button>
-                @if (newExpenseErrorMessage()) {
-                  <p class="text-sm text-destructive dark:text-destructive-dark">
-                    {{ newExpenseErrorMessage() }}
-                  </p>
-                }
-              </div>
-
-              <h4>{{ 'event.expenses.list.title' | translate }}</h4>
-              @for (e of expenses.value(); track e.id) {
-                <div>
-                  @if (editingExpenseId() === e.id) {
-                    <div>
-                      <label>{{ 'event.expenses.payer' | translate }}</label>
-                      <select [field]="editExpenseForm.payer_id">
-                        @for (p of participants.value(); track p.id) {
-                          <option value="{{ p.id }}">{{ p.name }}</option>
-                        }
-                      </select>
-                      <label>{{ 'event.expenses.amount' | translate }}</label>
-                      <input b-input type="number" [field]="editExpenseForm.amount" />
-                      <label>{{ 'event.expenses.consumers' | translate }}</label>
-                      @for (p of participants.value(); track p.id) {
-                        <label>
-                          <input
-                            type="checkbox"
-                            (change)="
-                              toggleConsumer(editExpenseForm, p.id, $any($event.target).checked)
-                            "
-                            [checked]="editExpenseForm.consumers().value().includes(p.id)"
-                          />
-                          {{ p.name }}
-                        </label>
-                      }
-                      <label>{{ 'event.expenses.description' | translate }}</label>
-                      <input b-input type="text" [field]="editExpenseForm.description" />
-                      <div>
-                        <button b-button (click)="submitEditExpense()">
-                          {{ 'event.save' | translate }}
-                        </button>
-                        <button b-button class="b-variant-outlined" (click)="cancelEditExpense()">
-                          {{ 'event.cancel' | translate }}
-                        </button>
-                        @if (editExpenseErrorMessage()) {
-                          <p class="text-sm text-destructive dark:text-destructive-dark">
-                            {{ editExpenseErrorMessage() }}
-                          </p>
-                        }
-                      </div>
-                    </div>
-                  } @else {
-                    <p>
-                      <strong>{{ getParticipantName(e.payer_id) }}</strong> - {{ e.amount }} -
-                      {{ e.description }}
-                      <button
-                        b-button
-                        class="b-size-sm b-variant-outlined b-squared"
-                        (click)="startEditExpense(e)"
-                      >
-                        <ng-icon name="lucidePencil" size="13" color="currentColor" />
-                      </button>
-                      <button
-                        b-button
-                        class="b-size-sm b-variant-outlined b-squared"
-                        (click)="deleteExpense(e)"
-                      >
-                        <ng-icon name="lucideTrash" size="13" color="currentColor" />
-                      </button>
-                    </p>
-                  }
-                </div>
+                  <button
+                    b-button
+                    class="b-size-sm b-variant-outlined b-squared"
+                    (click)="deleteExpense(e)"
+                  >
+                    <ng-icon name="lucideTrash" size="13" color="currentColor" />
+                  </button>
+                </p>
               }
             </div>
           }
+        }
 
-          <h3>{{ 'event.balances.title' | translate }}</h3>
-          <button b-button (click)="calculateSettlements()" [disabled]="isCalculatingSettlements()">
-            {{ 'event.balances.calculate' | translate }}
-          </button>
-          @if (balances.error()) {
-            <p>{{ 'event.balances.load-error' | translate }}</p>
-          } @else {
-            @for (item of balancesWithNames(); track item.id) {
-              <p>{{ item.name }}: {{ item.balance | number: '1.2-2' }}</p>
-            }
-            @if (settlements()) {
-              <h4>{{ 'event.balances.settlements' | translate }}</h4>
-              @for (s of settlements(); track s.from + '-' + s.to) {
-                <p>
-                  {{ getParticipantName(s.from) }} → {{ getParticipantName(s.to) }}:
-                  {{ s.amount | number: '1.2-2' }}
-                </p>
-              }
-            } @else if (settlementsError()) {
-              <p class="text-sm text-destructive dark:text-destructive-dark">
-                {{ settlementsError() }}
+        <h3>{{ 'event.balances.title' | translate }}</h3>
+        <button b-button (click)="calculateSettlements()" [disabled]="isCalculatingSettlements()">
+          {{ 'event.balances.calculate' | translate }}
+        </button>
+        @if (balances.error()) {
+          <p>{{ 'event.balances.load-error' | translate }}</p>
+        } @else {
+          @for (item of balancesWithNames(); track item.id) {
+            <p>{{ item.name }}: {{ item.balance | number: '1.2-2' }}</p>
+          }
+          @if (settlements()) {
+            <h4>{{ 'event.balances.settlements' | translate }}</h4>
+            @for (s of settlements(); track s.from + '-' + s.to) {
+              <p>
+                {{ getParticipantName(s.from) }} → {{ getParticipantName(s.to) }}:
+                {{ s.amount | number: '1.2-2' }}
               </p>
             }
+          } @else if (settlementsError()) {
+            <p class="text-sm text-destructive dark:text-destructive-dark">
+              {{ settlementsError() }}
+            </p>
           }
-        } @else {
-          <p>{{ 'event.auth.required' | translate }}</p>
         }
-      </div>
+      } @else {
+        <p class="text-center max-w-xs">{{ 'event.auth.required' | translate }}</p>
+      }
     }
   `,
   styles: ``,
   host: {
-    class: 'flex flex-col gap-4 items-center h-full',
+    class: 'flex flex-col gap-4 items-center justify-center h-full',
   },
   providers: [
-    provideIcons({ lucideLoader, lucideArrowLeft, lucidePencil, lucideTrash, lucideForward }),
+    provideIcons({
+      lucideLoader,
+      lucideArrowLeft,
+      lucidePencil,
+      lucideTrash,
+      lucideForward,
+      lucideSave,
+      lucideX,
+    }),
   ],
 })
 export class Event {
@@ -289,13 +310,16 @@ export class Event {
   eventId = signal(this.activatedRoute.snapshot.params['eventId']);
   apiEvents = inject(ApiEvents);
 
-  // UI / auth signals for participant PIN flow
-  selectedParticipantId = signal<string | null>(null);
-  pin = signal('');
-  authError = signal<string | null>(null);
+  selectedParticipant = signal<Participant | null>(null);
+  logged = signal<boolean>(false);
   isSubmittingPin = signal(false);
-  // Id of participant who successfully authenticated (set or login)
-  loggedInParticipantId = signal<string | null>(null);
+
+  // Forms
+  pinForm = form(signal<{ pin: string }>({ pin: '' }), (path) => {
+    required(path.pin, {
+      message: this.translationManager.translate('event.errors.pin-required'),
+    });
+  });
 
   // New / edit expense signals
   // form-based new expense
@@ -547,13 +571,6 @@ export class Event {
     });
   });
 
-  // Currently selected participant object (derived from selectedParticipantId)
-  selectedParticipant = computed(() => {
-    const id = this.selectedParticipantId();
-    if (!id) return null;
-    return this.participants.value()?.find((p) => p.id === id) ?? null;
-  });
-
   // Settlements UI state
   settlements = signal<Settlement[] | null>(null);
   settlementsError = signal<string | null>(null);
@@ -579,10 +596,8 @@ export class Event {
 
   // Select a participant to show PIN input
   selectParticipant(participant: Participant) {
-    this.authError.set(null);
-    this.pin.set('');
-    this.selectedParticipantId.set(participant.id);
-    // If participant has no pin, we'll propose to set one. Otherwise, prompt for login.
+    this.pinForm().reset();
+    this.selectedParticipant.set(participant);
   }
 
   // Helpers for expenses
@@ -655,7 +670,7 @@ export class Event {
     try {
       await this.apiEvents.deleteParticipant(this.eventId(), p.id);
       // if deleted logged in participant, logout
-      if (this.loggedInParticipantId() === p.id) this.logout();
+      if (this.selectedParticipant()?.id === p.id) this.logout();
       this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -804,15 +819,17 @@ export class Event {
   async submitPin(participant: Participant) {
     const pid = participant.id as string;
     this.isSubmittingPin.set(true);
-    this.authError.set(null);
+    //this.authError.set(null);
     try {
       if (!participant.pin) {
         // register new pin
-        await this.apiEvents.setParticipantPin(this.eventId(), pid, { pin: this.pin() });
+        await this.apiEvents.setParticipantPin(this.eventId(), pid, {
+          pin: this.pinForm().value().pin,
+        });
       } else {
         // try login
         const res = await this.apiEvents.loginParticipant(this.eventId(), pid, {
-          pin: this.pin(),
+          pin: this.pinForm().value().pin,
         });
         if (!res || !res.success) {
           throw new Error(this.translationManager.translate('event.errors.invalid-pin'));
@@ -820,9 +837,9 @@ export class Event {
       }
 
       // success: mark as logged in and try to refresh resources (best-effort)
-      this.loggedInParticipantId.set(pid);
+      this.logged.set(true);
 
-      // resources may provide reload/refetch; call them if available (cast via unknown -> specific shape)
+      // resources may provide reload/refetch; call them if available (best-effort)
       try {
         (this.participants as unknown as { reload?: () => void }).reload?.();
         (this.expenses as unknown as { reload?: () => void }).reload?.();
@@ -832,17 +849,33 @@ export class Event {
         // ignore reload errors
       }
     } catch {
-      this.authError.set(this.translationManager.translate('event.errors.auth-pin'));
+      this.pinForm
+        .pin()
+        .errors()
+        .push(
+          customError({
+            kind: 'auth_failed',
+            message: this.translationManager.translate('event.errors.invalid-pin'),
+          }),
+        );
+      // ensure the control is marked dirty so computed pinFormError (which checks dirty)
+      // will surface the server-side auth error to the UI
+      try {
+        this.pinForm.pin().markAsDirty();
+      } catch {
+        // ignore if markAsDirty is not available for some reason
+      }
+      //this.authError.set(this.translationManager.translate('event.errors.auth-pin'));
     } finally {
       this.isSubmittingPin.set(false);
     }
   }
 
   logout() {
-    this.loggedInParticipantId.set(null);
-    this.selectedParticipantId.set(null);
-    this.pin.set('');
-    this.authError.set(null);
+    this.selectedParticipant.set(null);
+    this.logged.set(false);
+    this.pinForm().reset();
+    //this.authError.set(null);
   }
 
   goHome() {

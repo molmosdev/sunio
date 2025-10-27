@@ -12,7 +12,7 @@ import { Button } from '@basis-ng/primitives';
       <div class="flex flex-col gap-1 items-center" (click)="selectParticipant(participant)">
         <div class="relative">
           <div
-            class="w-10 h-10 rounded-full flex items-center justify-center text-sm inset-ring-1 inset-ring-ring dark:inset-ring-ring-dark"
+            class="w-14 h-14 rounded-full flex items-center justify-center text-xl inset-ring-1 inset-ring-ring dark:inset-ring-ring-dark"
             [class.inset-ring-3]="
               selectedParticipant() && selectedParticipant()!.id === participant.id
             "
