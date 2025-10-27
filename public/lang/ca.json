@@ -25,8 +25,7 @@
     }
   },
   "event": {
-    "notFound.title": "Error: Esdeveniment no trobat",
-    "notFound": "L'esdeveniment no existeix",
+    "not-found-title": "Esdeveniment no trobat",
     "goHome": "Tornar a l'inici",
     "edit": "Editar",
     "save": "Desar",
@@ -86,7 +85,8 @@
       "update-expense": "Error actualitzant despesa",
       "delete-expense": "Error esborrant despesa",
       "auth-pin": "Error verificant el PIN",
-      "invalid-pin": "PIN invàlid"
+      "invalid-pin": "PIN invàlid",
+      "pin-required": "El PIN és obligatori"
     }
   }
 }

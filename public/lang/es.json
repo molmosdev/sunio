@@ -25,8 +25,7 @@
     }
   },
   "event": {
-    "notFound.title": "Error: Evento no encontrado",
-    "notFound": "El evento no existe",
+    "not-found-title": "Evento no encontrado",
     "goHome": "Volver al inicio",
     "edit": "Editar",
     "save": "Guardar",
@@ -86,7 +85,8 @@
       "update-expense": "Error actualizando gasto",
       "delete-expense": "Error borrando gasto",
       "auth-pin": "Error al verificar PIN",
-      "invalid-pin": "PIN inválido"
+      "invalid-pin": "PIN inválido",
+      "pin-required": "El PIN es obligatorio"
     }
   }
 }
