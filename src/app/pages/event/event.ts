@@ -1,4 +1,4 @@
-import { DecimalPipe, JsonPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, resource, signal, computed } from '@angular/core';
 import { Field, form, required, validate, customError } from '@angular/forms/signals';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -31,7 +31,6 @@ import {
     Input,
     InputGroup,
     Participants,
-    JsonPipe,
   ],
   template: `
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
@@ -163,7 +162,7 @@ import {
           </div>
           <div>
             <label>{{ 'event.expenses.amount' | translate }}</label>
-            <input b-inputtype="number" [field]="newExpenseForm.amount" />
+            <input b-input type="number" [field]="newExpenseForm.amount" />
           </div>
           <div>
             <label>{{ 'event.expenses.consumers' | translate }}</label>
