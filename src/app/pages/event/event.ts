@@ -1,13 +1,11 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, inject, resource, signal, computed } from '@angular/core';
-import { Field, form, required, validate, customError } from '@angular/forms/signals';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { form, required, validate, customError } from '@angular/forms/signals';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiEvents } from '../../core/services/api-events';
-import { Participant } from '../../shared/interfaces/participant.interface';
+import { IParticipant } from '../../shared/interfaces/participant.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
 import { Settlement } from '../../shared/interfaces/balance.interface';
-import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
-import { Participants } from '../../shared/components/participants/participants';
+import { Button, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideArrowLeft,
@@ -18,25 +16,48 @@ import {
   lucideSave,
   lucideX,
 } from '@ng-icons/lucide';
+import { Balance } from './shared/balance/balance';
+import { Title } from './shared/title/title';
+import { Login } from './shared/login/login';
+import { Expenses } from './shared/expenses/expenses';
+import { BalanceColor } from '../../core/services/balance-color';
 
 @Component({
   selector: 's-event',
-  imports: [
-    Field,
-    DecimalPipe,
-    Button,
-    TranslatePipe,
-    RouterLink,
-    NgIcon,
-    Input,
-    InputGroup,
-    Participants,
-  ],
+  imports: [Button, NgIcon, Login, Title, Balance, Expenses],
   template: `
-    <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
+    <button b-button (click)="goBack()" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
     </button>
-    @if (
+    @if (event.isLoading()) {
+      <ng-icon
+        name="lucideLoader"
+        size="23"
+        color="currentColor"
+        class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      />
+    } @else {
+      <s-title
+        [event]="event.value()"
+        [editable]="!!loggedParticipant()"
+        (reload)="event.reload()"
+      />
+      @if (loggedParticipant()) {
+        <s-balance
+          [balances]="balances.value()?.balances"
+          [loggedParticipantId]="loggedParticipant()?.id"
+        />
+        <s-expenses [eventId]="eventId()" [participants]="participants.value()!" />
+      } @else {
+        <s-login
+          [eventId]="eventId()"
+          [participants]="participants.value()!"
+          [(loggedParticipant)]="loggedParticipant"
+        />
+      }
+    }
+
+    <!-- @if (
       event.isLoading() || participants.isLoading() || expenses.isLoading() || balances.isLoading()
     ) {
       <ng-icon
@@ -148,7 +169,7 @@ import {
         @if (expenses.error()) {
           <p>{{ 'event.expenses.load-error' | translate }}</p>
         } @else {
-          <h4>{{ 'event.expenses.create.title' | translate }}</h4>
+          <s-my-balance />
           <div>
             <label>{{ 'event.expenses.payer' | translate }}</label>
             <select [field]="newExpenseForm.payer_id">
@@ -284,7 +305,7 @@ import {
       } @else {
         <p class="text-center max-w-xs">{{ 'event.auth.required' | translate }}</p>
       }
-    }
+    } -->
   `,
   styles: ``,
   host: {
@@ -307,18 +328,73 @@ export class Event {
   activatedRoute = inject(ActivatedRoute);
   router = inject(Router);
   eventId = signal(this.activatedRoute.snapshot.params['eventId']);
-  apiEvents = inject(ApiEvents);
+  _apiEvents = inject(ApiEvents);
+  loggedParticipant = signal<IParticipant | null>(null);
 
-  selectedParticipant = signal<Participant | null>(null);
+  event = resource({
+    params: () => ({ id: this.eventId() }),
+    loader: async ({ params }) => {
+      try {
+        return await this._apiEvents.getEvent(params.id);
+      } catch (error) {
+        console.error('Error loading event:', error);
+        throw error;
+      }
+    },
+  });
+
+  participants = resource({
+    params: () => ({ id: this.eventId() }),
+    loader: async ({ params }) => {
+      try {
+        return await this._apiEvents.getParticipants(params.id);
+      } catch (error) {
+        console.error('Error loading participants:', error);
+        throw error;
+      }
+    },
+  });
+
+  balances = resource({
+    params: () => ({ id: this.eventId() }),
+    loader: async ({ params }) => {
+      try {
+        return await this._apiEvents.getBalances(params.id);
+      } catch (error) {
+        console.error('Error loading balances:', error);
+        throw error;
+      }
+    },
+  });
+
+  balanceColor = inject(BalanceColor);
+
+  goBack() {
+    this.balanceColor.state.set('zero');
+
+    if (this.loggedParticipant()) {
+      this.loggedParticipant.set(null);
+    } else {
+      this.router.navigate(['/home']);
+    }
+  }
+
+  // balancesWithNames = computed(() => {
+  //   const raw = this.balances.value()?.balances;
+  //   const parts = this.participants.value() ?? [];
+  //   if (!raw) return [] as { id: string; name: string; balance: number }[];
+
+  //   return Object.entries(raw).map(([id, balance]) => {
+  //     const p = parts.find((x) => x.id === id);
+  //     return { id, name: p ? p.name : id, balance };
+  //   });
+  // });
+
+  selectedParticipant = signal<IParticipant | null>(null);
   logged = signal<boolean>(false);
   isSubmittingPin = signal(false);
 
   // Forms
-  pinForm = form(signal<{ pin: string }>({ pin: '' }), (path) => {
-    required(path.pin, {
-      message: this.translationManager.translate('event.errors.pin-required'),
-    });
-  });
 
   // New / edit expense signals
   // form-based new expense
@@ -511,65 +587,6 @@ export class Event {
     });
   });
 
-  event = resource({
-    params: () => ({ id: this.eventId() }),
-    loader: async ({ params }) => {
-      try {
-        return await this.apiEvents.getEvent(params.id);
-      } catch (error) {
-        console.error('Error loading event:', error);
-        throw error;
-      }
-    },
-  });
-
-  participants = resource({
-    params: () => ({ id: this.eventId() }),
-    loader: async ({ params }) => {
-      try {
-        return await this.apiEvents.getParticipants(params.id);
-      } catch (error) {
-        console.error('Error loading participants:', error);
-        throw error;
-      }
-    },
-  });
-
-  expenses = resource({
-    params: () => ({ id: this.eventId() }),
-    loader: async ({ params }) => {
-      try {
-        return await this.apiEvents.getExpenses(params.id);
-      } catch (error) {
-        console.error('Error loading expenses:', error);
-        throw error;
-      }
-    },
-  });
-
-  balances = resource({
-    params: () => ({ id: this.eventId() }),
-    loader: async ({ params }) => {
-      try {
-        return await this.apiEvents.getBalances(params.id);
-      } catch (error) {
-        console.error('Error loading balances:', error);
-        throw error;
-      }
-    },
-  });
-
-  balancesWithNames = computed(() => {
-    const raw = this.balances.value()?.balances;
-    const parts = this.participants.value() ?? [];
-    if (!raw) return [] as { id: string; name: string; balance: number }[];
-
-    return Object.entries(raw).map(([id, balance]) => {
-      const p = parts.find((x) => x.id === id);
-      return { id, name: p ? p.name : id, balance };
-    });
-  });
-
   // Settlements UI state
   settlements = signal<Settlement[] | null>(null);
   settlementsError = signal<string | null>(null);
@@ -579,10 +596,10 @@ export class Event {
     this.isCalculatingSettlements.set(true);
     this.settlementsError.set(null);
     try {
-      const res = await this.apiEvents.calculateSettlements(this.eventId());
+      const res = await this._apiEvents.calculateSettlements(this.eventId());
       this.settlements.set(res.settlements ?? []);
       // refresh balances from server
-      this.reloadData();
+      // //this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       this.settlementsError.set(
@@ -594,10 +611,6 @@ export class Event {
   }
 
   // Select a participant to show PIN input
-  selectParticipant(participant: Participant) {
-    this.pinForm().reset();
-    this.selectedParticipant.set(participant);
-  }
 
   // Helpers for expenses
   toggleConsumer(frm: unknown, id: string, checked: boolean) {
@@ -624,10 +637,10 @@ export class Event {
     }
     const data = this.newParticipantForm().value();
     try {
-      await this.apiEvents.createParticipant(this.eventId(), { name: data.name.trim() });
+      await this._apiEvents.createParticipant(this.eventId(), { name: data.name.trim() });
       this.newParticipantForm.name().value.set('');
       this.newParticipantError.set(null);
-      this.reloadData();
+      //this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       this.newParticipantError.set(
@@ -636,7 +649,7 @@ export class Event {
     }
   }
 
-  startEditParticipant(p: Participant) {
+  startEditParticipant(p: IParticipant) {
     this.participantEditId.set(p.id);
     this.editParticipantForm.name().value.set(p.name);
     this.editParticipantError.set(null);
@@ -652,11 +665,11 @@ export class Event {
     }
     const data = this.editParticipantForm().value();
     try {
-      await this.apiEvents.updateParticipant(this.eventId(), id, { name: data.name.trim() });
+      await this._apiEvents.updateParticipant(this.eventId(), id, { name: data.name.trim() });
       this.participantEditId.set(null);
       this.editParticipantForm.name().value.set('');
       this.editParticipantError.set(null);
-      this.reloadData();
+      //this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       this.editParticipantError.set(
@@ -665,12 +678,12 @@ export class Event {
     }
   }
 
-  async deleteParticipantConfirm(p: Participant) {
+  async deleteParticipantConfirm(p: IParticipant) {
     try {
-      await this.apiEvents.deleteParticipant(this.eventId(), p.id);
+      await this._apiEvents.deleteParticipant(this.eventId(), p.id);
       // if deleted logged in participant, logout
-      if (this.selectedParticipant()?.id === p.id) this.logout();
-      this.reloadData();
+      //if (this.selectedParticipant()?.id === p.id) this.logout();
+      //this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       this.newParticipantError.set(
@@ -691,25 +704,25 @@ export class Event {
     this.editEventError.set(null);
   }
 
-  async submitEditEvent() {
-    this.editEventForm.name().markAsDirty();
-    if (!this.editEventForm().valid()) {
-      this.editEventError.set(this.translationManager.translate('event.errors.fix-fields'));
-      return;
-    }
-    const data = this.editEventForm().value();
-    try {
-      await this.apiEvents.updateEvent(this.eventId(), { name: data.name.trim() });
-      this.editingEventName.set(false);
-      this.editEventError.set(null);
-      this.reloadData();
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      this.editEventError.set(
-        msg || this.translationManager.translate('event.errors.update-event'),
-      );
-    }
-  }
+  // async submitEditEvent() {
+  //   this.editEventForm.name().markAsDirty();
+  //   if (!this.editEventForm().valid()) {
+  //     this.editEventError.set(this.translationManager.translate('event.errors.fix-fields'));
+  //     return;
+  //   }
+  //   const data = this.editEventForm().value();
+  //   try {
+  //     await this._apiEvents.updateEvent(this.eventId(), { name: data.name.trim() });
+  //     this.editingEventName.set(false);
+  //     this.editEventError.set(null);
+  //     //this.reloadData();
+  //   } catch (err: unknown) {
+  //     const msg = err instanceof Error ? err.message : String(err);
+  //     this.editEventError.set(
+  //       msg || this.translationManager.translate('event.errors.update-event'),
+  //     );
+  //   }
+  // }
 
   async createExpense() {
     this.newExpenseForm.payer_id().markAsDirty();
@@ -722,7 +735,7 @@ export class Event {
 
     const data = this.newExpenseForm().value();
     try {
-      await this.apiEvents.createExpense(this.eventId(), {
+      await this._apiEvents.createExpense(this.eventId(), {
         payer_id: data.payer_id,
         amount: data.amount,
         consumers: data.consumers,
@@ -733,7 +746,7 @@ export class Event {
       this.newExpenseForm.amount().value.set(0);
       this.newExpenseForm.consumers().value.set([]);
       this.newExpenseForm.description().value.set('');
-      this.reloadData();
+      //this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       this.newExpenseError.set(
@@ -769,13 +782,13 @@ export class Event {
     if (!id) return;
     const data = this.editExpenseForm().value();
     try {
-      await this.apiEvents.updateExpense(this.eventId(), id, {
+      await this._apiEvents.updateExpense(this.eventId(), id, {
         amount: data.amount,
         consumers: data.consumers,
         description: data.description || undefined,
       });
       this.editingExpenseId.set(null);
-      this.reloadData();
+      //this.reloadData();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       this.editExpenseError.set(
@@ -786,8 +799,8 @@ export class Event {
 
   async deleteExpense(e: Expense) {
     try {
-      await this.apiEvents.deleteExpense(this.eventId(), e.id);
-      this.reloadData();
+      await this._apiEvents.deleteExpense(this.eventId(), e.id);
+      //this.reloadData();
     } catch (err: unknown) {
       // attach to newExpenseError for simplicity
       const msg = err instanceof Error ? err.message : String(err);
@@ -797,85 +810,85 @@ export class Event {
     }
   }
 
-  getParticipantName(id: string) {
-    const p = (this.participants.value() ?? []).find((x) => x.id === id);
-    return p ? p.name : id;
-  }
+  // getParticipantName(id: string) {
+  //   const p = (this.participants.value() ?? []).find((x) => x.id === id);
+  //   return p ? p.name : id;
+  // }
 
   // Try to reload resources (best-effort)
-  reloadData() {
-    try {
-      (this.expenses as unknown as { reload?: () => void }).reload?.();
-      (this.balances as unknown as { reload?: () => void }).reload?.();
-      (this.participants as unknown as { reload?: () => void }).reload?.();
-      (this.event as unknown as { reload?: () => void }).reload?.();
-    } catch {
-      // ignore
-    }
-  }
+  // reloadData() {
+  //   try {
+  //     (this.expenses as unknown as { reload?: () => void }).reload?.();
+  //     (this.balances as unknown as { reload?: () => void }).reload?.();
+  //     (this.participants as unknown as { reload?: () => void }).reload?.();
+  //     (this.event as unknown as { reload?: () => void }).reload?.();
+  //   } catch {
+  //     // ignore
+  //   }
+  // }
 
   // Submit PIN: if participant has no pin -> setPin, else -> login
-  async submitPin(participant: Participant) {
-    const pid = participant.id as string;
-    this.isSubmittingPin.set(true);
-    //this.authError.set(null);
-    try {
-      if (!participant.pin) {
-        // register new pin
-        await this.apiEvents.setParticipantPin(this.eventId(), pid, {
-          pin: this.pinForm().value().pin,
-        });
-      } else {
-        // try login
-        const res = await this.apiEvents.loginParticipant(this.eventId(), pid, {
-          pin: this.pinForm().value().pin,
-        });
-        if (!res || !res.success) {
-          throw new Error(this.translationManager.translate('event.errors.invalid-pin'));
-        }
-      }
+  // async submitPin(participant: Participant) {
+  //   const pid = participant.id as string;
+  //   this.isSubmittingPin.set(true);
+  //   //this.authError.set(null);
+  //   try {
+  //     if (!participant.pin) {
+  //       // register new pin
+  //       await this.apiEvents.setParticipantPin(this.eventId(), pid, {
+  //         pin: this.pinForm().value().pin,
+  //       });
+  //     } else {
+  //       // try login
+  //       const res = await this.apiEvents.loginParticipant(this.eventId(), pid, {
+  //         pin: this.pinForm().value().pin,
+  //       });
+  //       if (!res || !res.success) {
+  //         throw new Error(this.translationManager.translate('event.errors.invalid-pin'));
+  //       }
+  //     }
 
-      // success: mark as logged in and try to refresh resources (best-effort)
-      this.logged.set(true);
+  //     // success: mark as logged in and try to refresh resources (best-effort)
+  //     this.logged.set(true);
 
-      // resources may provide reload/refetch; call them if available (best-effort)
-      try {
-        (this.participants as unknown as { reload?: () => void }).reload?.();
-        (this.expenses as unknown as { reload?: () => void }).reload?.();
-        (this.balances as unknown as { reload?: () => void }).reload?.();
-        (this.event as unknown as { reload?: () => void }).reload?.();
-      } catch {
-        // ignore reload errors
-      }
-    } catch {
-      this.pinForm
-        .pin()
-        .errors()
-        .push(
-          customError({
-            kind: 'auth_failed',
-            message: this.translationManager.translate('event.errors.invalid-pin'),
-          }),
-        );
-      // ensure the control is marked dirty so computed pinFormError (which checks dirty)
-      // will surface the server-side auth error to the UI
-      try {
-        this.pinForm.pin().markAsDirty();
-      } catch {
-        // ignore if markAsDirty is not available for some reason
-      }
-      //this.authError.set(this.translationManager.translate('event.errors.auth-pin'));
-    } finally {
-      this.isSubmittingPin.set(false);
-    }
-  }
+  //     // resources may provide reload/refetch; call them if available (best-effort)
+  //     try {
+  //       (this.participants as unknown as { reload?: () => void }).reload?.();
+  //       (this.expenses as unknown as { reload?: () => void }).reload?.();
+  //       (this.balances as unknown as { reload?: () => void }).reload?.();
+  //       (this.event as unknown as { reload?: () => void }).reload?.();
+  //     } catch {
+  //       // ignore reload errors
+  //     }
+  //   } catch {
+  //     this.pinForm
+  //       .pin()
+  //       .errors()
+  //       .push(
+  //         customError({
+  //           kind: 'auth_failed',
+  //           message: this.translationManager.translate('event.errors.invalid-pin'),
+  //         }),
+  //       );
+  //     // ensure the control is marked dirty so computed pinFormError (which checks dirty)
+  //     // will surface the server-side auth error to the UI
+  //     try {
+  //       this.pinForm.pin().markAsDirty();
+  //     } catch {
+  //       // ignore if markAsDirty is not available for some reason
+  //     }
+  //     //this.authError.set(this.translationManager.translate('event.errors.auth-pin'));
+  //   } finally {
+  //     this.isSubmittingPin.set(false);
+  //   }
+  // }
 
-  logout() {
-    this.selectedParticipant.set(null);
-    this.logged.set(false);
-    this.pinForm().reset();
-    //this.authError.set(null);
-  }
+  // logout() {
+  //   this.selectedParticipant.set(null);
+  //   this.logged.set(false);
+  //   this.pinForm().reset();
+  //   //this.authError.set(null);
+  // }
 
   goHome() {
     this.router.navigate(['/']);

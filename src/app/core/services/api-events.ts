@@ -3,10 +3,10 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Settlement } from '../../shared/interfaces/balance.interface';
-import { Event } from '../../shared/interfaces/event.interface';
+import { IEvent } from '../../shared/interfaces/event.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
-import { Participant } from '../../shared/interfaces/participant.interface';
-import { Balance } from '../../shared/types/balance.type';
+import { IParticipant } from '../../shared/interfaces/participant.interface';
+import { TBalance } from '../../shared/types/balance.type';
 
 @Injectable({
   providedIn: 'root',
@@ -19,21 +19,21 @@ export class ApiEvents {
     return firstValueFrom(this.http.post<{ eventId: string }>(this.apiUrl, data));
   }
 
-  getEvent(eventId: string): Promise<Event> {
-    return firstValueFrom(this.http.get<Event>(`${this.apiUrl}/${eventId}`));
+  getEvent(eventId: string): Promise<IEvent> {
+    return firstValueFrom(this.http.get<IEvent>(`${this.apiUrl}/${eventId}`));
   }
 
-  updateEvent(eventId: string, data: { name: string }): Promise<Event> {
-    return firstValueFrom(this.http.put<Event>(`${this.apiUrl}/${eventId}`, data));
+  updateEvent(eventId: string, name: string): Promise<IEvent> {
+    return firstValueFrom(this.http.put<IEvent>(`${this.apiUrl}/${eventId}`, { name }));
   }
 
-  getParticipants(eventId: string): Promise<Participant[]> {
-    return firstValueFrom(this.http.get<Participant[]>(`${this.apiUrl}/${eventId}/participants`));
+  getParticipants(eventId: string): Promise<IParticipant[]> {
+    return firstValueFrom(this.http.get<IParticipant[]>(`${this.apiUrl}/${eventId}/participants`));
   }
 
-  createParticipant(eventId: string, data: { name: string }): Promise<Participant> {
+  createParticipant(eventId: string, data: { name: string }): Promise<IParticipant> {
     return firstValueFrom(
-      this.http.post<Participant>(`${this.apiUrl}/${eventId}/participants`, data),
+      this.http.post<IParticipant>(`${this.apiUrl}/${eventId}/participants`, data),
     );
   }
 
@@ -41,9 +41,9 @@ export class ApiEvents {
     eventId: string,
     participantId: string,
     data: { name: string },
-  ): Promise<Participant> {
+  ): Promise<IParticipant> {
     return firstValueFrom(
-      this.http.put<Participant>(`${this.apiUrl}/${eventId}/participants/${participantId}`, data),
+      this.http.put<IParticipant>(`${this.apiUrl}/${eventId}/participants/${participantId}`, data),
     );
   }
 
@@ -51,9 +51,9 @@ export class ApiEvents {
     eventId: string,
     participantId: string,
     data: { pin: string },
-  ): Promise<Participant> {
+  ): Promise<IParticipant> {
     return firstValueFrom(
-      this.http.post<Participant>(
+      this.http.post<IParticipant>(
         `${this.apiUrl}/${eventId}/participants/${participantId}/pin`,
         data,
       ),
@@ -63,12 +63,12 @@ export class ApiEvents {
   loginParticipant(
     eventId: string,
     participantId: string,
-    data: { pin: string },
+    pin: string,
   ): Promise<{ success: boolean; participantId: string }> {
     return firstValueFrom(
       this.http.post<{ success: boolean; participantId: string }>(
         `${this.apiUrl}/${eventId}/participants/${participantId}/login`,
-        data,
+        { pin },
       ),
     );
   }
@@ -117,15 +117,17 @@ export class ApiEvents {
     );
   }
 
-  getBalances(eventId: string): Promise<{ balances: Balance }> {
+  getBalances(eventId: string): Promise<{ balances: TBalance }> {
     return firstValueFrom(
-      this.http.get<{ balances: Balance }>(`${this.apiUrl}/${eventId}/balances`),
+      this.http.get<{ balances: TBalance }>(`${this.apiUrl}/${eventId}/balances`),
     );
   }
 
-  calculateSettlements(eventId: string): Promise<{ balances: Balance; settlements: Settlement[] }> {
+  calculateSettlements(
+    eventId: string,
+  ): Promise<{ balances: TBalance; settlements: Settlement[] }> {
     return firstValueFrom(
-      this.http.post<{ balances: Balance; settlements: Settlement[] }>(
+      this.http.post<{ balances: TBalance; settlements: Settlement[] }>(
         `${this.apiUrl}/${eventId}/settle`,
         {},
       ),

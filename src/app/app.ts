@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { BalanceColor } from './core/services/balance-color';
 
 @Component({
   selector: 's-root',
@@ -12,6 +13,15 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   `,
   host: {
     class: 'h-dvh flex flex-col p-4 gap-2',
+    '[class.bg-background]': "balanceColorState() === 'zero'",
+    '[class.dark:bg-background-dark]': "balanceColorState() === 'zero'",
+    '[class.bg-balance-positive]': "balanceColorState() === 'positive'",
+    '[class.dark:bg-balance-positive-dark]': "balanceColorState() === 'positive'",
+    '[class.bg-balance-negative]': "balanceColorState() === 'negative'",
+    '[class.dark:bg-balance-negative-dark]': "balanceColorState() === 'negative'",
   },
 })
-export class App {}
+export class App {
+  balanceColor = inject(BalanceColor);
+  balanceColorState = computed(() => this.balanceColor.state());
+}

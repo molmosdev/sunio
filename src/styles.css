@@ -29,6 +29,8 @@
   --color-warning-foreground: #856404;
   --color-info: #e0e0e0;
   --color-info-foreground: #333;
+  --color-balance-positive: #e6f9ec;
+  --color-balance-negative: #ffeaea;
 
   /* Dark theme colors */
   --color-background-dark: #0a0a0a;
@@ -47,4 +49,6 @@
   --color-warning-foreground-dark: #ffe066;
   --color-info-dark: #424242;
   --color-info-foreground-dark: #e0e0e0;
+  --color-balance-positive-dark: #163d2c;
+  --color-balance-negative-dark: #3d1616;
 }

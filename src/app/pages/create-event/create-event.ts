@@ -6,11 +6,11 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucideRocket, lucideTrash, lucideUserRoundPlus } from '@ng-icons/lucide';
 import { ApiEvents } from '../../core/services/api-events';
 import { Participants } from '../../shared/components/participants/participants';
-import { Participant } from '../../shared/interfaces/participant.interface';
+import { IParticipant } from '../../shared/interfaces/participant.interface';
 
 interface NewEvent {
   name: string;
-  participants: Participant[];
+  participants: IParticipant[];
 }
 
 @Component({
@@ -59,8 +59,10 @@ interface NewEvent {
     @if (form.participants.length > 0) {
       <s-participants
         [participants]="form.participants().value()"
-        (participantRemoved)="onparticipantRemoved($event)"
+        [(selected)]="selectedParticipant"
+        (participantRemoved)="onparticipantRemoved()"
         [removable]="true"
+        [unselectOnOutsideClick]="true"
       />
     }
     @if (participantsError()) {
@@ -80,11 +82,13 @@ interface NewEvent {
   providers: [provideIcons({ lucideTrash, lucideArrowLeft, lucideUserRoundPlus, lucideRocket })],
 })
 export class CreateEvent {
-  translationManager = inject(TranslationManager);
+  private _apiEvents = inject(ApiEvents);
+  private _router = inject(Router);
+  private _translationManager = inject(TranslationManager);
 
   form = form(signal<NewEvent>({ name: '', participants: [] }), (path) => {
     required(path.name, {
-      message: this.translationManager.translate('create-event.errors.name-required'),
+      message: this._translationManager.translate('create-event.errors.name-required'),
     });
     required(path.participants);
     validate(path.participants, (ctx) => {
@@ -92,26 +96,26 @@ export class CreateEvent {
       if (value.length < 2) {
         return customError({
           kind: 'too_few_participants',
-          message: this.translationManager.translate('create-event.errors.too-few-participants'),
+          message: this._translationManager.translate('create-event.errors.too-few-participants'),
         });
       }
       if (value.some((participant) => (participant.name || '').trim() === '')) {
         return customError({
           kind: 'empty_participant',
-          message: this.translationManager.translate('create-event.errors.empty-participant'),
+          message: this._translationManager.translate('create-event.errors.empty-participant'),
         });
       }
       return null;
     });
   });
-  apiEvents = inject(ApiEvents);
-  router = inject(Router);
 
   addParticipantForm = form(
     signal<{ participantName: string }>({ participantName: '' }),
     (path) => {
       required(path.participantName, {
-        message: this.translationManager.translate('create-event.errors.participant-name-required'),
+        message: this._translationManager.translate(
+          'create-event.errors.participant-name-required',
+        ),
       });
       validate(path.participantName, (ctx) => {
         const name = (ctx.value() || '').trim();
@@ -121,7 +125,9 @@ export class CreateEvent {
         if (participants.some((p) => (p.name || '').trim().toLowerCase() === normalized)) {
           return customError({
             kind: 'duplicate_participant',
-            message: this.translationManager.translate('create-event.errors.duplicate-participant'),
+            message: this._translationManager.translate(
+              'create-event.errors.duplicate-participant',
+            ),
           });
         }
         return null;
@@ -146,8 +152,12 @@ export class CreateEvent {
       : null;
   });
 
-  onparticipantRemoved(participant: Participant) {
+  selectedParticipant = signal<IParticipant | null>(null);
+
+  onparticipantRemoved() {
+    const participant = this.selectedParticipant();
     if (!participant || !participant.name) return;
+
     const currentParticipants = this.form.participants().value();
     const idx = currentParticipants.findIndex((p) => p.id === participant.id);
     if (idx !== -1) this.participantRemoved(idx);
@@ -166,8 +176,8 @@ export class CreateEvent {
       name: dataRaw.name,
       participants: (dataRaw.participants || []).map((p) => p.name),
     };
-    const response = await this.apiEvents.createEvent(data);
-    this.router.navigate(['/', response.eventId]);
+    const response = await this._apiEvents.createEvent(data);
+    this._router.navigate(['/', response.eventId]);
   }
 
   confirmAddParticipant() {
@@ -177,8 +187,8 @@ export class CreateEvent {
     }
     const name = (this.addParticipantForm.participantName().value() || '').trim();
     const currentParticipants = this.form.participants().value();
-    const newParticipant: Participant = {
-      id: `__new_${currentParticipants.length}`,
+    const newParticipant: IParticipant = {
+      id: Math.random().toString(36).substring(2),
       event_id: '',
       name,
       pin: null,

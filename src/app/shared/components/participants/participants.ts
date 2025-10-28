@@ -1,29 +1,31 @@
-import { Component, input, output, signal } from '@angular/core';
-import { Participant } from '../../interfaces/participant.interface';
+import { Component, input, model, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideTrash } from '@ng-icons/lucide';
 import { Button } from '@basis-ng/primitives';
+import { IParticipant } from '../../interfaces/participant.interface';
 
 @Component({
   selector: 's-participants',
   imports: [NgIcon, Button],
   template: `
     @for (participant of participants(); track participant.name) {
-      <div class="flex flex-col gap-1 items-center" (click)="selectParticipant(participant)">
+      <div class="flex flex-col gap-1 items-center">
         <div class="relative">
           <div
-            class="w-14 h-14 rounded-full flex items-center justify-center text-xl inset-ring-1 inset-ring-ring dark:inset-ring-ring-dark"
-            [class.inset-ring-3]="
-              selectedParticipant() && selectedParticipant()!.id === participant.id
-            "
+            (click)="selectParticipant(participant)"
+            (blur)="unselectOnOutsideClick() ? selected.set(null) : null"
+            tabindex="0"
+            class="w-14 h-14 rounded-full flex items-center justify-center text-xl inset-ring-1 inset-ring-ring dark:inset-ring-ring-dark cursor-pointer"
+            [class.inset-ring-3]="selected() && selected()!.id === participant.id"
           >
-            {{ participant.name.charAt(0).toUpperCase() }}
+            {{ participant.name.slice(0, 2).toUpperCase() }}
           </div>
-          @if (removable()) {
+          @if (removable() && selected() && selected()!.id === participant.id) {
             <button
               b-button
-              class="absolute -top-2 -right-2 b-size-sm b-squared b-variant-secondary b-rounded-full"
-              (click)="participantRemoved.emit(participant)"
+              class="absolute -top-2 -right-2 b-size-sm b-squared b-variant-secondary b-rounded-full cursor-pointer"
+              (mousedown)="$event.preventDefault()"
+              (click)="removeParticipant()"
             >
               <ng-icon name="lucideTrash" size="12" color="currentColor" />
             </button>
@@ -39,15 +41,29 @@ import { Button } from '@basis-ng/primitives';
   providers: [provideIcons({ lucideTrash })],
 })
 export class Participants {
-  participants = input<Participant[]>();
-  selectable = input<boolean>();
+  participants = input<IParticipant[]>();
+  selected = model<IParticipant | null>(null);
   removable = input<boolean>(false);
-  participantRemoved = output<Participant>();
-  participantSelected = output<Participant>();
-  selectedParticipant = signal<Participant | null>(null);
+  participantRemoved = output<void>();
+  participantSelected = output<void>();
+  unselectOnOutsideClick = input<boolean>(false);
 
-  selectParticipant(participant: Participant) {
-    this.participantSelected.emit(participant);
-    this.selectedParticipant.set(participant);
+  selectParticipant(participant: IParticipant) {
+    this.selected.set(participant);
+    console.log('selected participant:', participant);
+    this.participantSelected.emit();
+  }
+
+  removeParticipant() {
+    this.participantRemoved.emit();
+    this.selected.set(null);
+  }
+
+  test1() {
+    console.log('focused');
+  }
+
+  test() {
+    console.log('blurred');
   }
 }
