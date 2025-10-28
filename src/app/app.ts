@@ -5,8 +5,8 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   selector: 's-root',
   imports: [RouterOutlet, RouterLink],
   template: `
-    <header class="font-semibold flex justify-center items-center h-8">
-      <a routerLink="/home">sunio</a>
+    <header class=" flex justify-center items-center h-8">
+      <a routerLink="/home" class="text-xl font-bold">sunio</a>
     </header>
     <router-outlet />
   `,
