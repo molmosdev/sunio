@@ -12,16 +12,21 @@ import { BalanceColor } from './core/services/balance-color';
     <router-outlet />
   `,
   host: {
-    class: 'h-dvh flex flex-col p-4 gap-2',
-    '[class.bg-background]': "balanceColorState() === 'zero'",
-    '[class.dark:bg-background-dark]': "balanceColorState() === 'zero'",
-    '[class.bg-balance-positive]': "balanceColorState() === 'positive'",
-    '[class.dark:bg-balance-positive-dark]': "balanceColorState() === 'positive'",
-    '[class.bg-balance-negative]': "balanceColorState() === 'negative'",
-    '[class.dark:bg-balance-negative-dark]': "balanceColorState() === 'negative'",
+    class:
+      'h-dvh flex flex-col p-4 gap-2 text-font dark:text-font-dark transition-colors duration-500',
+    '[class]': 'balancedThemeClasses()',
   },
 })
 export class App {
   balanceColor = inject(BalanceColor);
-  balanceColorState = computed(() => this.balanceColor.state());
+  balancedThemeClasses = computed(() => {
+    switch (this.balanceColor.state()) {
+      case 'positive':
+        return 'bg-balance-positive dark:bg-balance-positive-dark';
+      case 'negative':
+        return 'bg-balance-negative dark:bg-balance-negative-dark';
+      default:
+        return 'bg-background dark:bg-background-dark';
+    }
+  });
 }
