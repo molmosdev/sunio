@@ -1,10 +1,11 @@
 import { Component, inject, input, model, signal } from '@angular/core';
-import { ApiEvents } from '../../../../core/services/api-events';
 import { customError, Field, form, required } from '@angular/forms/signals';
 import { Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
-import { IParticipant } from '../../../../shared/interfaces/participant.interface';
-import { NgIcon } from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideForward } from '@ng-icons/lucide';
+import { ApiEvents } from '../../../../core/services/api-events';
 import { Participants } from '../../../../shared/components/participants/participants';
+import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 
 @Component({
   selector: 's-login',
@@ -48,6 +49,7 @@ import { Participants } from '../../../../shared/components/participants/partici
   host: {
     class: 'flex flex-col gap-4 items-center justify-center',
   },
+  providers: [provideIcons({ lucideForward })],
 })
 export class Login {
   eventId = input.required<string>();
