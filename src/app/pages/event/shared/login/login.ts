@@ -15,7 +15,7 @@ import { Participants } from '../../../../shared/components/participants/partici
       [(selected)]="selectedParticipant"
       (participantSelected)="pinDataModel.set({ pin: '' })"
     />
-    @if (selectedParticipant()) {
+    @if (selectedParticipant().length === 1) {
       <b-input-group>
         <input
           b-input
@@ -23,7 +23,7 @@ import { Participants } from '../../../../shared/components/participants/partici
           [field]="pinForm.pin"
           maxLength="4"
           [placeholder]="
-            !selectedParticipant()!.pin
+            !selectedParticipant()[0]?.pin
               ? ('event.participants.pin.setup' | translate)
               : ('event.participants.pin.prompt' | translate)
           "
@@ -57,7 +57,7 @@ export class Login {
   private _apiEvents = inject(ApiEvents);
   private _translationManager = inject(TranslationManager);
 
-  selectedParticipant = signal<IParticipant | null>(null);
+  selectedParticipant = signal<IParticipant[]>([]);
   isSubmittingPin = signal(false);
 
   pinDataModel = signal<{ pin: string }>({ pin: '' });
@@ -69,12 +69,11 @@ export class Login {
   });
 
   async submitPin() {
-    const participant = this.selectedParticipant();
-
-    if (!participant) {
+    const selected = this.selectedParticipant();
+    if (selected.length !== 1) {
       return;
     }
-
+    const participant = selected[0];
     if (this.pinForm().valid()) {
       try {
         this.isSubmittingPin.set(true);
