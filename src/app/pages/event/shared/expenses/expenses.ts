@@ -1,11 +1,11 @@
-import { Component, computed, inject, input, model, output, resource } from '@angular/core';
-import { ApiEvents } from '../../../../core/services/api-events';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideLoader } from '@ng-icons/lucide';
 import { CurrencyPipe } from '@angular/common';
-import { IParticipant } from '../../../../shared/interfaces/participant.interface';
-import { Expense } from '../../../../shared/interfaces/expense.interface';
+import { Component, computed, inject, input, model, output, resource } from '@angular/core';
 import { Button } from '@basis-ng/primitives';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideLoader, lucidePencil, lucideTrash } from '@ng-icons/lucide';
+import { ApiEvents } from '../../../../core/services/api-events';
+import { Expense } from '../../../../shared/interfaces/expense.interface';
+import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 
 @Component({
   selector: 's-expenses',
@@ -48,6 +48,8 @@ import { Button } from '@basis-ng/primitives';
   providers: [
     provideIcons({
       lucideLoader,
+      lucidePencil,
+      lucideTrash,
     }),
   ],
 })
