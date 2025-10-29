@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { TBalance } from '../../../../shared/types/balance.type';
 import { CurrencyPipe } from '@angular/common';
 import { BalanceColor } from '../../../../core/services/balance-color';
@@ -11,28 +11,17 @@ import { BalanceColor } from '../../../../core/services/balance-color';
     class: 'text-6xl font-semibold  flex items-center justify-center',
   },
 })
-export class Balance implements OnInit {
+export class Balance {
   balances = input<TBalance>();
-  loggedParticipantId = input<string>();
-  balance = computed(() => {
-    const participantId = this.loggedParticipantId();
-    if (!participantId) return 0;
-    return this.balances()?.[participantId] || 0;
-  });
-  balanceColor = inject(BalanceColor);
+  loggedParticipantId = input.required<string>();
+  balance = computed(() => this.balances()?.[this.loggedParticipantId()] || 0);
+  private _balanceColor = inject(BalanceColor);
 
-  ngOnInit() {
-    this.updateBalanceColor();
-  }
-
-  updateBalanceColor() {
-    const balance = this.balance();
-    if (balance > 0) {
-      this.balanceColor.state.set('positive');
-    } else if (balance < 0) {
-      this.balanceColor.state.set('negative');
-    } else {
-      this.balanceColor.state.set('zero');
-    }
+  constructor() {
+    effect(() =>
+      this._balanceColor.set(
+        this.balance() > 0 ? 'positive' : this.balance() < 0 ? 'negative' : 'zero',
+      ),
+    );
   }
 }
