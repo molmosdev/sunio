@@ -13,18 +13,20 @@ import { BalanceColor } from './core/services/balance-color';
   `,
   host: {
     class:
-      'h-dvh flex flex-col p-4 gap-2 text-font dark:text-font-dark transition-colors duration-500',
+      'h-dvh flex flex-col p-4 gap-2 text-font dark:text-font-dark transition-colors duration-300',
     '[class]': 'balancedThemeClasses()',
   },
 })
 export class App {
   balanceColor = inject(BalanceColor);
+  balanceColorState = computed(() => this.balanceColor.state());
   balancedThemeClasses = computed(() => {
     switch (this.balanceColor.state()) {
       case 'positive':
         return 'bg-balance-positive dark:bg-balance-positive-dark';
       case 'negative':
         return 'bg-balance-negative dark:bg-balance-negative-dark';
+      case 'zero':
       default:
         return 'bg-background dark:bg-background-dark';
     }
