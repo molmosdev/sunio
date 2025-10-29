@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Settlement } from '../../shared/interfaces/balance.interface';
+import { ISettlement } from '../../shared/interfaces/settlement.interface';
 import { IEvent } from '../../shared/interfaces/event.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
 import { IParticipant } from '../../shared/interfaces/participant.interface';
@@ -125,9 +125,9 @@ export class ApiEvents {
 
   calculateSettlements(
     eventId: string,
-  ): Promise<{ balances: TBalance; settlements: Settlement[] }> {
+  ): Promise<{ balances: TBalance; settlements: ISettlement[] }> {
     return firstValueFrom(
-      this.http.post<{ balances: TBalance; settlements: Settlement[] }>(
+      this.http.post<{ balances: TBalance; settlements: ISettlement[] }>(
         `${this.apiUrl}/${eventId}/settle`,
         {},
       ),
