@@ -63,6 +63,7 @@ interface NewEvent {
         (participantRemoved)="onparticipantRemoved()"
         [removable]="true"
         [unselectOnOutsideClick]="true"
+        [multiple]="false"
       />
     }
     @if (participantsError()) {
@@ -152,15 +153,15 @@ export class CreateEvent {
       : null;
   });
 
-  selectedParticipant = signal<IParticipant | null>(null);
+  selectedParticipant = signal<IParticipant[]>([]);
 
   onparticipantRemoved() {
-    const participant = this.selectedParticipant();
-    if (!participant || !participant.name) return;
-
+    const selected = this.selectedParticipant();
+    if (!selected.length) return;
     const currentParticipants = this.form.participants().value();
-    const idx = currentParticipants.findIndex((p) => p.id === participant.id);
-    if (idx !== -1) this.participantRemoved(idx);
+    const idsToRemove = new Set(selected.map((p) => p.id));
+    this.form.participants().value.set(currentParticipants.filter((p) => !idsToRemove.has(p.id)));
+    this.selectedParticipant.set([]);
   }
 
   async submitForm() {
