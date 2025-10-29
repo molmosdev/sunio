@@ -1,4 +1,4 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, input, model, output, computed } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideTrash } from '@ng-icons/lucide';
 import { Button } from '@basis-ng/primitives';
@@ -13,14 +13,15 @@ import { IParticipant } from '../../interfaces/participant.interface';
         <div class="relative">
           <div
             (click)="selectParticipant(participant)"
-            (blur)="unselectOnOutsideClick() ? selected.set(null) : null"
+            (blur)="unselectOnOutsideClick() ? selected.set([]) : null"
             tabindex="0"
             class="w-14 h-14 rounded-full flex items-center justify-center text-xl inset-ring-1 inset-ring-ring dark:inset-ring-ring-dark cursor-pointer"
-            [class.inset-ring-3]="selected() && selected()!.id === participant.id"
+            [class.bg-ring]="selectedMap()[participant.id]"
+            [class.dark:bg-ring-dark]="selectedMap()[participant.id]"
           >
             {{ participant.name.slice(0, 2).toUpperCase() }}
           </div>
-          @if (removable() && selected() && selected()!.id === participant.id) {
+          @if (removable() && selectedMap()[participant.id]) {
             <button
               b-button
               class="absolute -top-2 -right-2 b-size-sm b-squared b-variant-secondary b-rounded-full cursor-pointer"
@@ -41,29 +42,46 @@ import { IParticipant } from '../../interfaces/participant.interface';
   providers: [provideIcons({ lucideTrash })],
 })
 export class Participants {
+  selectedMap = computed<Record<string, boolean>>(() => {
+    const map: Record<string, boolean> = {};
+    for (const p of this.selected()) {
+      map[p.id] = true;
+    }
+    return map;
+  });
   participants = input<IParticipant[]>();
-  selected = model<IParticipant | null>(null);
+  selected = model<IParticipant[]>([]);
   removable = input<boolean>(false);
   participantRemoved = output<void>();
   participantSelected = output<void>();
   unselectOnOutsideClick = input<boolean>(false);
+  multiple = input<boolean>(false);
 
   selectParticipant(participant: IParticipant) {
-    this.selected.set(participant);
-    console.log('selected participant:', participant);
+    if (this.multiple()) {
+      const current = this.selected();
+      const idx = current.findIndex((p) => p.id === participant.id);
+      if (idx === -1) {
+        // No está seleccionado, lo añadimos
+        this.selected.set([...current, participant]);
+      } else {
+        // Ya está seleccionado, lo quitamos
+        this.selected.set(current.filter((p) => p.id !== participant.id));
+      }
+    } else {
+      // Selección simple: solo uno seleccionado
+      const current = this.selected();
+      if (current.length === 1 && current[0].id === participant.id) {
+        this.selected.set([]);
+      } else {
+        this.selected.set([participant]);
+      }
+    }
     this.participantSelected.emit();
   }
 
   removeParticipant() {
     this.participantRemoved.emit();
-    this.selected.set(null);
-  }
-
-  test1() {
-    console.log('focused');
-  }
-
-  test() {
-    console.log('blurred');
+    this.selected.set([]);
   }
 }
