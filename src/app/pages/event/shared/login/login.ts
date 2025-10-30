@@ -25,7 +25,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
           pattern="[0-9]*"
           maxlength="4"
           placeholder="PIN"
-          field]="pinForm.pin"
+          [field]="pinForm.pin"
           [placeholder]="
             !selectedParticipant()[0]?.pin
               ? ('event.participants.pin.setup' | translate)
