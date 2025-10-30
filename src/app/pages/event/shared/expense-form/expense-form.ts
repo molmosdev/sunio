@@ -25,10 +25,11 @@ import { ApiEvents } from '../../../../core/services/api-events';
     <b-input-group>
       <input
         b-input
-        type="number"
-        numberType="decimal"
-        [decimals]="2"
-        placeholder="Amount"
+        type="text"
+        inputmode="decimal"
+        step="0.01"
+        min="0"
+        placeholder="0.00"
         [field]="expenseToEdit() ? editForm.amount : createForm.amount"
       />
       <span>€</span>
@@ -171,6 +172,20 @@ export class ExpenseForm {
     form.consumers().value.set(selected.map((p) => p.id));
   }
 
+  createDataModelWithFormattedAmount = computed(() => {
+    const data = this.createFormDataModel();
+    let amountStr = String(data.amount ?? '');
+    amountStr = amountStr
+      .replace(',', '.') // permite coma como decimal
+      .replace(/[^0-9.]/g, '') // solo números y punto
+      .replace(/(\..*)\./g, '$1') // solo un punto decimal
+      .replace(/^(\d+\.?\d{0,2}).*$/, '$1'); // máx 2 decimales
+    return {
+      ...data,
+      amount: amountStr ? Number(amountStr) : 0,
+    };
+  });
+
   async submitCreateForm() {
     this.createForm.payer_id().markAsDirty();
     this.createForm.amount().markAsDirty();
@@ -178,11 +193,28 @@ export class ExpenseForm {
     this.createForm.description().markAsDirty();
 
     if (this.createForm().valid()) {
-      await this._apiEvents.createExpense(this.eventId(), this.createFormDataModel());
+      await this._apiEvents.createExpense(
+        this.eventId(),
+        this.createDataModelWithFormattedAmount(),
+      );
 
       this.updatedOrCreated.emit();
     }
   }
+
+  editDataModelWithFormattedAmount = computed(() => {
+    const data = this.editFormDataModel();
+    let amountStr = String(data.amount ?? '');
+    amountStr = amountStr
+      .replace(',', '.') // permite coma como decimal
+      .replace(/[^0-9.]/g, '') // solo números y punto
+      .replace(/(\..*)\./g, '$1') // solo un punto decimal
+      .replace(/^(\d+\.?\d{0,2}).*$/, '$1'); // máx 2 decimales
+    return {
+      ...data,
+      amount: amountStr ? Number(amountStr) : 0,
+    };
+  });
 
   async submitEditForm() {
     this.editForm.payer_id().markAsDirty();
@@ -194,7 +226,7 @@ export class ExpenseForm {
       await this._apiEvents.updateExpense(
         this.eventId(),
         this.expenseToEdit()!.id,
-        this.editFormDataModel(),
+        this.editDataModelWithFormattedAmount(),
       );
 
       this.updatedOrCreated.emit();
