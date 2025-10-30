@@ -101,6 +101,7 @@ export class ApiEvents {
     eventId: string,
     expenseId: string,
     data: {
+      payer_id: string;
       amount: number;
       consumers: string[];
       description?: string;

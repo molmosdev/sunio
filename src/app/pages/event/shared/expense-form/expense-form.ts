@@ -4,12 +4,11 @@ import { customError, Field, form, min, required } from '@angular/forms/signals'
 import { Button, Input, InputGroup } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { Participants } from '../../../../shared/components/participants/participants';
-import { JsonPipe } from '@angular/common';
 import { ApiEvents } from '../../../../core/services/api-events';
 
 @Component({
   selector: 's-expense-form',
-  imports: [Input, InputGroup, Button, Field, Participants, JsonPipe],
+  imports: [Input, InputGroup, Button, Field, Participants],
   template: `
     <s-participants
       [participants]="participants()"
@@ -116,9 +115,9 @@ export class ExpenseForm {
 
   editFormDataModel = linkedSignal(() => {
     return {
-      payer_id: this.expenseToEdit()?.payer_id || '',
+      payer_id: this.selectedPayer().length ? this.selectedPayer()[0].id : '',
       amount: this.expenseToEdit()?.amount || 0,
-      consumers: this.expenseToEdit()?.consumers || [],
+      consumers: this.selectedConsumers().map((p) => p.id),
       description: this.expenseToEdit()?.description || '',
     };
   });
@@ -186,6 +185,7 @@ export class ExpenseForm {
   }
 
   async submitEditForm() {
+    this.editForm.payer_id().markAsDirty();
     this.editForm.amount().markAsDirty();
     this.editForm.consumers().markAsDirty();
     this.editForm.description().markAsDirty();
