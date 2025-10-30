@@ -21,8 +21,11 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
         <input
           b-input
           type="password"
-          [field]="pinForm.pin"
-          maxLength="4"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4"
+          placeholder="PIN"
+          field]="pinForm.pin"
           [placeholder]="
             !selectedParticipant()[0]?.pin
               ? ('event.participants.pin.setup' | translate)
