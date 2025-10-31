@@ -58,7 +58,23 @@
       "amount": "Import",
       "consumers": "Consumidors",
       "description": "Descripció",
-      "list": { "title": "Llista de despeses" }
+      "list": {
+        "title": "Llista de despeses",
+        "empty": "Encara no hi ha despeses registrades"
+      },
+      "form": {
+        "title": "Nova despesa",
+        "description": "Descripció",
+        "description-placeholder": "Per exemple, begudes",
+        "amount": "Quantitat",
+        "amount-placeholder": "0.00",
+        "paidBy": "Pagat per",
+        "split": "Dividir"
+      },
+      "add": "Afegir despesa",
+      "update": "Actualitzar despesa",
+      "has-paid": "ha pagat",
+      "unknown": "Desconegut"
     },
     "balances": {
       "title": "Balances",

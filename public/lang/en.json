@@ -58,7 +58,23 @@
       "amount": "Amount",
       "consumers": "Consumers",
       "description": "Description",
-      "list": { "title": "Expenses list" }
+      "list": {
+        "title": "Expenses list",
+        "empty": "No expenses registered yet"
+      },
+      "form": {
+        "title": "New expense",
+        "description": "Description",
+        "description-placeholder": "For example, drinks",
+        "amount": "Amount",
+        "amount-placeholder": "0.00",
+        "paidBy": "Paid by",
+        "split": "Split"
+      },
+      "add": "Add Expense",
+      "update": "Update Expense",
+      "has-paid": "has paid",
+      "unknown": "Unknown"
     },
     "balances": {
       "title": "Balances",

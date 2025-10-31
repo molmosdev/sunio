@@ -58,7 +58,23 @@
       "amount": "Monto",
       "consumers": "Consumidores",
       "description": "Descripción",
-      "list": { "title": "Lista de gastos" }
+      "list": {
+        "title": "Lista de gastos",
+        "empty": "Aún no hay gastos registrados"
+      },
+      "form": {
+        "title": "Nuevo gasto",
+        "description": "Descripción",
+        "description-placeholder": "Por ejemplo, bebidas",
+        "amount": "Cantidad",
+        "amount-placeholder": "0.00",
+        "paidBy": "Pagado por",
+        "split": "Dividir"
+      },
+      "add": "Añadir gasto",
+      "update": "Actualizar gasto",
+      "has-paid": "ha pagado",
+      "unknown": "Desconocido"
     },
     "balances": {
       "title": "Balances",
