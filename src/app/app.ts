@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { BalanceColor } from './core/services/balance-color';
 
@@ -12,23 +12,39 @@ import { BalanceColor } from './core/services/balance-color';
     <router-outlet />
   `,
   host: {
-    class:
-      'h-dvh flex flex-col p-4 gap-2 text-font dark:text-font-dark transition-colors duration-300',
-    '[class]': 'balancedThemeClasses()',
+    class: 'h-dvh flex flex-col p-4 gap-2',
   },
 })
 export class App {
   balanceColor = inject(BalanceColor);
-  balanceColorState = computed(() => this.balanceColor.state());
-  balancedThemeClasses = computed(() => {
-    switch (this.balanceColor.state()) {
+
+  constructor() {
+    effect(() => {
+      this.applyBodyClass(this.balanceColor.state());
+    });
+  }
+
+  applyBodyClass(state: string) {
+    const body = document.body;
+    body.classList.remove(
+      'bg-balance-positive',
+      'dark:bg-balance-positive-dark',
+      'bg-balance-negative',
+      'dark:bg-balance-negative-dark',
+      'bg-background',
+      'dark:bg-background-dark',
+    );
+    switch (state) {
       case 'positive':
-        return 'bg-balance-positive dark:bg-balance-positive-dark';
+        body.classList.add('bg-balance-positive', 'dark:bg-balance-positive-dark');
+        break;
       case 'negative':
-        return 'bg-balance-negative dark:bg-balance-negative-dark';
+        body.classList.add('bg-balance-negative', 'dark:bg-balance-negative-dark');
+        break;
       case 'zero':
       default:
-        return 'bg-background dark:bg-background-dark';
+        body.classList.add('bg-background', 'dark:bg-background-dark');
+        break;
     }
-  });
+  }
 }
