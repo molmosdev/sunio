@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiEvents } from '../../core/services/api-events';
 import { IParticipant } from '../../shared/interfaces/participant.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
-import { Button } from '@basis-ng/primitives';
+import { Button, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideArrowLeft, lucideLoader, lucidePlus } from '@ng-icons/lucide';
 import { Balance } from './shared/balance/balance';
@@ -16,7 +16,17 @@ import { Settlements } from './shared/settlements/settlements';
 
 @Component({
   selector: 's-event',
-  imports: [Button, NgIcon, Login, Title, Balance, Expenses, ExpenseForm, Settlements],
+  imports: [
+    Button,
+    NgIcon,
+    Login,
+    Title,
+    Balance,
+    Expenses,
+    ExpenseForm,
+    Settlements,
+    TranslatePipe,
+  ],
   template: `
     <button b-button (click)="goBack()" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
@@ -53,11 +63,11 @@ import { Settlements } from './shared/settlements/settlements';
             [eventId]="eventId()"
             [participants]="participants.value()!"
             [(expenseToEdit)]="expenseToEdit"
-            (expenseDeleted)="balances.reload()"
+            (expenseDeleted)="balances.reload(); settlements.reload()"
           />
           <button b-button class="b-variant-outlined" (click)="addingExpense.set(true)">
             <ng-icon name="lucidePlus" size="16" color="currentColor" />
-            Add expense
+            {{ 'event.expenses.add' | translate }}
           </button>
           <s-settlements [data]="settlements.value()" [participants]="participants.value()" />
         }

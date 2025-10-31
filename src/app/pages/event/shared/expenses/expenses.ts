@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { Component, computed, inject, input, model, output, resource } from '@angular/core';
-import { Button } from '@basis-ng/primitives';
+import { Button, TranslationManager, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader, lucidePencil, lucideTrash } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
@@ -9,7 +9,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
 
 @Component({
   selector: 's-expenses',
-  imports: [NgIcon, CurrencyPipe, Button],
+  imports: [NgIcon, CurrencyPipe, Button, TranslatePipe],
   template: `
     @if (expenses.isLoading()) {
       <ng-icon name="lucideLoader" size="23" color="currentColor" class="animate-spin" />
@@ -18,7 +18,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
         @for (e of expensesWithPayers(); track e.paidBy) {
           <div class="flex gap-2 items-center justify-center">
             <span>
-              {{ e.paidBy }} ha pagado
+              {{ e.paidBy }} {{ 'event.expenses.has-paid' | translate }}
               <strong>{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong> en
               {{ e.description }}
             </span>
@@ -42,7 +42,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
         }
       </div>
     } @else {
-      <span>Aún no hay gastos registrados</span>
+      <span>{{ 'event.expenses.list.empty' | translate }}</span>
     }
   `,
   providers: [
@@ -56,6 +56,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
 export class Expenses {
   eventId = input.required<string>();
   private _apiEvents = inject(ApiEvents);
+  private _translationManager = inject<TranslationManager>(TranslationManager);
   participants = input.required<IParticipant[]>();
   expenseToEdit = model<Expense | null>();
   expenseDeleted = output<void>();
@@ -76,7 +77,7 @@ export class Expenses {
       const payer = this.participants().find((p) => p.id === expense.payer_id);
       return {
         ...expense,
-        paidBy: payer ? payer.name : 'Desconocido',
+        paidBy: payer ? payer.name : this._translationManager.translate('event.expenses.unknown'),
       };
     });
   });

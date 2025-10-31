@@ -1,78 +1,89 @@
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { Expense } from '../../../../shared/interfaces/expense.interface';
-import { customError, Field, form, min, required } from '@angular/forms/signals';
-import { Button, Input, InputGroup } from '@basis-ng/primitives';
+import { customError, Field, form, min, minLength, required } from '@angular/forms/signals';
+import { Button, Input, InputGroup, TranslatePipe } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { Participants } from '../../../../shared/components/participants/participants';
 import { ApiEvents } from '../../../../core/services/api-events';
 
 @Component({
   selector: 's-expense-form',
-  imports: [Input, InputGroup, Button, Field, Participants],
+  imports: [Input, InputGroup, Button, Field, Participants, TranslatePipe],
   template: `
-    <s-participants
-      [participants]="participants()"
-      [(selected)]="selectedPayer"
-      [multiple]="false"
-      (participantSelected)="onPayerSelected()"
-    />
-    @if (payerError()) {
-      <p class="text-sm text-destructive dark:text-destructive-dark">
-        {{ payerError() }}
-      </p>
-    }
-    <span>ha pagado</span>
-    <b-input-group>
+    <div class="flex flex-col gap-1.5 items-center">
+      <label class="font-semibold">{{ 'event.expenses.form.description' | translate }}</label>
       <input
         b-input
         type="text"
-        inputmode="decimal"
-        step="0.01"
-        min="0"
-        placeholder="0.00"
-        [field]="expenseToEdit() ? editForm.amount : createForm.amount"
+        [field]="expenseToEdit() ? editForm.description : createForm.description"
+        placeholder="{{ 'event.expenses.form.description-placeholder' | translate }}"
       />
-      <span>€</span>
-    </b-input-group>
-    @if (amountError()) {
-      <p class="text-sm text-destructive dark:text-destructive-dark">
-        {{ amountError() }}
-      </p>
-    }
-    <span>en</span>
-    <input
-      b-input
-      type="text"
-      placeholder="Description"
-      [field]="expenseToEdit() ? editForm.description : createForm.description"
-    />
-    @if (descriptionError()) {
-      <p class="text-sm text-destructive dark:text-destructive-dark">
-        {{ descriptionError() }}
-      </p>
-    }
-    <span>para</span>
-    <s-participants
-      [participants]="participants()"
-      [(selected)]="selectedConsumers"
-      [multiple]="true"
-      (participantSelected)="onConsumersSelected()"
-    />
-    @if (consumersError()) {
-      <p class="text-sm text-destructive dark:text-destructive-dark">
-        {{ consumersError() }}
-      </p>
-    }
+      @if (descriptionError()) {
+        <p class="text-sm text-destructive dark:text-destructive-dark mt-1">
+          {{ descriptionError() }}
+        </p>
+      }
+    </div>
+    <div class="flex flex-col gap-1.5 items-center">
+      <label class="font-semibold">{{ 'event.expenses.form.amount' | translate }}</label>
+      <b-input-group>
+        <input
+          b-input
+          type="text"
+          inputmode="decimal"
+          step="0.01"
+          min="0"
+          [field]="expenseToEdit() ? editForm.amount : createForm.amount"
+          [placeholder]="'0.00'"
+        />
+        <span>€</span>
+      </b-input-group>
+      @if (amountError()) {
+        <p class="text-sm text-destructive dark:text-destructive-dark mt-1">
+          {{ amountError() }}
+        </p>
+      }
+    </div>
+    <div class="flex flex-col gap-0.5 items-center">
+      <label class="font-semibold">{{ 'event.expenses.form.paidBy' | translate }}</label>
+      <s-participants
+        [participants]="participants()"
+        [(selected)]="selectedPayer"
+        [multiple]="false"
+        (participantSelected)="onPayerSelected()"
+      />
+      @if (payerError()) {
+        <p class="text-sm text-destructive dark:text-destructive-dark mt-1">
+          {{ payerError() }}
+        </p>
+      }
+    </div>
+    <div class="flex flex-col gap-0.5 items-center">
+      <label class="font-semibold">{{ 'event.expenses.form.split' | translate }}</label>
+      <s-participants
+        [participants]="participants()"
+        [(selected)]="selectedConsumers"
+        [multiple]="true"
+        (participantSelected)="onConsumersSelected()"
+      />
+      @if (consumersError()) {
+        <p class="text-sm text-destructive dark:text-destructive-dark mt-1">
+          {{ consumersError() }}
+        </p>
+      }
+    </div>
     <button
       b-button
       class="b-variant-outlined mt-2"
       (click)="expenseToEdit() ? submitEditForm() : submitCreateForm()"
     >
-      {{ expenseToEdit() ? 'Update Expense' : 'Add Expense' }}
+      {{
+        expenseToEdit() ? ('event.expenses.update' | translate) : ('event.expenses.add' | translate)
+      }}
     </button>
   `,
   host: {
-    class: 'flex flex-col gap-3 justify-center items-center',
+    class: 'flex flex-col gap-5 justify-center items-center',
   },
 })
 export class ExpenseForm {
@@ -110,7 +121,7 @@ export class ExpenseForm {
     required(expense.payer_id, customError({ message: 'Payer is required' }));
     required(expense.amount, customError({ message: 'Amount is required' }));
     min(expense.amount, 0, customError({ message: 'Amount must be positive' }));
-    required(expense.consumers, customError({ message: 'At least one consumer is required' }));
+    minLength(expense.consumers, 1, customError({ message: 'At least one consumer is required' }));
     required(expense.description, customError({ message: 'Description is required' }));
   });
 
