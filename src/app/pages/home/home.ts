@@ -33,7 +33,7 @@ import { BalanceColor } from '../../core/services/balance-color';
             >
               <div class="flex flex-col gap-0.5">
                 <span>{{ event.name }}</span>
-                <span class="text-sm opacity-55"> {{ event.last_active | date: 'short' }} </span>
+                <span class="text-xs opacity-55"> {{ event.last_active | date: 'short' }} </span>
               </div>
               <div class="flex-1 gap-2 flex justify-end items-center">
                 <button
