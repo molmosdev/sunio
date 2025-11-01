@@ -8,7 +8,7 @@ import { BalanceColor } from './core/services/balance-color';
   template: `
     <header class=" flex justify-center items-center h-15">
       <svg
-        class="cursor-pointer"
+        class="cursor-pointer outline-none"
         routerLink="/home"
         width="30"
         height="30"
