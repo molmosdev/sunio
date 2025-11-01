@@ -5,10 +5,12 @@ import { Button, Input, InputGroup, TranslatePipe } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { Participants } from '../../../../shared/components/participants/participants';
 import { ApiEvents } from '../../../../core/services/api-events';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucidePlus, lucideSave } from '@ng-icons/lucide';
 
 @Component({
   selector: 's-expense-form',
-  imports: [Input, InputGroup, Button, Field, Participants, TranslatePipe],
+  imports: [Input, InputGroup, Button, Field, Participants, TranslatePipe, NgIcon],
   template: `
     <div class="flex flex-col gap-1.5 items-center">
       <label class="font-semibold">{{ 'event.expenses.form.description' | translate }}</label>
@@ -72,19 +74,25 @@ import { ApiEvents } from '../../../../core/services/api-events';
         </p>
       }
     </div>
-    <button
-      b-button
-      class="b-variant-outlined mt-2"
-      (click)="expenseToEdit() ? submitEditForm() : submitCreateForm()"
-    >
-      {{
-        expenseToEdit() ? ('event.expenses.update' | translate) : ('event.expenses.add' | translate)
-      }}
+    <button b-button class="mt-2" (click)="expenseToEdit() ? submitEditForm() : submitCreateForm()">
+      @if (expenseToEdit()) {
+        <ng-icon name="lucideSave" size="14" color="currentColor" />
+        <span>{{ 'event.expenses.update' | translate }}</span>
+      } @else {
+        <ng-icon name="lucidePlus" size="16" color="currentColor" />
+        <span>{{ 'event.expenses.add' | translate }}</span>
+      }
     </button>
   `,
   host: {
     class: 'flex flex-col gap-5 justify-center items-center',
   },
+  providers: [
+    provideIcons({
+      lucideSave,
+      lucidePlus,
+    }),
+  ],
 })
 export class ExpenseForm {
   private _apiEvents = inject(ApiEvents);
