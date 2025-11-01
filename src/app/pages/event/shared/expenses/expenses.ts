@@ -25,14 +25,14 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
             <div class="flex gap-1">
               <button
                 b-button
-                class="b-variant-outlined b-squared b-size-sm"
+                class="b-variant-secondary b-squared b-size-sm"
                 (click)="expenseToEdit.set(e)"
               >
                 <ng-icon name="lucidePencil" size="13" color="currentColor" />
               </button>
               <button
                 b-button
-                class="b-variant-outlined b-squared b-size-sm"
+                class="b-variant-secondary b-squared b-size-sm"
                 (click)="deleteExpense(e.id)"
               >
                 <ng-icon name="lucideTrash" size="13" color="currentColor" />
