@@ -28,8 +28,8 @@ import { BalanceColor } from '../../core/services/balance-color';
         />
       } @else {
         <div
-          class="flex-1 max-h-[calc(100vh-10.5rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-2 py-7"
-          [ngClass]="{ 'max-h-[calc(100vh-12.5rem)]': eventIdError() }"
+          class="flex-1 max-h-[calc(100vh-9.5rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-3 pb-7"
+          [ngClass]="{ 'max-h-[calc(100vh-10.5rem)]': eventIdError() }"
         >
           @for (event of recentEvents.value(); track event.id) {
             <div
