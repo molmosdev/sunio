@@ -75,22 +75,25 @@ import { FormsModule } from '@angular/forms';
               [(expenseToEdit)]="expenseToEdit"
               (expenseDeleted)="balances.reload(); settlements.reload()"
             />
-            <button b-button (click)="addingExpense.set(true)">
-              <ng-icon name="lucidePlus" size="16" color="currentColor" />
-              {{ 'event.expenses.add' | translate }}
-            </button>
           } @else {
             <s-settlements [data]="settlements.value()" [participants]="participants.value()" />
           }
         }
-        <b-tabs class="b-size-lg w-full w-max-xs absolute bottom-0" [(ngModel)]="selectedTab">
-          <b-tab value="expenses" class="flex-1">
-            {{ 'event.expenses.title' | translate }}
-          </b-tab>
-          <b-tab value="balances" class="flex-1">
-            {{ 'event.balances.title' | translate }}
-          </b-tab>
-        </b-tabs>
+        @if (!addingExpense() && !expenseToEdit()) {
+          <div class="w-full w-max-xs absolute bottom-0 flex gap-2 items-center">
+            <button b-button class="b-squared" (click)="addingExpense.set(true)">
+              <ng-icon name="lucidePlus" size="16" color="currentColor" />
+            </button>
+            <b-tabs class="b-size-lg flex-1" [(ngModel)]="selectedTab">
+              <b-tab value="expenses" class="flex-1">
+                {{ 'event.expenses.title' | translate }}
+              </b-tab>
+              <b-tab value="balances" class="flex-1">
+                {{ 'event.balances.title' | translate }}
+              </b-tab>
+            </b-tabs>
+          </div>
+        }
       } @else {
         <s-login
           [eventId]="eventId()"
@@ -117,7 +120,7 @@ export class Event {
   private _router = inject(Router);
   private _balanceColor = inject(BalanceColor);
   private _apiEvents = inject(ApiEvents);
-  selectedTab = signal<'expenses' | 'balances'>('expenses');
+  selectedTab = signal<('expenses' | 'balances')[]>(['expenses']);
 
   eventId = signal(this._activatedRoute.snapshot.params['eventId']);
   loggedParticipant = signal<IParticipant | null>(null);
