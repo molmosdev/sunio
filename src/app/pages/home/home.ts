@@ -48,7 +48,7 @@ import { BalanceColor } from '../../core/services/balance-color';
           }
         </div>
         <div
-          class="flex flex-col gap-4 w-full max-w-xs bg-background dark:bg-background-dark absolute bottom-0"
+          class="flex flex-col gap-4 w-full max-w-xs bg-background dark:bg-background-dark absolute bottom-0 transition-colors duration-150"
         >
           <b-input-group class="w-full max-w-xs">
             <input
@@ -57,7 +57,7 @@ import { BalanceColor } from '../../core/services/balance-color';
               [field]="form.eventId"
               [placeholder]="'load-event.event-code' | translate"
             />
-            <button b-button class="b-size-sm b-squared b-variant-outlined" (click)="submitForm()">
+            <button b-button class="b-size-sm b-squared" (click)="submitForm()">
               <ng-icon name="lucideCloudDownload" size="16" color="currentColor" />
             </button>
           </b-input-group>
@@ -66,7 +66,7 @@ import { BalanceColor } from '../../core/services/balance-color';
               eventIdError()
             }}</span>
           }
-          <button b-button routerLink="/create-event" class="b-variant-outlined w-full max-w-xs">
+          <button b-button routerLink="/create-event" class="w-full max-w-xs">
             <ng-icon name="lucideCirclePlus" size="16" />
             {{ 'home.create-event' | translate }}
           </button>
