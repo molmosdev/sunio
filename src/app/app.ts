@@ -38,7 +38,7 @@ import { BalanceColor } from './core/services/balance-color';
     <router-outlet class="absolute " />
   `,
   host: {
-    class: 'h-dvh flex flex-col p-4 gap-2',
+    class: 'h-dvh flex flex-col p-4 gap-6',
   },
 })
 export class App {
