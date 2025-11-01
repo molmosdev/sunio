@@ -103,6 +103,9 @@
       "auth-pin": "Error verificant el PIN",
       "invalid-pin": "PIN invàlid",
       "pin-required": "El PIN és obligatori"
+    },
+    "login": {
+      "who-are-you": "Qui ets?"
     }
   }
 }

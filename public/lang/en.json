@@ -101,6 +101,9 @@
       "auth-pin": "Error verifying PIN",
       "invalid-pin": "Invalid PIN",
       "pin-required": "PIN is required"
+    },
+    "login": {
+      "who-are-you": "Who are you?"
     }
   }
 }

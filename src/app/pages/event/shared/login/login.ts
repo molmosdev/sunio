@@ -11,11 +11,14 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
   selector: 's-login',
   imports: [NgIcon, Input, InputGroup, Participants, TranslatePipe, Field],
   template: `
-    <s-participants
-      [participants]="participants()"
-      [(selected)]="selectedParticipant"
-      (participantSelected)="pinDataModel.set({ pin: '' })"
-    />
+    <div class="flex flex-col gap-1 items-center">
+      <div class="font-medium text-center">{{ 'event.login.who-are-you' | translate }}</div>
+      <s-participants
+        [participants]="participants()"
+        [(selected)]="selectedParticipant"
+        (participantSelected)="pinDataModel.set({ pin: '' })"
+      />
+    </div>
     @if (selectedParticipant().length === 1) {
       <b-input-group>
         <input
@@ -50,7 +53,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
     }
   `,
   host: {
-    class: 'flex flex-col gap-4 items-center justify-center',
+    class: 'flex flex-col gap-6 items-center justify-center',
   },
   providers: [provideIcons({ lucideForward })],
 })

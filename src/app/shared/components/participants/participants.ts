@@ -37,7 +37,7 @@ import { IParticipant } from '../../interfaces/participant.interface';
     }
   `,
   host: {
-    class: 'flex gap-4 mt-2',
+    class: 'flex gap-4 mt-2 justify-center flex-wrap w-full max-w-md',
   },
   providers: [provideIcons({ lucideTrash })],
 })
