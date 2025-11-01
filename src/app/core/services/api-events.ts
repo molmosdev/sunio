@@ -7,6 +7,7 @@ import { IEvent } from '../../shared/interfaces/event.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
 import { IParticipant } from '../../shared/interfaces/participant.interface';
 import { TBalance } from '../../shared/types/balance.type';
+import { IRecentEvent } from '../../shared/interfaces/recent-event.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +16,30 @@ export class ApiEvents {
   private apiUrl = environment.apiUrl + '/events';
   private http = inject(HttpClient);
 
+  getRecentEvents(): Promise<{ recentEvents: IRecentEvent[] }> {
+    return firstValueFrom(
+      this.http.get<{ recentEvents: IRecentEvent[] }>(`${this.apiUrl}/recent`, {
+        withCredentials: true,
+      }),
+    );
+  }
+
+  deleteRecentEvent(eventId: string): Promise<{ recentEvents: IRecentEvent[] }> {
+    return firstValueFrom(
+      this.http.delete<{ recentEvents: IRecentEvent[] }>(`${this.apiUrl}/recent/${eventId}`, {
+        withCredentials: true,
+      }),
+    );
+  }
+
   createEvent(data: { name: string; participants: string[] }): Promise<{ eventId: string }> {
     return firstValueFrom(this.http.post<{ eventId: string }>(this.apiUrl, data));
   }
 
   getEvent(eventId: string): Promise<IEvent> {
-    return firstValueFrom(this.http.get<IEvent>(`${this.apiUrl}/${eventId}`));
+    return firstValueFrom(
+      this.http.get<IEvent>(`${this.apiUrl}/${eventId}`, { withCredentials: true }),
+    );
   }
 
   updateEvent(eventId: string, name: string): Promise<IEvent> {
