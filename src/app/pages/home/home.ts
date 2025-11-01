@@ -29,7 +29,7 @@ import { BalanceColor } from '../../core/services/balance-color';
           @for (event of recentEvents.value(); track event.id) {
             <div
               routerLink="/{{ event.id }}"
-              class="w-full inset-ring inset-ring-ring dark:inset-ring-ring-dark py-3 px-4 rounded-lg flex gap-4 cursor-pointer"
+              class="w-full py-3 px-4 rounded-lg flex gap-4 cursor-pointer bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-x"
             >
               <div class="flex flex-col gap-0.5">
                 <span>{{ event.name }}</span>
@@ -38,7 +38,7 @@ import { BalanceColor } from '../../core/services/balance-color';
               <div class="flex-1 gap-2 flex justify-end items-center">
                 <button
                   b-button
-                  class="b-variant-outlined b-squared"
+                  class="b-variant-ghost b-squared"
                   (click)="removeRecentEvent(event.id); $event.stopPropagation()"
                 >
                   <ng-icon name="lucideTrash" size="16" />
