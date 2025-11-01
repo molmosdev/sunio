@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, LowerCasePipe } from '@angular/common';
 import { Component, computed, inject, input, model, output, resource } from '@angular/core';
 import { Button, TranslationManager, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -9,33 +9,31 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
 
 @Component({
   selector: 's-expenses',
-  imports: [NgIcon, CurrencyPipe, Button, TranslatePipe],
+  imports: [NgIcon, CurrencyPipe, Button, TranslatePipe, LowerCasePipe],
   template: `
     @if (expenses.isLoading()) {
       <ng-icon name="lucideLoader" size="23" color="currentColor" class="animate-spin" />
     } @else if (expenses.hasValue()) {
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-3 w-full">
         @for (e of expensesWithPayers(); track e.paidBy) {
-          <div class="flex gap-2 items-center justify-center">
-            <span>
-              {{ e.paidBy }} {{ 'event.expenses.has-paid' | translate }}
-              <strong>{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong> en
-              {{ e.description }}
-            </span>
-            <div class="flex gap-1">
-              <button
-                b-button
-                class="b-variant-secondary b-squared b-size-sm"
-                (click)="expenseToEdit.set(e)"
+          <div
+            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-x"
+          >
+            <div class="flex flex-col gap-0.5">
+              <span
+                >{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}
+                {{ 'event.expenses.on' | translate }} {{ e.description | lowercase }}</span
               >
-                <ng-icon name="lucidePencil" size="13" color="currentColor" />
+              <span class="text-xs opacity-55">
+                {{ 'event.expenses.form.paidBy' | translate }} {{ e.paidBy }}
+              </span>
+            </div>
+            <div class="flex-1 gap-2 flex justify-end items-center">
+              <button b-button class="b-variant-ghost b-squared" (click)="expenseToEdit.set(e)">
+                <ng-icon name="lucidePencil" size="16" color="currentColor" />
               </button>
-              <button
-                b-button
-                class="b-variant-secondary b-squared b-size-sm"
-                (click)="deleteExpense(e.id)"
-              >
-                <ng-icon name="lucideTrash" size="13" color="currentColor" />
+              <button b-button class="b-variant-ghost b-squared" (click)="deleteExpense(e.id)">
+                <ng-icon name="lucideTrash" size="16" color="currentColor" />
               </button>
             </div>
           </div>
@@ -52,6 +50,10 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
       lucideTrash,
     }),
   ],
+  host: {
+    class:
+      'w-full mt-4 max-w-xs flex flex-col items-center h-full max-h-[calc(100vh-20.5rem)] overflow-y-auto',
+  },
 })
 export class Expenses {
   eventId = input.required<string>();
