@@ -15,7 +15,11 @@ import { ApiEvents } from '../../../../core/services/api-events';
         {{ event()?.name }}
       </h2>
       @if (editable() && !editing()) {
-        <button b-button class="b-variant-outlined b-squared b-size-sm" (click)="editing.set(true)">
+        <button
+          b-button
+          class="b-variant-secondary b-squared b-size-sm"
+          (click)="editing.set(true)"
+        >
           <ng-icon name="lucidePencil" size="13" color="currentColor" />
         </button>
       }
