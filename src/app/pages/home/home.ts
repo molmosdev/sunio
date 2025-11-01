@@ -18,13 +18,13 @@ import { BalanceColor } from '../../core/services/balance-color';
   selector: 's-home',
   imports: [RouterLink, Button, Field, TranslatePipe, NgIcon, DatePipe, InputGroup, Input, NgClass],
   template: `
-    <div class="flex flex-1 flex-col items-center w-full h-full max-h-full">
+    <div class="flex flex-1 flex-col items-center w-full h-full max-h-full relative">
       @if (recentEvents.isLoading()) {
         <ng-icon name="lucideLoader" size="23" color="currentColor" class="animate-spin" />
       } @else {
         <div
-          class="flex-1 max-h-[calc(100vh-11rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-2 pb-7"
-          [ngClass]="{ 'max-h-[calc(100vh-13.5rem)]': eventIdError() }"
+          class="flex-1 max-h-[calc(100vh-10.5rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-2 pb-7"
+          [ngClass]="{ 'max-h-[calc(100vh-12.5rem)]': eventIdError() }"
         >
           @for (event of recentEvents.value(); track event.id) {
             <div
@@ -48,7 +48,7 @@ import { BalanceColor } from '../../core/services/balance-color';
           }
         </div>
         <div
-          class="flex flex-col gap-4 w-full max-w-xs bg-background dark:bg-background-dark pb-4 fixed bottom-2"
+          class="flex flex-col gap-4 w-full max-w-xs bg-background dark:bg-background-dark absolute bottom-0"
         >
           <b-input-group class="w-full max-w-xs">
             <input
