@@ -59,7 +59,7 @@ import { ApiEvents } from '../../../../core/services/api-events';
       }
     </div>
     <div class="flex flex-col gap-0.5 items-center">
-      <label class="font-semibold">{{ 'event.expenses.form.split' | translate }}</label>
+      <label class="font-semibold">{{ 'event.expenses.form.split-between' | translate }}</label>
       <s-participants
         [participants]="participants()"
         [(selected)]="selectedConsumers"

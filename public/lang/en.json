@@ -69,7 +69,7 @@
         "amount": "Amount",
         "amount-placeholder": "0.00",
         "paidBy": "Paid by",
-        "split": "Split"
+        "split-between": "Split between"
       },
       "add": "Add Expense",
       "update": "Update Expense",

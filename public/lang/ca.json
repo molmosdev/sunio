@@ -69,7 +69,7 @@
         "amount": "Quantitat",
         "amount-placeholder": "0.00",
         "paidBy": "Pagat per",
-        "split": "Dividir"
+        "split-between": "Dividir entre"
       },
       "add": "Afegir despesa",
       "update": "Actualitzar despesa",

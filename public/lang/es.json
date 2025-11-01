@@ -69,7 +69,7 @@
         "amount": "Cantidad",
         "amount-placeholder": "0.00",
         "paidBy": "Pagado por",
-        "split": "Dividir"
+        "split-between": "Dividir entre"
       },
       "add": "Añadir gasto",
       "update": "Actualizar gasto",

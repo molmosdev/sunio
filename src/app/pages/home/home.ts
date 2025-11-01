@@ -1,4 +1,4 @@
-import { Component, computed, inject, resource, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, resource, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -12,6 +12,7 @@ import {
 import { ApiEvents } from '../../core/services/api-events';
 import { DatePipe, NgClass } from '@angular/common';
 import { form, required, Field } from '@angular/forms/signals';
+import { BalanceColor } from '../../core/services/balance-color';
 
 @Component({
   selector: 's-home',
@@ -86,8 +87,14 @@ import { form, required, Field } from '@angular/forms/signals';
     }),
   ],
 })
-export class Home {
+export class Home implements OnInit {
   private _apiEvents = inject(ApiEvents);
+  private _balanceColor = inject(BalanceColor);
+
+  ngOnInit(): void {
+    this._balanceColor.set('zero');
+  }
+
   recentEvents = resource({
     loader: async () => (await this._apiEvents.getRecentEvents()).recentEvents,
   });
