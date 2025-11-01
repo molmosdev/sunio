@@ -2,7 +2,7 @@ import { Component, computed, inject, input, linkedSignal, output, signal } from
 import { IEvent } from '../../../../shared/interfaces/event.interface';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucidePencil } from '@ng-icons/lucide';
+import { lucidePencil, lucideSave, lucideX } from '@ng-icons/lucide';
 import { customError, Field, form, required } from '@angular/forms/signals';
 import { ApiEvents } from '../../../../core/services/api-events';
 
@@ -24,7 +24,7 @@ import { ApiEvents } from '../../../../core/services/api-events';
         </button>
       }
     </div>
-    @if (editing()) {
+    @if (editable() && editing()) {
       <b-input-group>
         <input
           b-input
@@ -33,11 +33,11 @@ import { ApiEvents } from '../../../../core/services/api-events';
           [placeholder]="'event.event-name' | translate"
           (keydown.enter)="submitEditEvent()"
         />
-        <button b-button (click)="submitEditEvent()" class="b-variant-outlined b-squared b-size-sm">
-          <ng-icon name="lucideSave" size="14" color="currentColor" />
-        </button>
-        <button b-button class="b-variant-outlined  b-squared b-size-sm" (click)="cancelEdit()">
+        <button b-button class="b-variant-secondary b-squared b-size-sm" (click)="cancelEdit()">
           <ng-icon name="lucideX" size="15" color="currentColor" />
+        </button>
+        <button b-button (click)="submitEditEvent()" class="b-variant-primary b-squared b-size-sm">
+          <ng-icon name="lucideSave" size="14" color="currentColor" />
         </button>
       </b-input-group>
       @if (error()) {
@@ -50,7 +50,7 @@ import { ApiEvents } from '../../../../core/services/api-events';
   host: {
     class: 'flex flex-col gap-4 justify-center items-center',
   },
-  providers: [provideIcons({ lucidePencil })],
+  providers: [provideIcons({ lucidePencil, lucideSave, lucideX })],
 })
 export class Title {
   event = input<IEvent>();
