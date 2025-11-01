@@ -1,25 +1,124 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { Button, TranslatePipe } from '@basis-ng/primitives';
+import { Component, computed, inject, resource, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideCirclePlus, lucideCloudDownload } from '@ng-icons/lucide';
+import {
+  lucideArrowRight,
+  lucideCirclePlus,
+  lucideCloudDownload,
+  lucideLoader,
+  lucideTrash,
+} from '@ng-icons/lucide';
+import { ApiEvents } from '../../core/services/api-events';
+import { DatePipe, NgClass } from '@angular/common';
+import { form, required, Field } from '@angular/forms/signals';
 
 @Component({
   selector: 's-home',
-  imports: [RouterLink, Button, TranslatePipe, NgIcon],
+  imports: [RouterLink, Button, Field, TranslatePipe, NgIcon, DatePipe, InputGroup, Input, NgClass],
   template: `
-    <button b-button routerLink="/create-event" class="b-variant-outlined w-full max-w-xs">
-      <ng-icon name="lucideCirclePlus" size="16" />
-      {{ 'home.create-event' | translate }}
-    </button>
-    <button b-button routerLink="/load-event" class="b-variant-outlined w-full max-w-xs">
-      <ng-icon name="lucideCloudDownload" size="16" />
-      {{ 'home.load-event' | translate }}
-    </button>
+    <div class="flex flex-1 flex-col items-center w-full h-full max-h-full">
+      @if (recentEvents.isLoading()) {
+        <ng-icon name="lucideLoader" size="23" color="currentColor" class="animate-spin" />
+      } @else {
+        <div
+          class="flex-1 max-h-[calc(100vh-11rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-2 pb-7"
+          [ngClass]="{ 'max-h-[calc(100vh-13.5rem)]': eventIdError() }"
+        >
+          @for (event of recentEvents.value(); track event.id) {
+            <div
+              routerLink="/{{ event.id }}"
+              class="w-full inset-ring inset-ring-ring dark:inset-ring-ring-dark py-3 px-4 rounded-lg flex gap-4 cursor-pointer"
+            >
+              <div class="flex flex-col gap-1">
+                <span>{{ event.name }}</span>
+                <span class="text-sm opacity-55"> {{ event.last_active | date: 'short' }} </span>
+              </div>
+              <div class="flex-1 gap-2 flex justify-end items-center">
+                <button
+                  b-button
+                  class="b-variant-outlined b-squared"
+                  (click)="removeRecentEvent(event.id); $event.stopPropagation()"
+                >
+                  <ng-icon name="lucideTrash" size="16" />
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+        <div
+          class="flex flex-col gap-4 w-full max-w-xs bg-background dark:bg-background-dark pb-4 fixed bottom-2"
+        >
+          <b-input-group class="w-full max-w-xs">
+            <input
+              b-input
+              type="text"
+              [field]="form.eventId"
+              [placeholder]="'load-event.event-code' | translate"
+            />
+            <button b-button class="b-size-sm b-squared b-variant-outlined" (click)="submitForm()">
+              <ng-icon name="lucideCloudDownload" size="16" color="currentColor" />
+            </button>
+          </b-input-group>
+          @if (eventIdError()) {
+            <span class="text-sm text-destructive dark:text-destructive-dark">{{
+              eventIdError()
+            }}</span>
+          }
+          <button b-button routerLink="/create-event" class="b-variant-outlined w-full max-w-xs">
+            <ng-icon name="lucideCirclePlus" size="16" />
+            {{ 'home.create-event' | translate }}
+          </button>
+        </div>
+      }
+    </div>
   `,
   host: {
-    class: 'flex flex-col gap-4 items-center justify-center h-full',
+    class: 'flex flex-col gap-4 items-center justify-center h-full max-h-full',
   },
-  providers: [provideIcons({ lucideCirclePlus, lucideCloudDownload })],
+  providers: [
+    provideIcons({
+      lucideCirclePlus,
+      lucideCloudDownload,
+      lucideLoader,
+      lucideArrowRight,
+      lucideTrash,
+    }),
+  ],
 })
-export class Home {}
+export class Home {
+  private _apiEvents = inject(ApiEvents);
+  recentEvents = resource({
+    loader: async () => (await this._apiEvents.getRecentEvents()).recentEvents,
+  });
+  removeRecentEvent(eventId: string) {
+    this._apiEvents.deleteRecentEvent(eventId).then(() => {
+      this.recentEvents.reload();
+    });
+  }
+
+  router = inject(Router);
+  translationManager = inject(TranslationManager);
+
+  form = form(signal<{ eventId: string }>({ eventId: '' }), (path) => {
+    required(path.eventId, {
+      message: this.translationManager.translate('load-event.errors.code-required'),
+    });
+  });
+
+  eventIdError = computed(() => {
+    return this.form.eventId().dirty() && this.form.eventId().errors().length > 0
+      ? this.form.eventId().errors()[0].message
+      : null;
+  });
+
+  submitForm() {
+    this.form.eventId().markAsDirty();
+
+    if (!this.form().valid()) {
+      return;
+    }
+
+    this.router.navigate(['/', this.form.eventId().value()]);
+  }
+}
