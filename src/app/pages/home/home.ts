@@ -23,7 +23,7 @@ import { BalanceColor } from '../../core/services/balance-color';
         <ng-icon name="lucideLoader" size="23" color="currentColor" class="animate-spin" />
       } @else {
         <div
-          class="flex-1 max-h-[calc(100vh-10.5rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-2 pb-7"
+          class="flex-1 max-h-[calc(100vh-10.5rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-2 py-7"
           [ngClass]="{ 'max-h-[calc(100vh-12.5rem)]': eventIdError() }"
         >
           @for (event of recentEvents.value(); track event.id) {
