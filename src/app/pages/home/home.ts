@@ -20,7 +20,12 @@ import { BalanceColor } from '../../core/services/balance-color';
   template: `
     <div class="flex flex-1 flex-col items-center w-full h-full max-h-full relative">
       @if (recentEvents.isLoading()) {
-        <ng-icon name="lucideLoader" size="23" color="currentColor" class="animate-spin" />
+        <ng-icon
+          name="lucideLoader"
+          size="23"
+          color="currentColor"
+          class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        />
       } @else {
         <div
           class="flex-1 max-h-[calc(100vh-10.5rem)] w-full max-w-xs overflow-y-auto flex flex-col gap-2 py-7"
