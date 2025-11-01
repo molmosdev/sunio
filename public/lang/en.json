@@ -26,7 +26,7 @@
   },
   "event": {
     "not-found-title": "Event not found",
-    "goHome": "Go home",
+    "go-home": "Go home",
     "edit": "Edit",
     "save": "Save",
     "cancel": "Cancel",

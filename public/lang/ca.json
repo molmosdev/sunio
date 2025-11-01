@@ -26,7 +26,7 @@
   },
   "event": {
     "not-found-title": "Esdeveniment no trobat",
-    "goHome": "Tornar a l'inici",
+    "go-home": "Tornar a l'inici",
     "edit": "Editar",
     "save": "Desar",
     "cancel": "Cancel·lar",

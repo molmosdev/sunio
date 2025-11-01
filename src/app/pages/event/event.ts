@@ -38,6 +38,11 @@ import { Settlements } from './shared/settlements/settlements';
         color="currentColor"
         class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       />
+    } @else if (event.error()) {
+      {{ 'event.not-found-title' | translate }}
+      <button b-button (click)="goBack()" class="b-variant-outlined">
+        {{ 'event.go-home' | translate }}
+      </button>
     } @else {
       @if (!addingExpense() && !expenseToEdit()) {
         <s-title
