@@ -7,10 +7,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home/home').then((c) => c.Home),
   },
   {
-    path: 'load-event',
-    loadComponent: () => import('./pages/load-event/load-event').then((c) => c.LoadEvent),
-  },
-  {
     path: 'create-event',
     loadComponent: () => import('./pages/create-event/create-event').then((c) => c.CreateEvent),
   },
