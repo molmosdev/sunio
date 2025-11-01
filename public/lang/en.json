@@ -69,7 +69,14 @@
         "amount": "Amount",
         "amount-placeholder": "0.00",
         "paidBy": "Paid by",
-        "split-between": "Split between"
+        "split-between": "Split between",
+        "errors": {
+          "payer-required": "Payer is required",
+          "amount-required": "Amount is required",
+          "amount-positive": "Amount must be positive",
+          "consumers-required": "At least one consumer is required",
+          "description-required": "Description is required"
+        }
       },
       "add": "Add Expense",
       "update": "Update Expense",

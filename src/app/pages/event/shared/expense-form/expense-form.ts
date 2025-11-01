@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
 import { Expense } from '../../../../shared/interfaces/expense.interface';
 import { customError, Field, form, min, minLength, required } from '@angular/forms/signals';
-import { Button, Input, InputGroup, TranslatePipe } from '@basis-ng/primitives';
+import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { Participants } from '../../../../shared/components/participants/participants';
 import { ApiEvents } from '../../../../core/services/api-events';
@@ -96,6 +96,7 @@ import { lucidePlus, lucideSave } from '@ng-icons/lucide';
 })
 export class ExpenseForm {
   private _apiEvents = inject(ApiEvents);
+  private _translateManager = inject(TranslationManager);
   eventId = input.required<string>();
   participants = input<IParticipant[]>();
   expenseToEdit = input<Expense | null>();
@@ -126,11 +127,40 @@ export class ExpenseForm {
   });
 
   createForm = form(this.createFormDataModel, (expense) => {
-    required(expense.payer_id, customError({ message: 'Payer is required' }));
-    required(expense.amount, customError({ message: 'Amount is required' }));
-    min(expense.amount, 0, customError({ message: 'Amount must be positive' }));
-    minLength(expense.consumers, 1, customError({ message: 'At least one consumer is required' }));
-    required(expense.description, customError({ message: 'Description is required' }));
+    required(
+      expense.payer_id,
+      customError({
+        message: this._translateManager.translate('event.expenses.form.errors.payer-required'),
+      }),
+    );
+    required(
+      expense.amount,
+      customError({
+        message: this._translateManager.translate('event.expenses.form.errors.amount-required'),
+      }),
+    );
+    min(
+      expense.amount,
+      0,
+      customError({
+        message: this._translateManager.translate('event.expenses.form.errors.amount-positive'),
+      }),
+    );
+    minLength(
+      expense.consumers,
+      1,
+      customError({
+        message: this._translateManager.translate('event.expenses.form.errors.consumers-required'),
+      }),
+    );
+    required(
+      expense.description,
+      customError({
+        message: this._translateManager.translate(
+          'event.expenses.form.errors.description-required',
+        ),
+      }),
+    );
   });
 
   editFormDataModel = linkedSignal(() => {
@@ -143,10 +173,33 @@ export class ExpenseForm {
   });
 
   editForm = form(this.editFormDataModel, (expense) => {
-    required(expense.amount, customError({ message: 'Amount is required' }));
-    min(expense.amount, 0, customError({ message: 'Amount must be positive' }));
-    required(expense.consumers, customError({ message: 'At least one consumer is required' }));
-    required(expense.description, customError({ message: 'Description is required' }));
+    required(
+      expense.amount,
+      customError({
+        message: this._translateManager.translate('event.expenses.form.errors.amount-required'),
+      }),
+    );
+    min(
+      expense.amount,
+      0,
+      customError({
+        message: this._translateManager.translate('event.expenses.form.errors.amount-positive'),
+      }),
+    );
+    required(
+      expense.consumers,
+      customError({
+        message: this._translateManager.translate('event.expenses.form.errors.consumers-required'),
+      }),
+    );
+    required(
+      expense.description,
+      customError({
+        message: this._translateManager.translate(
+          'event.expenses.form.errors.description-required',
+        ),
+      }),
+    );
   });
 
   payerError = computed(() => {

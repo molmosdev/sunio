@@ -69,7 +69,14 @@
         "amount": "Quantitat",
         "amount-placeholder": "0.00",
         "paidBy": "Pagat per",
-        "split-between": "Dividir entre"
+        "split-between": "Dividir entre",
+        "errors": {
+          "payer-required": "El pagador és obligatori",
+          "amount-required": "La quantitat és obligatòria",
+          "amount-positive": "La quantitat ha de ser positiva",
+          "consumers-required": "Selecciona almenys un consumidor",
+          "description-required": "La descripció és obligatòria"
+        }
       },
       "add": "Afegir despesa",
       "update": "Actualitzar despesa",

@@ -69,7 +69,14 @@
         "amount": "Cantidad",
         "amount-placeholder": "0.00",
         "paidBy": "Pagado por",
-        "split-between": "Dividir entre"
+        "split-between": "Dividir entre",
+        "errors": {
+          "payer-required": "El pagador es obligatorio",
+          "amount-required": "El monto es obligatorio",
+          "amount-positive": "El monto debe ser positivo",
+          "consumers-required": "Selecciona al menos un consumidor",
+          "description-required": "La descripción es obligatoria"
+        }
       },
       "add": "Añadir gasto",
       "update": "Actualizar gasto",
