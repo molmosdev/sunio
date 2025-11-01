@@ -70,7 +70,7 @@ import { Settlements } from './shared/settlements/settlements';
             [(expenseToEdit)]="expenseToEdit"
             (expenseDeleted)="balances.reload(); settlements.reload()"
           />
-          <button b-button class="b-variant-outlined" (click)="addingExpense.set(true)">
+          <button b-button (click)="addingExpense.set(true)">
             <ng-icon name="lucidePlus" size="16" color="currentColor" />
             {{ 'event.expenses.add' | translate }}
           </button>
