@@ -29,8 +29,8 @@
   --color-warning-foreground: #856404;
   --color-info: #e0e0e0;
   --color-info-foreground: #333;
-  --color-balance-positive: #e6f9ec;
-  --color-balance-negative: #ffeaea;
+  --color-balance-positive: #bfffd3;
+  --color-balance-negative: #ffbfbf;
 
   /* Dark theme colors */
   --color-background-dark: #0a0a0a;
