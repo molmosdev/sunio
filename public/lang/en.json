@@ -89,6 +89,9 @@
       "load-error": "Error loading balances",
       "settlements": "Settlements"
     },
+    "settlements": {
+      "must": "owes"
+    },
     "auth": { "required": "Select a participant and authenticate to see expenses and balances." },
     "errors": {
       "payer-required": "Payer is required",

@@ -89,6 +89,9 @@
       "load-error": "Error carregant balances",
       "settlements": "Liquidacions"
     },
+    "settlements": {
+      "must": "li deu"
+    },
     "auth": {
       "required": "Selecciona un participant i autentica't per veure despeses i balances."
     },

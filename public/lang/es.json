@@ -89,6 +89,9 @@
       "load-error": "Error cargando balances",
       "settlements": "Liquidaciones"
     },
+    "settlements": {
+      "must": "le debe"
+    },
     "auth": {
       "required": "Selecciona un participante y autentícate para ver los gastos y balances."
     },
