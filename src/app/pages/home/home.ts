@@ -31,7 +31,7 @@ import { BalanceColor } from '../../core/services/balance-color';
               routerLink="/{{ event.id }}"
               class="w-full inset-ring inset-ring-ring dark:inset-ring-ring-dark py-3 px-4 rounded-lg flex gap-4 cursor-pointer"
             >
-              <div class="flex flex-col gap-1">
+              <div class="flex flex-col gap-0.5">
                 <span>{{ event.name }}</span>
                 <span class="text-sm opacity-55"> {{ event.last_active | date: 'short' }} </span>
               </div>
