@@ -58,6 +58,7 @@
       "amount": "Amount",
       "consumers": "Consumers",
       "description": "Description",
+      "on": "on",
       "list": {
         "title": "Expenses list",
         "empty": "No expenses registered yet"

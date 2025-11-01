@@ -58,6 +58,7 @@
       "amount": "Monto",
       "consumers": "Consumidores",
       "description": "Descripción",
+      "on": "en",
       "list": {
         "title": "Lista de gastos",
         "empty": "Aún no hay gastos registrados"

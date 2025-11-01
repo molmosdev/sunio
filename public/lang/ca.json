@@ -58,6 +58,7 @@
       "amount": "Import",
       "consumers": "Consumidors",
       "description": "Descripció",
+      "on": "en",
       "list": {
         "title": "Llista de despeses",
         "empty": "Encara no hi ha despeses registrades"
