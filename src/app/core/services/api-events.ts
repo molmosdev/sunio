@@ -8,6 +8,7 @@ import { Expense } from '../../shared/interfaces/expense.interface';
 import { IParticipant } from '../../shared/interfaces/participant.interface';
 import { TBalance } from '../../shared/types/balance.type';
 import { IRecentEvent } from '../../shared/interfaces/recent-event.interface';
+import { Payment } from '../../shared/interfaces/payment.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -143,20 +144,32 @@ export class ApiEvents {
     );
   }
 
-  calculateSettlements(
-    eventId: string,
-  ): Promise<{ balances: TBalance; settlements: ISettlement[] }> {
+  calculateSettlements(eventId: string): Promise<{ settlements: ISettlement[] }> {
     return firstValueFrom(
-      this.http.post<{ balances: TBalance; settlements: ISettlement[] }>(
-        `${this.apiUrl}/${eventId}/settle`,
-        {},
-      ),
+      this.http.get<{ settlements: ISettlement[] }>(`${this.apiUrl}/${eventId}/settlements`),
     );
   }
 
   cleanupOldEvents(): Promise<{ success: boolean }> {
     return firstValueFrom(
       this.http.delete<{ success: boolean }>(`${environment.apiUrl}/events/cleanup`),
+    );
+  }
+
+  createPayment(
+    eventId: string,
+    data: { from_participant: string; to_participant: string; amount: number },
+  ): Promise<Payment> {
+    return firstValueFrom(this.http.post<Payment>(`${this.apiUrl}/${eventId}/payments`, data));
+  }
+
+  getPayments(eventId: string): Promise<Payment[]> {
+    return firstValueFrom(this.http.get<Payment[]>(`${this.apiUrl}/${eventId}/payments`));
+  }
+
+  deletePayment(eventId: string, paymentId: string): Promise<{ success: boolean }> {
+    return firstValueFrom(
+      this.http.delete<{ success: boolean }>(`${this.apiUrl}/${eventId}/payments/${paymentId}`),
     );
   }
 }

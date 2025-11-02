@@ -1,10 +1,10 @@
 import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
-import { IEvent } from '../../../../shared/interfaces/event.interface';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePencil, lucideSave, lucideX } from '@ng-icons/lucide';
 import { customError, Field, form, required } from '@angular/forms/signals';
 import { ApiEvents } from '../../../../core/services/api-events';
+import { IEvent } from '../../../../shared/interfaces/event.interface';
 
 @Component({
   selector: 's-title',
@@ -53,15 +53,16 @@ import { ApiEvents } from '../../../../core/services/api-events';
   providers: [provideIcons({ lucidePencil, lucideSave, lucideX })],
 })
 export class Title {
-  event = input<IEvent>();
-  formDataModel = linkedSignal(() => ({ name: this.event() ? this.event()!.name : '' }));
-  editable = input(false);
-  editing = signal(false);
-  reload = output<void>();
-
   private _apiEvents = inject(ApiEvents);
   private _translationManager = inject(TranslationManager);
 
+  event = input<IEvent>();
+  editable = input(false);
+  editing = signal(false);
+
+  reload = output<void>();
+
+  formDataModel = linkedSignal(() => ({ name: this.event() ? this.event()!.name : '' }));
   form = form(this.formDataModel, (path) => {
     required(path.name, {
       message: this._translationManager.translate('event.errors.event-name-required'),
@@ -76,14 +77,11 @@ export class Title {
 
   async submitEditEvent() {
     this.form.name().markAsDirty();
-
     if (this.form().valid()) {
       const event = this.event();
-
       if (!event) {
         return;
       }
-
       try {
         await this._apiEvents.updateEvent(event.id, this.form.name().value().trim());
         this.reload.emit();

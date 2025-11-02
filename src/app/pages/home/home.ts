@@ -12,7 +12,7 @@ import {
 import { ApiEvents } from '../../core/services/api-events';
 import { DatePipe, NgClass } from '@angular/common';
 import { form, required, Field } from '@angular/forms/signals';
-import { BalanceColor } from '../../core/services/balance-color';
+import { BalancesState } from '../../core/services/balances-state';
 
 @Component({
   selector: 's-home',
@@ -93,28 +93,28 @@ import { BalanceColor } from '../../core/services/balance-color';
   ],
 })
 export class Home implements OnInit {
+  private _router = inject(Router);
+  private _translationManager = inject(TranslationManager);
   private _apiEvents = inject(ApiEvents);
-  private _balanceColor = inject(BalanceColor);
+  private _balancesState = inject(BalancesState);
 
   ngOnInit(): void {
-    this._balanceColor.set('zero');
+    this._balancesState.color.set('zero');
   }
 
   recentEvents = resource({
     loader: async () => (await this._apiEvents.getRecentEvents()).recentEvents,
   });
+
   removeRecentEvent(eventId: string) {
     this._apiEvents.deleteRecentEvent(eventId).then(() => {
       this.recentEvents.reload();
     });
   }
 
-  router = inject(Router);
-  translationManager = inject(TranslationManager);
-
   form = form(signal<{ eventId: string }>({ eventId: '' }), (path) => {
     required(path.eventId, {
-      message: this.translationManager.translate('load-event.errors.code-required'),
+      message: this._translationManager.translate('load-event.errors.code-required'),
     });
   });
 
@@ -131,6 +131,6 @@ export class Home implements OnInit {
       return;
     }
 
-    this.router.navigate(['/', this.form.eventId().value()]);
+    this._router.navigate(['/', this.form.eventId().value()]);
   }
 }

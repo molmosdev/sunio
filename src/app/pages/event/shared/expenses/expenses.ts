@@ -1,9 +1,10 @@
+import { Component, computed, inject, input, model, resource } from '@angular/core';
 import { CurrencyPipe, LowerCasePipe } from '@angular/common';
-import { Component, computed, inject, input, model, output, resource } from '@angular/core';
 import { Button, TranslationManager, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader, lucidePencil, lucideTrash } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
+import { BalancesState } from '../../../../core/services/balances-state';
 import { Expense } from '../../../../shared/interfaces/expense.interface';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 
@@ -20,7 +21,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
       />
     } @else if (expenses.hasValue()) {
       <div class="flex flex-col gap-3 w-full">
-        @for (e of expensesWithPayers(); track e.paidBy) {
+        @for (e of expensesWithPayers(); track e.id) {
           <div
             class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
           >
@@ -61,12 +62,15 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
   },
 })
 export class Expenses {
-  eventId = input.required<string>();
   private _apiEvents = inject(ApiEvents);
   private _translationManager = inject<TranslationManager>(TranslationManager);
+  private _balancesState = inject(BalancesState);
+
+  eventId = input.required<string>();
   participants = input.required<IParticipant[]>();
+
   expenseToEdit = model<Expense | null>();
-  expenseDeleted = output<void>();
+
   expenses = resource({
     params: () => ({ id: this.eventId() }),
     loader: async ({ params }) => {
@@ -92,6 +96,6 @@ export class Expenses {
   async deleteExpense(expenseId: string) {
     await this._apiEvents.deleteExpense(this.eventId(), expenseId);
     this.expenses.reload();
-    this.expenseDeleted.emit();
+    this._balancesState.data.reload();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject, input, model, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { customError, Field, form, required } from '@angular/forms/signals';
 import { Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -6,6 +6,7 @@ import { lucideForward } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
 import { Participants } from '../../../../shared/components/participants/participants';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
+import { Auth } from '../../../../core/services/auth';
 
 @Component({
   selector: 's-login',
@@ -60,7 +61,8 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
 export class Login {
   eventId = input.required<string>();
   participants = input.required<IParticipant[]>();
-  loggedParticipant = model<IParticipant | null>(null);
+  private _auth = inject(Auth);
+  loggedParticipant = computed(() => this._auth.loggedParticipant());
 
   private _apiEvents = inject(ApiEvents);
   private _translationManager = inject(TranslationManager);
@@ -86,19 +88,17 @@ export class Login {
       try {
         this.isSubmittingPin.set(true);
         if (!participant.pin) {
-          const res = await this._apiEvents.setParticipantPin(this.eventId(), participant.id, {
+          await this._apiEvents.setParticipantPin(this.eventId(), participant.id, {
             pin: this.pinForm.pin().value(),
           });
-          console.log('Set PIN response:', res);
         } else {
-          const res = await this._apiEvents.loginParticipant(
+          await this._apiEvents.loginParticipant(
             this.eventId(),
             participant.id,
             this.pinForm.pin().value(),
           );
-          console.log('Login response:', res);
         }
-        this.loggedParticipant.set(participant);
+        this._auth.setLoggedParticipant(participant);
       } catch {
         this.pinForm
           .pin()

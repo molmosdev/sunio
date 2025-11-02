@@ -1,6 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { BalanceColor } from './core/services/balance-color';
+import { BalancesState } from './core/services/balances-state';
 
 @Component({
   selector: 's-root',
@@ -42,11 +42,11 @@ import { BalanceColor } from './core/services/balance-color';
   },
 })
 export class App {
-  balanceColor = inject(BalanceColor);
+  private _balancesState = inject(BalancesState);
 
   constructor() {
     effect(() => {
-      this.applyBodyClass(this.balanceColor.state());
+      this.applyBodyClass(this._balancesState.color());
     });
   }
 
