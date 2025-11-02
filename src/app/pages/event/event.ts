@@ -59,7 +59,7 @@ import { Auth } from '../../core/services/auth';
           (reload)="event.reload()"
         />
       }
-      <div class="flex-1 w-full flex gap-6 flex-col items-center">
+      <div class="flex-1 w-full flex gap-6 flex-col items-cente">
         @if (loggedParticipant()) {
           @if (addingExpense() || expenseToEdit()) {
             <s-expense-form

@@ -58,7 +58,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
   ],
   host: {
     class:
-      'w-full flex flex-col items-center h-full max-h-[calc(100vh-15.7rem)] overflow-y-auto pb-4 relative',
+      'w-full flex flex-col items-center h-full max-h-[calc(100vh-18.1rem)] overflow-y-auto pb-4 relative',
   },
 })
 export class Expenses {

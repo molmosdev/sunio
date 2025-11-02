@@ -24,6 +24,11 @@
       "empty-participant": "All participants must have a name"
     }
   },
+  "balance": {
+    "they-owe-you": "They owe you",
+    "you-owe-them": "You owe them",
+    "all-settled": "All settled"
+  },
   "event": {
     "not-found-title": "Event not found",
     "go-home": "Go home",
@@ -84,6 +89,7 @@
       "has-paid": "has paid",
       "unknown": "Unknown"
     },
+
     "balances": {
       "title": "Balances",
       "calculate": "Calculate settlements",

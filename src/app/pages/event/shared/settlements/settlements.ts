@@ -2,7 +2,7 @@ import { Component, computed, inject, input, resource } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { Button, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowRight, lucideCheck, lucideX } from '@ng-icons/lucide';
+import { lucideBanknoteArrowUp, lucideX } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
 import { BalancesState } from '../../../../core/services/balances-state';
 import { ISettlement } from '../../../../shared/interfaces/settlement.interface';
@@ -41,8 +41,8 @@ import { Payment } from '../../../../shared/interfaces/payment.interface';
               (click)="s.payment_id ? removePayment(s) : registerPayment(s)"
             >
               <ng-icon
-                [name]="s.payment_id ? 'lucideX' : 'lucideCheck'"
-                size="16"
+                [name]="s.payment_id ? 'lucideX' : 'lucideBanknoteArrowUp'"
+                size="20"
                 color="currentColor"
               />
             </button>
@@ -51,7 +51,12 @@ import { Payment } from '../../../../shared/interfaces/payment.interface';
       }
     </div>
   `,
-  providers: [provideIcons({ lucideArrowRight, lucideCheck, lucideX })],
+  providers: [
+    provideIcons({
+      lucideX,
+      lucideBanknoteArrowUp,
+    }),
+  ],
   host: {
     class: 'flex flex-col gap-2 items-center justify-center w-full',
   },

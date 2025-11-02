@@ -24,6 +24,11 @@
       "empty-participant": "Todos los participantes deben tener un nombre"
     }
   },
+  "balance": {
+    "they-owe-you": "Te deben",
+    "you-owe-them": "Debes",
+    "all-settled": "Todo saldado"
+  },
   "event": {
     "not-found-title": "Evento no encontrado",
     "go-home": "Volver al inicio",

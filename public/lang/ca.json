@@ -24,6 +24,11 @@
       "empty-participant": "Tots els participants han de tenir un nom"
     }
   },
+  "balance": {
+    "they-owe-you": "T'adeuen",
+    "you-owe-them": "Tu deus",
+    "all-settled": "Tot saldat"
+  },
   "event": {
     "not-found-title": "Esdeveniment no trobat",
     "go-home": "Tornar a l'inici",
@@ -84,6 +89,7 @@
       "has-paid": "ha pagat",
       "unknown": "Desconegut"
     },
+
     "balances": {
       "title": "Balances",
       "calculate": "Calcular liquidacions",
