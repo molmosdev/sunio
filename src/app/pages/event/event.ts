@@ -82,9 +82,6 @@ import { FormsModule } from '@angular/forms';
           }
           @if (!addingExpense() && !expenseToEdit()) {
             <div class="w-full absolute bottom-0 flex gap-2 items-center">
-              <button b-button class="b-squared" (click)="addingExpense.set(true)">
-                <ng-icon name="lucidePlus" size="16" color="currentColor" />
-              </button>
               <b-tabs class="b-size-lg flex-1" [(ngModel)]="selectedTab">
                 <b-tab value="expenses" class="flex-1">
                   {{ 'event.expenses.title' | translate }}
@@ -93,6 +90,9 @@ import { FormsModule } from '@angular/forms';
                   {{ 'event.balances.title' | translate }}
                 </b-tab>
               </b-tabs>
+              <button b-button class="b-squared" (click)="addingExpense.set(true)">
+                <ng-icon name="lucidePlus" size="16" color="currentColor" />
+              </button>
             </div>
           }
         } @else {
