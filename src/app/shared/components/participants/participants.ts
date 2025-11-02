@@ -15,7 +15,7 @@ import { IParticipant } from '../../interfaces/participant.interface';
             (click)="selectParticipant(participant)"
             (blur)="unselectOnOutsideClick() ? selected.set([]) : null"
             tabindex="0"
-            class="w-14 h-14 rounded-full flex items-center justify-center text-xl inset-ring-1 inset-ring-ring dark:inset-ring-ring-dark cursor-pointer"
+            class="w-14 h-14 rounded-full flex items-center justify-center text-xl bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs cursor-pointer"
             [class.bg-ring]="selectedMap()[participant.id]"
             [class.dark:bg-ring-dark]="selectedMap()[participant.id]"
           >

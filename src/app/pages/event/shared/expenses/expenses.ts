@@ -17,7 +17,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
       <div class="flex flex-col gap-3 w-full">
         @for (e of expensesWithPayers(); track e.paidBy) {
           <div
-            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-x"
+            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
           >
             <div class="flex flex-col gap-0.5">
               <span
@@ -28,7 +28,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
                 {{ 'event.expenses.form.paidBy' | translate }} {{ e.paidBy }}
               </span>
             </div>
-            <div class="flex-1 gap-2 flex justify-end items-center">
+            <div class="flex-1 gap-1 flex justify-end items-center">
               <button b-button class="b-variant-ghost b-squared" (click)="expenseToEdit.set(e)">
                 <ng-icon name="lucidePencil" size="16" color="currentColor" />
               </button>
