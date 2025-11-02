@@ -12,7 +12,12 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
   imports: [NgIcon, CurrencyPipe, Button, TranslatePipe, LowerCasePipe],
   template: `
     @if (expenses.isLoading()) {
-      <ng-icon name="lucideLoader" size="23" color="currentColor" class="animate-spin" />
+      <ng-icon
+        name="lucideLoader"
+        size="23"
+        color="currentColor"
+        class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      />
     } @else if (expenses.hasValue()) {
       <div class="flex flex-col gap-3 w-full">
         @for (e of expensesWithPayers(); track e.paidBy) {
@@ -20,10 +25,10 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
             class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
           >
             <div class="flex flex-col gap-0.5">
-              <span
-                >{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}
-                {{ 'event.expenses.on' | translate }} {{ e.description | lowercase }}</span
-              >
+              <span>
+                <strong>{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
+                {{ 'event.expenses.on' | translate }} {{ e.description | lowercase }}
+              </span>
               <span class="text-xs opacity-55">
                 {{ 'event.expenses.form.paidBy' | translate }} {{ e.paidBy }}
               </span>
@@ -52,7 +57,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
   ],
   host: {
     class:
-      'w-full mt-4 max-w-sm flex flex-col items-center h-full max-h-[calc(100vh-20.5rem)] overflow-y-auto',
+      'w-full max-w-sm flex flex-col items-center h-full max-h-[calc(100vh-15.7rem)] overflow-y-auto pb-4 relative',
   },
 })
 export class Expenses {

@@ -53,7 +53,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
     }
   `,
   host: {
-    class: 'flex flex-col gap-6 items-center justify-center',
+    class: 'flex-1 flex flex-col gap-6 items-center justify-center',
   },
   providers: [provideIcons({ lucideForward })],
 })

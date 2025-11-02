@@ -55,52 +55,54 @@ import { FormsModule } from '@angular/forms';
           (reload)="event.reload()"
         />
       }
-      @if (loggedParticipant()) {
-        @if (addingExpense() || expenseToEdit()) {
-          <s-expense-form
-            [eventId]="eventId()"
-            [participants]="participants.value()!"
-            [expenseToEdit]="expenseToEdit()"
-            (updatedOrCreated)="goBack()"
-          />
-        } @else {
-          <s-balance
-            [balances]="balances.value()?.balances"
-            [loggedParticipantId]="loggedParticipant()!.id"
-          />
-          @if (selectedTab()[0] === 'expenses') {
-            <s-expenses
+      <div class="flex-1 flex gap-6 flex-col items-center">
+        @if (loggedParticipant()) {
+          @if (addingExpense() || expenseToEdit()) {
+            <s-expense-form
               [eventId]="eventId()"
               [participants]="participants.value()!"
-              [(expenseToEdit)]="expenseToEdit"
-              (expenseDeleted)="balances.reload(); settlements.reload()"
+              [expenseToEdit]="expenseToEdit()"
+              (updatedOrCreated)="goBack()"
             />
           } @else {
-            <s-settlements [data]="settlements.value()" [participants]="participants.value()" />
+            <s-balance
+              [balances]="balances.value()?.balances"
+              [loggedParticipantId]="loggedParticipant()!.id"
+            />
+            @if (selectedTab()[0] === 'expenses') {
+              <s-expenses
+                [eventId]="eventId()"
+                [participants]="participants.value()!"
+                [(expenseToEdit)]="expenseToEdit"
+                (expenseDeleted)="balances.reload(); settlements.reload()"
+              />
+            } @else {
+              <s-settlements [data]="settlements.value()" [participants]="participants.value()" />
+            }
           }
+          @if (!addingExpense() && !expenseToEdit()) {
+            <div class="w-full max-w-sm absolute bottom-0 flex gap-2 items-center">
+              <button b-button class="b-squared" (click)="addingExpense.set(true)">
+                <ng-icon name="lucidePlus" size="16" color="currentColor" />
+              </button>
+              <b-tabs class="b-size-lg flex-1" [(ngModel)]="selectedTab">
+                <b-tab value="expenses" class="flex-1">
+                  {{ 'event.expenses.title' | translate }}
+                </b-tab>
+                <b-tab value="balances" class="flex-1">
+                  {{ 'event.balances.title' | translate }}
+                </b-tab>
+              </b-tabs>
+            </div>
+          }
+        } @else {
+          <s-login
+            [eventId]="eventId()"
+            [participants]="participants.value()!"
+            [(loggedParticipant)]="loggedParticipant"
+          />
         }
-        @if (!addingExpense() && !expenseToEdit()) {
-          <div class="w-full max-w-sm absolute bottom-0 flex gap-2 items-center">
-            <button b-button class="b-squared" (click)="addingExpense.set(true)">
-              <ng-icon name="lucidePlus" size="16" color="currentColor" />
-            </button>
-            <b-tabs class="b-size-lg flex-1" [(ngModel)]="selectedTab">
-              <b-tab value="expenses" class="flex-1">
-                {{ 'event.expenses.title' | translate }}
-              </b-tab>
-              <b-tab value="balances" class="flex-1">
-                {{ 'event.balances.title' | translate }}
-              </b-tab>
-            </b-tabs>
-          </div>
-        }
-      } @else {
-        <s-login
-          [eventId]="eventId()"
-          [participants]="participants.value()!"
-          [(loggedParticipant)]="loggedParticipant"
-        />
-      }
+      </div>
     }
   `,
   styles: ``,

@@ -85,7 +85,7 @@ import { lucidePlus, lucideSave } from '@ng-icons/lucide';
     </button>
   `,
   host: {
-    class: 'flex flex-col gap-5 justify-center items-center',
+    class: 'flex flex-1 flex-col gap-5 justify-center items-center',
   },
   providers: [
     provideIcons({

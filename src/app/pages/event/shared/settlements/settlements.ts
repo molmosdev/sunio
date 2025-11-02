@@ -10,12 +10,22 @@ import { lucideArrowRight } from '@ng-icons/lucide';
   selector: 's-settlements',
   imports: [CurrencyPipe],
   template: `
-    @for (s of data(); track s.from + '-' + s.to) {
-      <div class="flex flex-col items-center gap-0.5">
-        {{ participantMap()[s.from] }} {{ mustText() }} {{ participantMap()[s.to] }}
-        <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
-      </div>
-    }
+    <div class="flex flex-col gap-3 w-full">
+      @for (s of data(); track s.from + '-' + s.to) {
+        <div
+          class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
+        >
+          <div class="flex flex-col gap-0.5">
+            <span>
+              {{ participantMap()[s.from] }}
+              {{ mustText() }}
+              <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
+              {{ participantMap()[s.to] }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
   `,
   providers: [provideIcons({ lucideArrowRight })],
   host: {
