@@ -80,7 +80,7 @@ import { FormsModule } from '@angular/forms';
           }
         }
         @if (!addingExpense() && !expenseToEdit()) {
-          <div class="w-full max-w-xs absolute bottom-0 flex gap-2 items-center">
+          <div class="w-full max-w-sm absolute bottom-0 flex gap-2 items-center">
             <button b-button class="b-squared" (click)="addingExpense.set(true)">
               <ng-icon name="lucidePlus" size="16" color="currentColor" />
             </button>
