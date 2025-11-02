@@ -99,7 +99,7 @@ export class Home implements OnInit {
   private _balancesState = inject(BalancesState);
 
   ngOnInit(): void {
-    this._balancesState.color.set('zero');
+    this._balancesState.negative.set(false);
   }
 
   recentEvents = resource({
