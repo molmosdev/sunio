@@ -15,19 +15,13 @@ export class BalancesState {
   loggedParticipantId = computed(() => this._auth.loggedParticipant()?.id || '');
   personal = computed(() => this.data.value()?.[this.loggedParticipantId()] || 0);
 
-  color = linkedSignal(() => {
-    const amount = this.personal();
-    if (amount > 0) return 'positive';
-    if (amount < 0) return 'negative';
-    return 'zero';
-  });
+  negative = linkedSignal(() => this.personal() < 0);
 
   data = resource({
     params: () => ({ id: this._eventId() }),
     loader: async ({ params }) => {
       if (!params?.id) return undefined;
       const balances = (await this._apiEvents.getBalances(params.id)).balances;
-      // Redondear cada balance a 2 decimales
       Object.keys(balances).forEach(
         (key) => (balances[key] = Math.round(balances[key] * 100) / 100),
       );

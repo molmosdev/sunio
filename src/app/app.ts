@@ -46,31 +46,23 @@ export class App {
 
   constructor() {
     effect(() => {
-      this.applyBodyClass(this._balancesState.color());
+      this.applyBodyClass(this._balancesState.negative());
     });
   }
 
-  applyBodyClass(state: string) {
+  applyBodyClass(negative: boolean) {
     const body = document.body;
     body.classList.remove(
-      'bg-balance-positive',
-      'dark:bg-balance-positive-dark',
       'bg-balance-negative',
       'dark:bg-balance-negative-dark',
       'bg-background',
       'dark:bg-background-dark',
     );
-    switch (state) {
-      case 'positive':
-        body.classList.add('bg-balance-positive', 'dark:bg-balance-positive-dark');
-        break;
-      case 'negative':
-        body.classList.add('bg-balance-negative', 'dark:bg-balance-negative-dark');
-        break;
-      case 'zero':
-      default:
-        body.classList.add('bg-background', 'dark:bg-background-dark');
-        break;
+    if (negative) {
+      body.classList.add('bg-balance-negative', 'dark:bg-balance-negative-dark');
+      return;
+    } else {
+      body.classList.add('bg-background', 'dark:bg-background-dark');
     }
   }
 }
