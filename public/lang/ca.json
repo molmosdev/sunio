@@ -91,7 +91,13 @@
       "settlements": "Liquidacions"
     },
     "settlements": {
-      "must": "li deu"
+      "title": "Liquidacions",
+      "must": "li deu",
+      "settled": "Saldat",
+      "unsettled": "Pendent",
+      "pay": "Registrar pagament",
+      "delete-payment": "Eliminar pagament",
+      "add-payment": "Afegir pagament"
     },
     "auth": {
       "required": "Selecciona un participant i autentica't per veure despeses i balances."

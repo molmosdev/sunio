@@ -91,7 +91,13 @@
       "settlements": "Settlements"
     },
     "settlements": {
-      "must": "owes"
+      "title": "Settlements",
+      "must": "owes",
+      "settled": "Settled",
+      "unsettled": "Pending",
+      "pay": "Register payment",
+      "delete-payment": "Delete payment",
+      "add-payment": "Add payment"
     },
     "auth": { "required": "Select a participant and authenticate to see expenses and balances." },
     "errors": {

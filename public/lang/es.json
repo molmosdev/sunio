@@ -91,7 +91,13 @@
       "settlements": "Liquidaciones"
     },
     "settlements": {
-      "must": "le debe"
+      "title": "Liquidaciones",
+      "must": "le debe",
+      "settled": "Saldado",
+      "unsettled": "Pendiente",
+      "pay": "Registrar pago",
+      "delete-payment": "Eliminar pago",
+      "add-payment": "Añadir pago"
     },
     "auth": {
       "required": "Selecciona un participante y autentícate para ver los gastos y balances."
