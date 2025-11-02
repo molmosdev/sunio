@@ -16,8 +16,8 @@ import { IParticipant } from '../../interfaces/participant.interface';
             (blur)="unselectOnOutsideClick() ? selected.set([]) : null"
             tabindex="0"
             class="w-14 h-14 rounded-full flex items-center justify-center text-xl bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs cursor-pointer"
-            [class.bg-primary/10]="selectedMap()[participant.id]"
-            [class.dark:bg-primary-dark/10]="selectedMap()[participant.id]"
+            [class.bg-primary/20]="selectedMap()[participant.id]"
+            [class.dark:bg-primary-dark/20]="selectedMap()[participant.id]"
           >
             {{ participant.name.slice(0, 2).toUpperCase() }}
           </div>
