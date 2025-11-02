@@ -29,7 +29,7 @@ import { lucideArrowRight } from '@ng-icons/lucide';
   `,
   providers: [provideIcons({ lucideArrowRight })],
   host: {
-    class: 'flex flex-col gap-2 items-center justify-center',
+    class: 'flex flex-col gap-2 items-center justify-center w-full',
   },
 })
 export class Settlements {

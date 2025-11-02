@@ -6,7 +6,7 @@ import { BalanceColor } from './core/services/balance-color';
   selector: 's-root',
   imports: [RouterOutlet, RouterLink],
   template: `
-    <header class=" flex justify-center items-center h-9">
+    <header class="flex justify-center items-center h-9">
       <svg
         class="cursor-pointer outline-none"
         routerLink="/home"
@@ -38,7 +38,7 @@ import { BalanceColor } from './core/services/balance-color';
     <router-outlet class="absolute " />
   `,
   host: {
-    class: 'h-dvh flex flex-col p-4 gap-6',
+    class: 'h-dvh flex flex-col p-4 gap-6 w-full max-w-sm mx-auto',
   },
 })
 export class App {

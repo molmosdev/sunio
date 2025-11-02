@@ -55,7 +55,7 @@ import { FormsModule } from '@angular/forms';
           (reload)="event.reload()"
         />
       }
-      <div class="flex-1 flex gap-6 flex-col items-center">
+      <div class="flex-1 w-full flex gap-6 flex-col items-center">
         @if (loggedParticipant()) {
           @if (addingExpense() || expenseToEdit()) {
             <s-expense-form
@@ -81,7 +81,7 @@ import { FormsModule } from '@angular/forms';
             }
           }
           @if (!addingExpense() && !expenseToEdit()) {
-            <div class="w-full max-w-sm absolute bottom-0 flex gap-2 items-center">
+            <div class="w-full absolute bottom-0 flex gap-2 items-center">
               <button b-button class="b-squared" (click)="addingExpense.set(true)">
                 <ng-icon name="lucidePlus" size="16" color="currentColor" />
               </button>
@@ -107,7 +107,7 @@ import { FormsModule } from '@angular/forms';
   `,
   styles: ``,
   host: {
-    class: 'flex flex-col gap-4 items-center justify-center h-full relative',
+    class: 'flex flex-col gap-4 items-center justify-center h-full relative w-full',
   },
   providers: [
     provideIcons({

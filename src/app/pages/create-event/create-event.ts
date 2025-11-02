@@ -20,7 +20,7 @@ interface NewEvent {
     <button b-button routerLink="/home" class="b-variant-outlined b-squared absolute top-4 left-4">
       <ng-icon name="lucideArrowLeft" size="16" color="currentColor" />
     </button>
-    <b-input-group class="w-full max-w-sm">
+    <b-input-group class="w-full">
       <input
         b-input
         type="text"
@@ -30,7 +30,7 @@ interface NewEvent {
     </b-input-group>
 
     <!-- Inline add-participant input group -->
-    <b-input-group class="w-full max-w-sm">
+    <b-input-group class="w-full">
       <input
         b-input
         type="text"
@@ -72,7 +72,7 @@ interface NewEvent {
       </span>
     }
 
-    <button b-button (click)="submitForm()" class="w-full max-w-sm b-variant-outlined">
+    <button b-button (click)="submitForm()" class="w-full b-variant-outlined">
       <ng-icon name="lucideRocket" size="16" color="currentColor" />
       {{ 'create-event.create' | translate }}
     </button>

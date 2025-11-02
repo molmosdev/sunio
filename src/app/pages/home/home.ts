@@ -28,7 +28,7 @@ import { BalanceColor } from '../../core/services/balance-color';
         />
       } @else {
         <div
-          class="flex-1 max-h-[calc(100vh-9.5rem)] w-full max-w-sm overflow-y-auto flex flex-col gap-3 pb-7"
+          class="flex-1 max-h-[calc(100vh-9.5rem)] w-full overflow-y-auto flex flex-col gap-3 pb-7"
           [ngClass]="{ 'max-h-[calc(100vh-10.5rem)]': eventIdError() }"
         >
           @for (event of recentEvents.value(); track event.id) {
@@ -53,9 +53,9 @@ import { BalanceColor } from '../../core/services/balance-color';
           }
         </div>
         <div
-          class="flex flex-col gap-4 w-full max-w-sm bg-background dark:bg-background-dark absolute bottom-0 transition-colors duration-150"
+          class="flex flex-col gap-4 w-full bg-background dark:bg-background-dark absolute bottom-0 transition-colors duration-150"
         >
-          <b-input-group class="w-full max-w-sm">
+          <b-input-group class="w-full">
             <input
               b-input
               type="text"
@@ -71,7 +71,7 @@ import { BalanceColor } from '../../core/services/balance-color';
               eventIdError()
             }}</span>
           }
-          <button b-button routerLink="/create-event" class="w-full max-w-sm">
+          <button b-button routerLink="/create-event" class="w-full">
             <ng-icon name="lucideCirclePlus" size="16" />
             {{ 'home.create-event' | translate }}
           </button>
