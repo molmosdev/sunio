@@ -3,7 +3,13 @@ import { customError, Field, form, required, validate } from '@angular/forms/sig
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { Router, RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideArrowLeft, lucideRocket, lucideTrash, lucideUserRoundPlus } from '@ng-icons/lucide';
+import {
+  lucideArrowLeft,
+  lucideLoader,
+  lucideRocket,
+  lucideTrash,
+  lucideUserRoundPlus,
+} from '@ng-icons/lucide';
 import { ApiEvents } from '../../core/services/api-events';
 import { Participants } from '../../shared/components/participants/participants';
 import { IParticipant } from '../../shared/interfaces/participant.interface';
@@ -73,19 +79,27 @@ interface NewEvent {
     }
 
     <button b-button (click)="submitForm()" class="w-full b-variant-outlined">
-      <ng-icon name="lucideRocket" size="16" color="currentColor" />
-      {{ 'create-event.create' | translate }}
+      @if (creatingEvent()) {
+        <ng-icon name="lucideLoader" size="16" color="currentColor" class="animate-spin" />
+      } @else {
+        <ng-icon name="lucideRocket" size="16" color="currentColor" />
+        {{ 'create-event.create' | translate }}
+      }
     </button>
   `,
   host: {
     class: 'flex flex-col gap-3 items-center justify-center h-full',
   },
-  providers: [provideIcons({ lucideTrash, lucideArrowLeft, lucideUserRoundPlus, lucideRocket })],
+  providers: [
+    provideIcons({ lucideTrash, lucideArrowLeft, lucideUserRoundPlus, lucideRocket, lucideLoader }),
+  ],
 })
 export class CreateEvent {
   private _apiEvents = inject(ApiEvents);
   private _router = inject(Router);
   private _translationManager = inject(TranslationManager);
+
+  creatingEvent = signal(false);
 
   form = form(signal<NewEvent>({ name: '', participants: [] }), (path) => {
     required(path.name, {
@@ -177,6 +191,7 @@ export class CreateEvent {
       name: dataRaw.name,
       participants: (dataRaw.participants || []).map((p) => p.name),
     };
+    this.creatingEvent.set(true);
     const response = await this._apiEvents.createEvent(data);
     this._router.navigate(['/', response.eventId]);
   }
