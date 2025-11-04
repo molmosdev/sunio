@@ -31,9 +31,9 @@ import { State } from '../../../../core/services/state';
       </div>
     }
   `,
-  standalone: true,
   host: {
-    class: 'flex flex-col gap-2 items-center justify-center w-full',
+    class:
+      'w-full flex flex-col items-center h-full max-h-[calc(100vh-18.1rem)] overflow-y-auto pb-4 relative',
   },
   providers: [
     provideIcons({

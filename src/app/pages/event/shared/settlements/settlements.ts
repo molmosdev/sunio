@@ -59,6 +59,10 @@ import { State } from '../../../../core/services/state';
       </div>
     }
   `,
+  host: {
+    class:
+      'w-full flex flex-col items-center h-full max-h-[calc(100vh-18.1rem)] overflow-y-auto pb-4 relative',
+  },
   providers: [
     provideIcons({
       lucideLoader,
@@ -66,9 +70,6 @@ import { State } from '../../../../core/services/state';
       lucideBanknoteArrowUp,
     }),
   ],
-  host: {
-    class: 'flex flex-col gap-2 items-center justify-center w-full',
-  },
 })
 export class Settlements {
   private _apiEvents = inject(ApiEvents);
