@@ -142,9 +142,11 @@ export class ExpenseForm {
     );
     min(
       expense.amount,
-      0,
+      1,
       customError({
-        message: this._translateManager.translate('event.expenses.form.errors.amount-positive'),
+        message: this._translateManager.translate(
+          'event.expenses.form.errors.amount-greater-than-0',
+        ),
       }),
     );
     minLength(
@@ -182,9 +184,11 @@ export class ExpenseForm {
     );
     min(
       expense.amount,
-      0,
+      1,
       customError({
-        message: this._translateManager.translate('event.expenses.form.errors.amount-positive'),
+        message: this._translateManager.translate(
+          'event.expenses.form.errors.amount-greater-than-0',
+        ),
       }),
     );
     required(

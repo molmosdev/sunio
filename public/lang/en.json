@@ -79,7 +79,7 @@
         "errors": {
           "payer-required": "Payer is required",
           "amount-required": "Amount is required",
-          "amount-positive": "Amount must be positive",
+          "amount-greater-than-0": "Amount must be greater than 0",
           "consumers-required": "At least one consumer is required",
           "description-required": "Description is required"
         }

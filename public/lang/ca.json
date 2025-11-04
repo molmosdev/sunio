@@ -79,7 +79,7 @@
         "errors": {
           "payer-required": "El pagador és obligatori",
           "amount-required": "La quantitat és obligatòria",
-          "amount-positive": "La quantitat ha de ser positiva",
+          "amount-greater-than-0": "La quantitat ha de ser més gran que 0",
           "consumers-required": "Selecciona almenys un consumidor",
           "description-required": "La descripció és obligatòria"
         }

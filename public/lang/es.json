@@ -79,7 +79,7 @@
         "errors": {
           "payer-required": "El pagador es obligatorio",
           "amount-required": "El monto es obligatorio",
-          "amount-positive": "El monto debe ser positivo",
+          "amount-greater-than-0": "El monto debe ser mayor que 0",
           "consumers-required": "Selecciona al menos un consumidor",
           "description-required": "La descripción es obligatoria"
         }
