@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { customError, Field, form, required } from '@angular/forms/signals';
 import { Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -6,7 +6,7 @@ import { lucideForward } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
 import { Participants } from '../../../../shared/components/participants/participants';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
-import { Auth } from '../../../../core/services/auth';
+import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-login',
@@ -59,17 +59,16 @@ import { Auth } from '../../../../core/services/auth';
   providers: [provideIcons({ lucideForward })],
 })
 export class Login {
-  eventId = input.required<string>();
-  participants = input.required<IParticipant[]>();
-  private _auth = inject(Auth);
-  loggedParticipant = computed(() => this._auth.loggedParticipant());
-
+  private _state = inject(State);
   private _apiEvents = inject(ApiEvents);
   private _translationManager = inject(TranslationManager);
 
+  eventId = computed(() => this._state.eventId());
+  loggedParticipant = computed(() => this._state.loggedParticipant());
+  participants = computed(() => this._state.participants.value());
+
   selectedParticipant = signal<IParticipant[]>([]);
   isSubmittingPin = signal(false);
-
   pinDataModel = signal<{ pin: string }>({ pin: '' });
 
   pinForm = form(this.pinDataModel, (path) => {
@@ -80,7 +79,8 @@ export class Login {
 
   async submitPin() {
     const selected = this.selectedParticipant();
-    if (selected.length !== 1) {
+    const eventId = this.eventId();
+    if (selected.length !== 1 || !eventId) {
       return;
     }
     const participant = selected[0];
@@ -88,17 +88,17 @@ export class Login {
       try {
         this.isSubmittingPin.set(true);
         if (!participant.pin) {
-          await this._apiEvents.setParticipantPin(this.eventId(), participant.id, {
+          await this._apiEvents.setParticipantPin(eventId, participant.id, {
             pin: this.pinForm.pin().value(),
           });
         } else {
           await this._apiEvents.loginParticipant(
-            this.eventId(),
+            eventId,
             participant.id,
             this.pinForm.pin().value(),
           );
         }
-        this._auth.setLoggedParticipant(participant);
+        this._state.setLoggedParticipant(participant);
       } catch {
         this.pinForm
           .pin()

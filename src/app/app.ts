@@ -1,6 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { BalancesState } from './core/services/balances-state';
+import { State } from './core/services/state';
 
 @Component({
   selector: 's-root',
@@ -42,11 +42,11 @@ import { BalancesState } from './core/services/balances-state';
   },
 })
 export class App {
-  private _balancesState = inject(BalancesState);
+  private _state = inject(State);
 
   constructor() {
     effect(() => {
-      this.applyBodyClass(this._balancesState.negative());
+      this.applyBodyClass(this._state.inDebt());
     });
   }
 

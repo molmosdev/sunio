@@ -1,15 +1,15 @@
 import { Component, computed, inject } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
-import { BalancesState } from '../../../../core/services/balances-state';
 import { TranslatePipe } from '@basis-ng/primitives';
+import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-balance',
   imports: [CurrencyPipe, TranslatePipe],
   template: `
-    @if (amount() > 0) {
+    @if (personalBalance() > 0) {
       {{ 'balance.they-owe-you' | translate }}
-    } @else if (amount() < 0) {
+    } @else if (personalBalance() < 0) {
       {{ 'balance.you-owe-them' | translate }}
     } @else {
       {{ 'balance.all-settled' | translate }}
@@ -23,8 +23,8 @@ import { TranslatePipe } from '@basis-ng/primitives';
   },
 })
 export class Balance {
-  private _balancesState = inject(BalancesState);
+  private _state = inject(State);
 
-  amount = computed(() => this._balancesState.personal());
-  formattedAmount = computed(() => Math.abs(this._balancesState.personal()));
+  personalBalance = computed(() => this._state.personalBalance());
+  formattedAmount = computed(() => Math.abs(this.personalBalance()));
 }

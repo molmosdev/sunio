@@ -1,5 +1,4 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
-import { Expense } from '../../../../shared/interfaces/expense.interface';
+import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
 import { customError, Field, form, min, minLength, required } from '@angular/forms/signals';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
@@ -7,6 +6,7 @@ import { Participants } from '../../../../shared/components/participants/partici
 import { ApiEvents } from '../../../../core/services/api-events';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePlus, lucideSave } from '@ng-icons/lucide';
+import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-expense-form',
@@ -96,11 +96,12 @@ import { lucidePlus, lucideSave } from '@ng-icons/lucide';
 })
 export class ExpenseForm {
   private _apiEvents = inject(ApiEvents);
+  private _state = inject(State);
   private _translateManager = inject(TranslationManager);
-  eventId = input.required<string>();
-  participants = input<IParticipant[]>();
-  expenseToEdit = input<Expense | null>();
-  updatedOrCreated = output<void>();
+
+  participants = computed(() => this._state.participants.value());
+  expenseToEdit = computed(() => this._state.expenseForm().expense);
+
   selectedPayer = linkedSignal<IParticipant[]>(() => {
     if (this.expenseToEdit()) {
       const payer = this.participants()?.find((p) => p.id === this.expenseToEdit()!.payer_id);
@@ -259,18 +260,21 @@ export class ExpenseForm {
   });
 
   async submitCreateForm() {
+    const eventId = this._state.eventId();
+    if (!eventId) return;
+
     this.createForm.payer_id().markAsDirty();
     this.createForm.amount().markAsDirty();
     this.createForm.consumers().markAsDirty();
     this.createForm.description().markAsDirty();
 
     if (this.createForm().valid()) {
-      await this._apiEvents.createExpense(
-        this.eventId(),
-        this.createDataModelWithFormattedAmount(),
-      );
+      await this._apiEvents.createExpense(eventId, this.createDataModelWithFormattedAmount());
 
-      this.updatedOrCreated.emit();
+      this._state.reloadBalances();
+      this._state.reloadExpenses();
+      this._state.reloadSettlements();
+      this._state.closeExpenseForm();
     }
   }
 
@@ -289,6 +293,9 @@ export class ExpenseForm {
   });
 
   async submitEditForm() {
+    const eventId = this._state.eventId();
+    if (!eventId) return;
+
     this.editForm.payer_id().markAsDirty();
     this.editForm.amount().markAsDirty();
     this.editForm.consumers().markAsDirty();
@@ -296,12 +303,15 @@ export class ExpenseForm {
 
     if (this.editForm().valid() && this.expenseToEdit()) {
       await this._apiEvents.updateExpense(
-        this.eventId(),
+        eventId,
         this.expenseToEdit()!.id,
         this.editDataModelWithFormattedAmount(),
       );
 
-      this.updatedOrCreated.emit();
+      this._state.reloadBalances();
+      this._state.reloadExpenses();
+      this._state.reloadSettlements();
+      this._state.closeExpenseForm();
     }
   }
 }

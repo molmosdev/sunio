@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, resource, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -9,17 +9,17 @@ import {
   lucideLoader,
   lucideTrash,
 } from '@ng-icons/lucide';
-import { ApiEvents } from '../../core/services/api-events';
 import { DatePipe, NgClass } from '@angular/common';
 import { form, required, Field } from '@angular/forms/signals';
-import { BalancesState } from '../../core/services/balances-state';
+import { State } from '../../core/services/state';
+import { ApiEvents } from '../../core/services/api-events';
 
 @Component({
   selector: 's-home',
   imports: [RouterLink, Button, Field, TranslatePipe, NgIcon, DatePipe, InputGroup, Input, NgClass],
   template: `
     <div class="flex flex-1 flex-col items-center w-full h-full max-h-full relative">
-      @if (recentEvents.isLoading()) {
+      @if (isRecentEventsLoading()) {
         <ng-icon
           name="lucideLoader"
           size="23"
@@ -31,7 +31,7 @@ import { BalancesState } from '../../core/services/balances-state';
           class="flex-1 max-h-[calc(100vh-9.5rem)] w-full overflow-y-auto flex flex-col gap-3 pb-7"
           [ngClass]="{ 'max-h-[calc(100vh-10.5rem)]': eventIdError() }"
         >
-          @for (event of recentEvents.value(); track event.id) {
+          @for (event of recentEvents(); track event.id) {
             <div
               routerLink="/{{ event.id }}"
               class="w-full py-3 px-4 rounded-lg flex gap-4 cursor-pointer bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-x"
@@ -93,23 +93,21 @@ import { BalancesState } from '../../core/services/balances-state';
   ],
 })
 export class Home implements OnInit {
+  private _apiEvents = inject(ApiEvents);
   private _router = inject(Router);
   private _translationManager = inject(TranslationManager);
-  private _apiEvents = inject(ApiEvents);
-  private _balancesState = inject(BalancesState);
+  private _state = inject(State);
+
+  recentEvents = computed(() => this._state.recentEvents.value());
+  isRecentEventsLoading = computed(() => this._state.recentEvents.isLoading());
 
   ngOnInit(): void {
-    this._balancesState.negative.set(false);
+    this._state.inDebt.set(false);
   }
 
-  recentEvents = resource({
-    loader: async () => (await this._apiEvents.getRecentEvents()).recentEvents,
-  });
-
-  removeRecentEvent(eventId: string) {
-    this._apiEvents.deleteRecentEvent(eventId).then(() => {
-      this.recentEvents.reload();
-    });
+  async removeRecentEvent(eventId: string): Promise<void> {
+    await this._apiEvents.deleteRecentEvent(eventId);
+    this._state.reloadRecentEvents();
   }
 
   form = form(signal<{ eventId: string }>({ eventId: '' }), (path) => {

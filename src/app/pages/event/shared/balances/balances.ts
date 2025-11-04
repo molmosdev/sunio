@@ -1,16 +1,14 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader } from '@ng-icons/lucide';
-import { BalancesState } from '../../../../core/services/balances-state';
-import { IParticipant } from '../../../../shared/interfaces/participant.interface';
+import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-balances',
   imports: [CurrencyPipe, NgIcon],
   template: `
-    @let b = balances();
-    @if (!b) {
+    @if (isBalancesLoading()) {
       <ng-icon
         name="lucideLoader"
         size="23"
@@ -22,11 +20,11 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
         @for (p of participants(); track p.id) {
           <div
             class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
-            [class.opacity-50]="b[p.id] === 0"
+            [class.opacity-50]="balances()![p.id] === 0"
           >
             <span>{{ p.name }}</span>
             <span>
-              {{ b[p.id] | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}
+              {{ balances()![p.id] | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}
             </span>
           </div>
         }
@@ -44,9 +42,9 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
   ],
 })
 export class Balances {
-  private _balancesState = inject(BalancesState);
+  private _state = inject(State);
 
-  participants = input<IParticipant[]>();
-
-  balances = computed(() => this._balancesState.data.value());
+  balances = computed(() => this._state.balances.value());
+  isBalancesLoading = computed(() => this._state.balances.isLoading());
+  participants = computed(() => this._state.participants.value());
 }

@@ -1,25 +1,23 @@
-import { Component, computed, inject, input, model, resource } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CurrencyPipe, LowerCasePipe } from '@angular/common';
 import { Button, TranslationManager, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader, lucidePencil, lucideTrash } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
-import { BalancesState } from '../../../../core/services/balances-state';
-import { Expense } from '../../../../shared/interfaces/expense.interface';
-import { IParticipant } from '../../../../shared/interfaces/participant.interface';
+import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-expenses',
   imports: [NgIcon, CurrencyPipe, Button, TranslatePipe, LowerCasePipe],
   template: `
-    @if (expenses.isLoading()) {
+    @if (isExpensesLoading()) {
       <ng-icon
         name="lucideLoader"
         size="23"
         color="currentColor"
         class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       />
-    } @else if (expenses.hasValue()) {
+    } @else if (expensesHasValue()) {
       <div class="flex flex-col gap-3 w-full">
         @for (e of expensesWithPayers(); track e.id) {
           <div
@@ -35,7 +33,7 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
               </span>
             </div>
             <div class="flex-1 gap-1 flex justify-end items-center">
-              <button b-button class="b-variant-ghost b-squared" (click)="expenseToEdit.set(e)">
+              <button b-button class="b-variant-ghost b-squared" (click)="state.openExpenseForm(e)">
                 <ng-icon name="lucidePencil" size="16" color="currentColor" />
               </button>
               <button b-button class="b-variant-ghost b-squared" (click)="deleteExpense(e.id)">
@@ -64,28 +62,17 @@ import { IParticipant } from '../../../../shared/interfaces/participant.interfac
 export class Expenses {
   private _apiEvents = inject(ApiEvents);
   private _translationManager = inject<TranslationManager>(TranslationManager);
-  private _balancesState = inject(BalancesState);
+  state = inject(State);
 
-  eventId = input.required<string>();
-  participants = input.required<IParticipant[]>();
-
-  expenseToEdit = model<Expense | null>();
-
-  expenses = resource({
-    params: () => ({ id: this.eventId() }),
-    loader: async ({ params }) => {
-      try {
-        return await this._apiEvents.getExpenses(params.id);
-      } catch (error) {
-        console.error('Error loading expenses:', error);
-        throw error;
-      }
-    },
-  });
+  eventId = computed(() => this.state.eventId());
+  participants = computed(() => this.state.participants.value());
+  expenses = computed(() => this.state.expenses.value());
+  isExpensesLoading = computed(() => this.state.expenses.isLoading());
+  expensesHasValue = computed(() => this.state.expenses.hasValue());
 
   expensesWithPayers = computed(() => {
-    return this.expenses.value()?.map((expense) => {
-      const payer = this.participants().find((p) => p.id === expense.payer_id);
+    return this.expenses()?.map((expense) => {
+      const payer = this.participants()?.find((p) => p.id === expense.payer_id);
       return {
         ...expense,
         paidBy: payer ? payer.name : this._translationManager.translate('event.expenses.unknown'),
@@ -94,8 +81,11 @@ export class Expenses {
   });
 
   async deleteExpense(expenseId: string) {
-    await this._apiEvents.deleteExpense(this.eventId(), expenseId);
-    this.expenses.reload();
-    this._balancesState.data.reload();
+    const eventId = this.eventId();
+    if (!eventId) return;
+
+    await this._apiEvents.deleteExpense(eventId, expenseId);
+    this.state.reloadExpenses();
+    this.state.reloadBalances();
   }
 }

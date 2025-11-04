@@ -1,10 +1,10 @@
-import { Component, computed, inject, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, inject, linkedSignal, output, signal } from '@angular/core';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePencil, lucideSave, lucideX } from '@ng-icons/lucide';
 import { customError, Field, form, required } from '@angular/forms/signals';
 import { ApiEvents } from '../../../../core/services/api-events';
-import { IEvent } from '../../../../shared/interfaces/event.interface';
+import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-title',
@@ -14,7 +14,7 @@ import { IEvent } from '../../../../shared/interfaces/event.interface';
       <h2 class="text-2xl font-bold flex items-center gap-2">
         {{ event()?.name }}
       </h2>
-      @if (editable() && !editing()) {
+      @if (isEditable() && !editing()) {
         <button
           b-button
           class="b-variant-secondary b-squared b-size-sm"
@@ -24,7 +24,7 @@ import { IEvent } from '../../../../shared/interfaces/event.interface';
         </button>
       }
     </div>
-    @if (editable() && editing()) {
+    @if (isEditable() && editing()) {
       <b-input-group>
         <input
           b-input
@@ -55,9 +55,11 @@ import { IEvent } from '../../../../shared/interfaces/event.interface';
 export class Title {
   private _apiEvents = inject(ApiEvents);
   private _translationManager = inject(TranslationManager);
+  private _state = inject(State);
 
-  event = input<IEvent>();
-  editable = input(false);
+  event = computed(() => this._state.event.value());
+  isEditable = computed(() => !!this._state.loggedParticipant());
+
   editing = signal(false);
 
   reload = output<void>();
@@ -96,6 +98,7 @@ export class Title {
           );
       }
       this.editing.set(false);
+      this._state.reloadEvent();
     }
   }
 
