@@ -143,7 +143,7 @@ export class ExpenseForm {
     );
     min(
       expense.amount,
-      1,
+      0.01,
       customError({
         message: this._translateManager.translate(
           'event.expenses.form.errors.amount-greater-than-0',
@@ -168,11 +168,12 @@ export class ExpenseForm {
   });
 
   editFormDataModel = linkedSignal(() => {
+    const expense = this.expenseToEdit();
     return {
       payer_id: this.selectedPayer().length ? this.selectedPayer()[0].id : '',
-      amount: this.expenseToEdit()?.amount || 0,
+      amount: expense && expense.amount != null ? expense.amount : 0,
       consumers: this.selectedConsumers().map((p) => p.id),
-      description: this.expenseToEdit()?.description || '',
+      description: expense?.description || '',
       updated_by: this.loggedParticipantId() || '',
     };
   });
@@ -186,15 +187,16 @@ export class ExpenseForm {
     );
     min(
       expense.amount,
-      1,
+      0.01,
       customError({
         message: this._translateManager.translate(
           'event.expenses.form.errors.amount-greater-than-0',
         ),
       }),
     );
-    required(
+    minLength(
       expense.consumers,
+      1,
       customError({
         message: this._translateManager.translate('event.expenses.form.errors.consumers-required'),
       }),
@@ -253,15 +255,9 @@ export class ExpenseForm {
 
   createDataModelWithFormattedAmount = computed(() => {
     const data = this.createFormDataModel();
-    let amountStr = String(data.amount ?? '');
-    amountStr = amountStr
-      .replace(',', '.') // permite coma como decimal
-      .replace(/[^0-9.]/g, '') // solo números y punto
-      .replace(/(\..*)\./g, '$1') // solo un punto decimal
-      .replace(/^(\d+\.?\d{0,2}).*$/, '$1'); // máx 2 decimales
     return {
       ...data,
-      amount: amountStr ? Number(amountStr) : 0,
+      amount: data.amount,
     };
   });
 
@@ -286,15 +282,9 @@ export class ExpenseForm {
 
   editDataModelWithFormattedAmount = computed(() => {
     const data = this.editFormDataModel();
-    let amountStr = String(data.amount ?? '');
-    amountStr = amountStr
-      .replace(',', '.') // permite coma como decimal
-      .replace(/[^0-9.]/g, '') // solo números y punto
-      .replace(/(\..*)\./g, '$1') // solo un punto decimal
-      .replace(/^(\d+\.?\d{0,2}).*$/, '$1'); // máx 2 decimales
     return {
       ...data,
-      amount: amountStr ? Number(amountStr) : 0,
+      amount: data.amount,
     };
   });
 
