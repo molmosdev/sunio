@@ -1,5 +1,5 @@
 import { Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { customError, Field, form, min, minLength, required } from '@angular/forms/signals';
+import { customError, Field, form, minLength, required } from '@angular/forms/signals';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { ApiEvents } from '../../../../core/services/api-events';
@@ -31,11 +31,11 @@ import { Participants } from '../../../../shared/components/participants';
       <b-input-group>
         <input
           b-input
-          type="number"
+          type="text"
           inputmode="decimal"
-          step="0.01"
           [field]="expenseToEdit() ? editForm.amount : createForm.amount"
           [placeholder]="'0.00'"
+          (blur)="onAmountBlur($event)"
         />
         <span>€</span>
       </b-input-group>
@@ -122,7 +122,7 @@ export class ExpenseForm {
 
   createFormDataModel = signal({
     payer_id: '',
-    amount: 0,
+    amount: '',
     consumers: [] as string[],
     description: '',
     updated_by: this.loggedParticipantId() || '',
@@ -139,15 +139,6 @@ export class ExpenseForm {
       expense.amount,
       customError({
         message: this._translateManager.translate('event.expenses.form.errors.amount-required'),
-      }),
-    );
-    min(
-      expense.amount,
-      0.01,
-      customError({
-        message: this._translateManager.translate(
-          'event.expenses.form.errors.amount-greater-than-0',
-        ),
       }),
     );
     minLength(
@@ -171,7 +162,7 @@ export class ExpenseForm {
     const expense = this.expenseToEdit();
     return {
       payer_id: this.selectedPayer().length ? this.selectedPayer()[0].id : '',
-      amount: expense && expense.amount != null ? expense.amount : 0,
+      amount: expense && expense.amount != null ? expense.amount.toString() : '',
       consumers: this.selectedConsumers().map((p) => p.id),
       description: expense?.description || '',
       updated_by: this.loggedParticipantId() || '',
@@ -183,15 +174,6 @@ export class ExpenseForm {
       expense.amount,
       customError({
         message: this._translateManager.translate('event.expenses.form.errors.amount-required'),
-      }),
-    );
-    min(
-      expense.amount,
-      0.01,
-      customError({
-        message: this._translateManager.translate(
-          'event.expenses.form.errors.amount-greater-than-0',
-        ),
       }),
     );
     minLength(
@@ -257,7 +239,7 @@ export class ExpenseForm {
     const data = this.createFormDataModel();
     return {
       ...data,
-      amount: data.amount,
+      amount: this._parseAmount(data.amount),
     };
   });
 
@@ -269,6 +251,22 @@ export class ExpenseForm {
     this.createForm.amount().markAsDirty();
     this.createForm.consumers().markAsDirty();
     this.createForm.description().markAsDirty();
+
+    const amountValue = this._parseAmount(this.createFormDataModel().amount);
+    if (amountValue <= 0) {
+      this.createForm
+        .amount()
+        .errors()
+        .push(
+          customError({
+            kind: 'min_amount',
+            message: this._translateManager.translate(
+              'event.expenses.form.errors.amount-greater-than-0',
+            ),
+          }),
+        );
+      return;
+    }
 
     if (this.createForm().valid()) {
       await this._apiEvents.createExpense(eventId, this.createDataModelWithFormattedAmount());
@@ -284,7 +282,7 @@ export class ExpenseForm {
     const data = this.editFormDataModel();
     return {
       ...data,
-      amount: data.amount,
+      amount: this._parseAmount(data.amount),
     };
   });
 
@@ -296,6 +294,22 @@ export class ExpenseForm {
     this.editForm.amount().markAsDirty();
     this.editForm.consumers().markAsDirty();
     this.editForm.description().markAsDirty();
+
+    const amountValue = this._parseAmount(this.editFormDataModel().amount);
+    if (amountValue <= 0) {
+      this.editForm
+        .amount()
+        .errors()
+        .push(
+          customError({
+            kind: 'min_amount',
+            message: this._translateManager.translate(
+              'event.expenses.form.errors.amount-greater-than-0',
+            ),
+          }),
+        );
+      return;
+    }
 
     if (this.editForm().valid() && this.expenseToEdit()) {
       await this._apiEvents.updateExpense(
@@ -309,5 +323,31 @@ export class ExpenseForm {
       this._state.reloadSettlements();
       this._state.closeExpenseForm();
     }
+  }
+
+  onAmountBlur(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const form = this.expenseToEdit() ? this.editForm : this.createForm;
+    const sanitized = this._sanitizeAmount(input.value);
+    form.amount().value.set(sanitized);
+    input.value = sanitized;
+  }
+
+  private _sanitizeAmount(value: string): string {
+    const cleaned = value
+      .replace(/,/g, '.')
+      .replace(/[^0-9.]/g, '')
+      .replace(/(\..*)\./g, '$1');
+
+    const parts = cleaned.split('.');
+    if (parts.length > 1) {
+      return parts[0] + '.' + parts[1].substring(0, 2);
+    }
+    return cleaned;
+  }
+
+  private _parseAmount(value: string): number {
+    const num = parseFloat(value.replace(/,/g, '.'));
+    return isNaN(num) ? 0 : num;
   }
 }
