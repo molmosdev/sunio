@@ -11,17 +11,11 @@
   },
   "create-event": {
     "event-name": "Nom de l'esdeveniment",
-    "participant-name": "Nom del participant",
-    "add-participant-description": "Introdueix el nom del participant que vols afegir",
-    "close": "Tancar",
-    "add": "Afegir",
     "create": "Crear esdeveniment",
+    "copy-the-event-code": "Copia el codi de l'esdeveniment per compartir-lo",
+    "go-to-event": "Ir al evento",
     "errors": {
-      "name-required": "El nom de l'esdeveniment és obligatori",
-      "participant-name-required": "El nom del participant és obligatori",
-      "duplicate-participant": "Ja existeix un participant amb aquest nom",
-      "too-few-participants": "Es requereixen almenys 2 participants",
-      "empty-participant": "Tots els participants han de tenir un nom"
+      "name-required": "El nom de l'esdeveniment és obligatori"
     }
   },
   "balance": {
