@@ -26,8 +26,6 @@ import { Participants } from '../../../../shared/components/participants';
           b-input
           type="password"
           inputmode="numeric"
-          pattern="[0-9]*"
-          maxlength="4"
           placeholder="PIN"
           [field]="pinForm.pin"
           [placeholder]="

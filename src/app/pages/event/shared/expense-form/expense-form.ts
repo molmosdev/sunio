@@ -31,10 +31,9 @@ import { Participants } from '../../../../shared/components/participants';
       <b-input-group>
         <input
           b-input
-          type="text"
+          type="number"
           inputmode="decimal"
           step="0.01"
-          min="0"
           [field]="expenseToEdit() ? editForm.amount : createForm.amount"
           [placeholder]="'0.00'"
         />
