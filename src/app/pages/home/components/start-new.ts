@@ -7,21 +7,10 @@ import { lucideCheckCircle, lucideCopy, lucideLoader } from '@ng-icons/lucide';
 import { FormsModule } from '@angular/forms';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { RouterLink } from '@angular/router';
-import { QrCodeComponent } from 'ng-qrcode';
 
 @Component({
   selector: 's-start-new',
-  imports: [
-    Input,
-    Button,
-    NgIcon,
-    FormsModule,
-    CdkCopyToClipboard,
-    Field,
-    RouterLink,
-    QrCodeComponent,
-    InputGroup,
-  ],
+  imports: [Input, Button, NgIcon, FormsModule, CdkCopyToClipboard, Field, RouterLink, InputGroup],
   template: `
     @if (eventCode()) {
       <div class="flex flex-col items-center gap-2">
@@ -31,21 +20,6 @@ import { QrCodeComponent } from 'ng-qrcode';
           Comparte el enlace con quien quieras para empezar a gestionar gastos juntos.
         </span>
       </div>
-      <div
-        class="bg-background-dark flex w-full justify-center p-2 rounded-md inset-ring-1 inset-ring-primary/30"
-      >
-        <qr-code
-          [value]="eventUrl()"
-          [size]="180"
-          errorCorrectionLevel="M"
-          darkColor="#00000000"
-          lightColor="#FFFFFF"
-          class="rounded-size-lg overflow-hidden"
-        />
-      </div>
-      <span class="text-xs text-gray-400 text-center">
-        O escanea este código QR para unirte fácilmente
-      </span>
       <b-input-group class="w-full">
         <input b-input type="text" class="b-size-lg" [ngModel]="eventUrl()" [disabled]="true" />
         <button b-button class="b-variant-secondary b-size-md" [cdkCopyToClipboard]="eventUrl()">
