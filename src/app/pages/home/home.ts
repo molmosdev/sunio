@@ -1,40 +1,40 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, TemplateRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
+import { Button, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideArrowRight,
+  lucideBadgePlus,
   lucideCirclePlus,
   lucideCloudDownload,
   lucideLoader,
+  lucidePlus,
   lucideTrash,
 } from '@ng-icons/lucide';
-import { DatePipe, NgClass } from '@angular/common';
-import { form, required, Field } from '@angular/forms/signals';
+import { DatePipe } from '@angular/common';
 import { State } from '../../core/services/state';
 import { ApiEvents } from '../../core/services/api-events';
+import { StartNew } from './components/start-new';
+import { Join } from './components/join';
 
 @Component({
   selector: 's-home',
-  imports: [RouterLink, Button, Field, TranslatePipe, NgIcon, DatePipe, InputGroup, Input, NgClass],
+  imports: [RouterLink, Button, NgIcon, DatePipe, StartNew, Join],
   template: `
-    <div class="flex flex-1 flex-col items-center w-full h-full max-h-full relative">
-      @if (isRecentEventsLoading()) {
-        <ng-icon
-          name="lucideLoader"
-          size="23"
-          color="currentColor"
-          class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-        />
-      } @else {
-        <div
-          class="flex-1 max-h-[calc(100vh-9.5rem)] w-full overflow-y-auto flex flex-col gap-3 pb-7"
-          [ngClass]="{ 'max-h-[calc(100vh-10.5rem)]': eventIdError() }"
-        >
+    <div class="h-full flex flex-col items-center justify-between">
+      <div class="flex flex-col gap-2 w-full max-h-dvh overflow-y-auto py-22">
+        @if (isRecentEventsLoading()) {
+          <ng-icon
+            name="lucideLoader"
+            size="23"
+            color="currentColor"
+            class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          />
+        } @else {
           @for (event of recentEvents(); track event.id) {
             <div
               routerLink="/{{ event.id }}"
-              class="w-full py-3 px-4 rounded-lg flex gap-4 cursor-pointer bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-x"
+              class="w-full py-3 px-4 rounded-size-lg flex gap-4 cursor-pointer bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-x"
             >
               <div class="flex flex-col gap-0.5">
                 <span>{{ event.name }}</span>
@@ -51,39 +51,50 @@ import { ApiEvents } from '../../core/services/api-events';
               </div>
             </div>
           }
-        </div>
-        <div
-          class="flex flex-col gap-4 w-full bg-background dark:bg-background-dark absolute bottom-0 transition-colors duration-150"
+        }
+      </div>
+      <!-- Start New Drawer Template -->
+      <ng-template #startNewTpl>
+        <s-start-new />
+      </ng-template>
+
+      <!-- Join Drawer Template -->
+      <ng-template #joinTpl>
+        <s-join />
+      </ng-template>
+
+      <!-- Add Drawer Template -->
+      <ng-template #addDrawerTpl>
+        <button
+          b-button
+          class="b-size-lg b-variant-secondary"
+          (click)="openStartNewDrawer(startNewTpl)"
         >
-          <b-input-group class="w-full">
-            <input
-              b-input
-              type="text"
-              [field]="form.eventId"
-              [placeholder]="'load-event.event-code' | translate"
-            />
-            <button b-button class="b-size-sm b-squared" (click)="submitForm()">
-              <ng-icon name="lucideCloudDownload" size="16" color="currentColor" />
-            </button>
-          </b-input-group>
-          @if (eventIdError()) {
-            <span class="text-sm text-destructive dark:text-destructive-dark">{{
-              eventIdError()
-            }}</span>
-          }
-          <button b-button routerLink="/create-event" class="w-full">
-            <ng-icon name="lucideCirclePlus" size="16" />
-            {{ 'home.create-event' | translate }}
-          </button>
-        </div>
-      }
+          <ng-icon name="lucideCirclePlus" size="20" />
+          Iniciar nuevo sunio
+        </button>
+        <button b-button class="b-size-lg b-variant-secondary" (click)="openJoinDrawer(joinTpl)">
+          <ng-icon name="lucideCloudDownload" size="20" />
+          Únete a un sunio existente
+        </button>
+      </ng-template>
+
+      <button
+        b-button
+        class="b-squared b-rounded-full b-size-lg fixed bottom-5 z-10"
+        (click)="openAddDrawer(addDrawerTpl)"
+      >
+        <ng-icon name="lucidePlus" size="29" />
+      </button>
     </div>
   `,
   host: {
-    class: 'flex flex-col gap-4 items-center justify-center h-full max-h-full',
+    class: 'flex flex-col h-full w-full relative overflow-hidden',
   },
   providers: [
     provideIcons({
+      lucideBadgePlus,
+      lucidePlus,
       lucideCirclePlus,
       lucideCloudDownload,
       lucideLoader,
@@ -101,6 +112,13 @@ export class Home implements OnInit {
   recentEvents = computed(() => this._state.recentEvents.value());
   isRecentEventsLoading = computed(() => this._state.recentEvents.isLoading());
 
+  addDrawerOpen = signal(false);
+  startNewSunio = signal(false);
+  loadExistingSunio = signal(false);
+  isADrawerOpen = computed(() => {
+    return this.addDrawerOpen() || this.startNewSunio() || this.loadExistingSunio();
+  });
+
   ngOnInit(): void {
     this._state.inDebt.set(false);
   }
@@ -110,25 +128,15 @@ export class Home implements OnInit {
     this._state.reloadRecentEvents();
   }
 
-  form = form(signal<{ eventId: string }>({ eventId: '' }), (path) => {
-    required(path.eventId, {
-      message: this._translationManager.translate('load-event.errors.code-required'),
-    });
-  });
+  openAddDrawer(template: TemplateRef<unknown>) {
+    this._state.openDynamicDrawer(template);
+  }
 
-  eventIdError = computed(() => {
-    return this.form.eventId().dirty() && this.form.eventId().errors().length > 0
-      ? this.form.eventId().errors()[0].message
-      : null;
-  });
+  openStartNewDrawer(template: TemplateRef<unknown>) {
+    this._state.openDynamicDrawer(template);
+  }
 
-  submitForm() {
-    this.form.eventId().markAsDirty();
-
-    if (!this.form().valid()) {
-      return;
-    }
-
-    this._router.navigate(['/', this.form.eventId().value()]);
+  openJoinDrawer(template: TemplateRef<unknown>) {
+    this._state.openDynamicDrawer(template);
   }
 }

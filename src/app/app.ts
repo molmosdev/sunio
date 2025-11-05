@@ -1,12 +1,15 @@
 import { Component, effect, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { State } from './core/services/state';
+import { DynamicDrawer } from './shared/components/dynamic-drawer';
 
 @Component({
   selector: 's-root',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, DynamicDrawer],
   template: `
-    <header class="flex justify-center items-center h-9">
+    <header
+      class="flex justify-center items-center h-22 fixed top-0 left-0 w-full bg-linear-to-b from-background to-transparent dark:from-background-dark z-10"
+    >
       <svg
         class="cursor-pointer outline-none"
         routerLink="/home"
@@ -36,9 +39,13 @@ import { State } from './core/services/state';
       </svg>
     </header>
     <router-outlet class="absolute " />
+    <s-dynamic-drawer />
+    <div
+      class="flex bg-linear-to-t from-background to-transparent dark:from-background-dark fixed bottom-0 left-0 h-22 w-full"
+    ></div>
   `,
   host: {
-    class: 'h-dvh flex flex-col p-4 gap-6 w-full max-w-sm mx-auto',
+    class: 'h-dvh flex flex-col px-6 gap-6 w-full max-w-md mx-auto relative',
   },
 })
 export class App {

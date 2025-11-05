@@ -5,10 +5,10 @@ import { environment } from '../../../environments/environment';
 import { ISettlement } from '../../shared/interfaces/settlement.interface';
 import { IEvent } from '../../shared/interfaces/event.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
-import { IParticipant } from '../../shared/interfaces/participant.interface';
 import { TBalance } from '../../shared/types/balance.type';
 import { IRecentEvent } from '../../shared/interfaces/recent-event.interface';
 import { Payment } from '../../shared/interfaces/payment.interface';
+import { IParticipant } from '../../shared/interfaces/participant.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +17,7 @@ export class ApiEvents {
   private apiUrl = environment.apiUrl + '/events';
   private http = inject(HttpClient);
 
+  // EVENTS
   getRecentEvents(): Promise<{ recentEvents: IRecentEvent[] }> {
     return firstValueFrom(
       this.http.get<{ recentEvents: IRecentEvent[] }>(`${this.apiUrl}/recent`, {
@@ -33,7 +34,7 @@ export class ApiEvents {
     );
   }
 
-  createEvent(data: { name: string; participants: string[] }): Promise<{ eventId: string }> {
+  createEvent(data: { name: string }): Promise<{ eventId: string }> {
     return firstValueFrom(this.http.post<{ eventId: string }>(this.apiUrl, data));
   }
 
@@ -47,11 +48,16 @@ export class ApiEvents {
     return firstValueFrom(this.http.put<IEvent>(`${this.apiUrl}/${eventId}`, { name }));
   }
 
+  cleanupOldEvents(): Promise<{ success: boolean }> {
+    return firstValueFrom(this.http.delete<{ success: boolean }>(`${this.apiUrl}/cleanup`));
+  }
+
+  // PARTICIPANTS
   getParticipants(eventId: string): Promise<IParticipant[]> {
     return firstValueFrom(this.http.get<IParticipant[]>(`${this.apiUrl}/${eventId}/participants`));
   }
 
-  createParticipant(eventId: string, data: { name: string }): Promise<IParticipant> {
+  createParticipant(eventId: string, data: { name: string; pin: string }): Promise<IParticipant> {
     return firstValueFrom(
       this.http.post<IParticipant>(`${this.apiUrl}/${eventId}/participants`, data),
     );
@@ -64,6 +70,14 @@ export class ApiEvents {
   ): Promise<IParticipant> {
     return firstValueFrom(
       this.http.put<IParticipant>(`${this.apiUrl}/${eventId}/participants/${participantId}`, data),
+    );
+  }
+
+  deleteParticipant(eventId: string, participantId: string): Promise<{ success: boolean }> {
+    return firstValueFrom(
+      this.http.delete<{ success: boolean }>(
+        `${this.apiUrl}/${eventId}/participants/${participantId}`,
+      ),
     );
   }
 
@@ -84,23 +98,68 @@ export class ApiEvents {
     eventId: string,
     participantId: string,
     pin: string,
-  ): Promise<{ success: boolean; participantId: string }> {
+  ): Promise<{ success: boolean; participant: IParticipant }> {
     return firstValueFrom(
-      this.http.post<{ success: boolean; participantId: string }>(
+      this.http.post<{ success: boolean; participant: IParticipant }>(
         `${this.apiUrl}/${eventId}/participants/${participantId}/login`,
         { pin },
       ),
     );
   }
 
-  deleteParticipant(eventId: string, participantId: string): Promise<{ success: boolean }> {
+  requestPinReset(eventId: string, participantId: string): Promise<IParticipant> {
     return firstValueFrom(
-      this.http.delete<{ success: boolean }>(
-        `${this.apiUrl}/${eventId}/participants/${participantId}`,
+      this.http.post<IParticipant>(
+        `${this.apiUrl}/${eventId}/participants/${participantId}/request-pin-reset`,
+        {},
       ),
     );
   }
 
+  resetParticipantPin(
+    eventId: string,
+    participantId: string,
+    requesterId: string,
+  ): Promise<IParticipant> {
+    return firstValueFrom(
+      this.http.post<IParticipant>(
+        `${this.apiUrl}/${eventId}/participants/${participantId}/reset-pin`,
+        { requesterId },
+      ),
+    );
+  }
+
+  promoteParticipantToAdmin(
+    eventId: string,
+    participantId: string,
+    requesterId: string,
+  ): Promise<IParticipant> {
+    return firstValueFrom(
+      this.http.post<IParticipant>(
+        `${this.apiUrl}/${eventId}/participants/${participantId}/promote`,
+        { requesterId },
+      ),
+    );
+  }
+
+  demoteParticipantFromAdmin(
+    eventId: string,
+    participantId: string,
+    requesterId: string,
+  ): Promise<IParticipant> {
+    return firstValueFrom(
+      this.http.post<IParticipant>(
+        `${this.apiUrl}/${eventId}/participants/${participantId}/demote`,
+        { requesterId },
+      ),
+    );
+  }
+
+  getAdmins(eventId: string): Promise<IParticipant[]> {
+    return firstValueFrom(this.http.get<IParticipant[]>(`${this.apiUrl}/${eventId}/admins`));
+  }
+
+  // EXPENSES
   getExpenses(eventId: string): Promise<Expense[]> {
     return firstValueFrom(this.http.get<Expense[]>(`${this.apiUrl}/${eventId}/expenses`));
   }
@@ -112,6 +171,7 @@ export class ApiEvents {
       amount: number;
       consumers: string[];
       description?: string;
+      updated_by: string;
     },
   ): Promise<Expense> {
     return firstValueFrom(this.http.post<Expense>(`${this.apiUrl}/${eventId}/expenses`, data));
@@ -125,6 +185,7 @@ export class ApiEvents {
       amount: number;
       consumers: string[];
       description?: string;
+      updated_by: string;
     },
   ): Promise<Expense> {
     return firstValueFrom(
@@ -138,22 +199,9 @@ export class ApiEvents {
     );
   }
 
-  getBalances(eventId: string): Promise<{ balances: TBalance }> {
-    return firstValueFrom(
-      this.http.get<{ balances: TBalance }>(`${this.apiUrl}/${eventId}/balances`),
-    );
-  }
-
-  calculateSettlements(eventId: string): Promise<{ settlements: ISettlement[] }> {
-    return firstValueFrom(
-      this.http.get<{ settlements: ISettlement[] }>(`${this.apiUrl}/${eventId}/settlements`),
-    );
-  }
-
-  cleanupOldEvents(): Promise<{ success: boolean }> {
-    return firstValueFrom(
-      this.http.delete<{ success: boolean }>(`${environment.apiUrl}/events/cleanup`),
-    );
+  // PAYMENTS
+  getPayments(eventId: string): Promise<Payment[]> {
+    return firstValueFrom(this.http.get<Payment[]>(`${this.apiUrl}/${eventId}/payments`));
   }
 
   createPayment(
@@ -163,13 +211,23 @@ export class ApiEvents {
     return firstValueFrom(this.http.post<Payment>(`${this.apiUrl}/${eventId}/payments`, data));
   }
 
-  getPayments(eventId: string): Promise<Payment[]> {
-    return firstValueFrom(this.http.get<Payment[]>(`${this.apiUrl}/${eventId}/payments`));
-  }
-
   deletePayment(eventId: string, paymentId: string): Promise<{ success: boolean }> {
     return firstValueFrom(
       this.http.delete<{ success: boolean }>(`${this.apiUrl}/${eventId}/payments/${paymentId}`),
+    );
+  }
+
+  // BALANCES
+  getBalances(eventId: string): Promise<{ balances: TBalance }> {
+    return firstValueFrom(
+      this.http.get<{ balances: TBalance }>(`${this.apiUrl}/${eventId}/balances`),
+    );
+  }
+
+  // SETTLEMENTS
+  calculateSettlements(eventId: string): Promise<{ settlements: ISettlement[] }> {
+    return firstValueFrom(
+      this.http.get<{ settlements: ISettlement[] }>(`${this.apiUrl}/${eventId}/settlements`),
     );
   }
 }

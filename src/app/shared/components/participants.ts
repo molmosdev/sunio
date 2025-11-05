@@ -2,7 +2,7 @@ import { Component, input, model, output, computed } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideTrash } from '@ng-icons/lucide';
 import { Button } from '@basis-ng/primitives';
-import { IParticipant } from '../../interfaces/participant.interface';
+import { IParticipant } from '../interfaces/participant.interface';
 
 @Component({
   selector: 's-participants',

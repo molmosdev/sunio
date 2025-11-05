@@ -4,4 +4,6 @@ export interface IParticipant {
   name: string;
   pin?: string | null;
   created_at: string;
+  is_admin?: boolean;
+  pin_reset_requested?: boolean;
 }

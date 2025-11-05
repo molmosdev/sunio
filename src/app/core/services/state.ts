@@ -1,4 +1,12 @@
-import { computed, inject, Injectable, linkedSignal, resource, signal } from '@angular/core';
+import {
+  computed,
+  inject,
+  Injectable,
+  linkedSignal,
+  resource,
+  signal,
+  TemplateRef,
+} from '@angular/core';
 import { ApiEvents } from './api-events';
 import { IParticipant } from '../../shared/interfaces/participant.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
@@ -119,9 +127,55 @@ export class State {
     this._expenseForm.set({ active: false, expense: undefined });
   }
 
+  admins = resource({
+    params: () => ({ id: this.eventId() }),
+    loader: async ({ params }) => {
+      if (!params?.id) return undefined;
+      return await this._apiEvents.getAdmins(params.id);
+    },
+  });
+
   reloadAll(): void {
     this.reloadExpenses();
     this.reloadBalances();
     this.reloadSettlements();
+  }
+
+  isDynamicDrawerOpen = signal<boolean>(false);
+  dynamicDrawerContent = signal<TemplateRef<unknown> | null>(null);
+
+  private _drawerTimeout: ReturnType<typeof setTimeout> | null = null;
+  private readonly _drawerDelay = 200;
+
+  openDynamicDrawer(content: TemplateRef<unknown> | null): void {
+    if (this._drawerTimeout) {
+      clearTimeout(this._drawerTimeout);
+      this._drawerTimeout = null;
+    }
+
+    if (this.isDynamicDrawerOpen()) {
+      this.isDynamicDrawerOpen.set(false);
+      this._drawerTimeout = setTimeout(() => {
+        this.dynamicDrawerContent.set(content);
+        this.isDynamicDrawerOpen.set(true);
+        this._drawerTimeout = null;
+      }, this._drawerDelay);
+    } else {
+      this.dynamicDrawerContent.set(content);
+      this.isDynamicDrawerOpen.set(true);
+    }
+  }
+
+  closeDynamicDrawer(): void {
+    this.isDynamicDrawerOpen.set(false);
+
+    if (this._drawerTimeout) {
+      clearTimeout(this._drawerTimeout);
+      this._drawerTimeout = null;
+    }
+    this._drawerTimeout = setTimeout(() => {
+      this.dynamicDrawerContent.set(null);
+      this._drawerTimeout = null;
+    }, this._drawerDelay);
   }
 }

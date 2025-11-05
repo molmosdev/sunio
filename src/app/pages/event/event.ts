@@ -42,7 +42,7 @@ import { State } from '../../core/services/state';
       b-button
       [routerLink]="!isExpenseFormVisible() && !loggedParticipant() ? '/home' : null"
       (click)="isExpenseFormVisible() ? state.closeExpenseForm() : cleanLoggedParticipant()"
-      class="b-variant-outlined b-squared fixed top-4 left-4"
+      class="b-variant-outlined b-squared fixed top-6 left-6 z-20"
     >
       <ng-icon
         [name]="
@@ -73,7 +73,7 @@ import { State } from '../../core/services/state';
           <button
             b-button
             (click)="state.reloadAll()"
-            class="b-variant-outlined b-squared fixed top-4 right-4"
+            class="b-variant-outlined b-squared fixed top-6 right-6 z-20"
           >
             <ng-icon name="lucideRefreshCcw" size="16" color="currentColor" />
           </button>
@@ -90,7 +90,7 @@ import { State } from '../../core/services/state';
             }
           }
           @if (!isExpenseFormVisible()) {
-            <div class="w-full absolute bottom-0 flex gap-2 items-center">
+            <div class="w-full absolute bottom-6 flex gap-2 items-center z-10">
               <b-tabs class="b-size-lg flex-1" [(ngModel)]="selectedTab">
                 <b-tab value="expenses" class="flex-1">
                   {{ 'event.expenses.title' | translate }}
@@ -115,7 +115,7 @@ import { State } from '../../core/services/state';
   `,
   styles: ``,
   host: {
-    class: 'flex flex-col gap-4 items-center justify-center h-full relative w-full',
+    class: 'flex flex-col gap-4 items-center justify-center h-full relative w-full py-22',
   },
   providers: [
     provideIcons({

@@ -2,11 +2,11 @@ import { Component, computed, inject, linkedSignal, signal } from '@angular/core
 import { customError, Field, form, min, minLength, required } from '@angular/forms/signals';
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
-import { Participants } from '../../../../shared/components/participants/participants';
 import { ApiEvents } from '../../../../core/services/api-events';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePlus, lucideSave } from '@ng-icons/lucide';
 import { State } from '../../../../core/services/state';
+import { Participants } from '../../../../shared/components/participants';
 
 @Component({
   selector: 's-expense-form',
@@ -101,6 +101,7 @@ export class ExpenseForm {
 
   participants = computed(() => this._state.participants.value());
   expenseToEdit = computed(() => this._state.expenseForm().expense);
+  loggedParticipantId = computed(() => this._state.loggedParticipant()?.id);
 
   selectedPayer = linkedSignal<IParticipant[]>(() => {
     if (this.expenseToEdit()) {
@@ -125,6 +126,7 @@ export class ExpenseForm {
     amount: 0,
     consumers: [] as string[],
     description: '',
+    updated_by: this.loggedParticipantId() || '',
   });
 
   createForm = form(this.createFormDataModel, (expense) => {
@@ -172,6 +174,7 @@ export class ExpenseForm {
       amount: this.expenseToEdit()?.amount || 0,
       consumers: this.selectedConsumers().map((p) => p.id),
       description: this.expenseToEdit()?.description || '',
+      updated_by: this.loggedParticipantId() || '',
     };
   });
 

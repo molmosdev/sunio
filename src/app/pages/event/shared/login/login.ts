@@ -4,9 +4,9 @@ import { Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideForward } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
-import { Participants } from '../../../../shared/components/participants/participants';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { State } from '../../../../core/services/state';
+import { Participants } from '../../../../shared/components/participants';
 
 @Component({
   selector: 's-login',
