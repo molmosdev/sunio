@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { State } from './core/services/state';
 import { DynamicDrawer } from './shared/components/dynamic-drawer';
@@ -8,7 +8,10 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
   imports: [RouterOutlet, RouterLink, DynamicDrawer],
   template: `
     <header
-      class="flex justify-center items-center h-22 fixed top-0 left-0 w-full bg-linear-to-b from-background to-transparent dark:from-background-dark z-10"
+      [class]="
+        'flex justify-center items-center h-22 fixed top-0 left-0 w-full bg-linear-to-b to-transparent z-10 ' +
+        gradientClass()
+      "
     >
       <svg
         class="cursor-pointer outline-none"
@@ -41,7 +44,9 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
     <router-outlet class="absolute " />
     <s-dynamic-drawer />
     <div
-      class="flex bg-linear-to-t from-background to-transparent dark:from-background-dark fixed bottom-0 left-0 h-22 w-full"
+      [class]="
+        'flex bg-linear-to-t to-transparent fixed bottom-0 left-0 h-22 w-full ' + gradientClass()
+      "
     ></div>
   `,
   host: {
@@ -50,6 +55,12 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
 })
 export class App {
   private _state = inject(State);
+
+  gradientClass = computed(() =>
+    this._state.inDebt()
+      ? 'from-balance-negative dark:from-balance-negative-dark'
+      : 'from-background dark:from-background-dark',
+  );
 
   constructor() {
     effect(() => {
