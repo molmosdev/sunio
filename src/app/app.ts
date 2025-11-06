@@ -41,7 +41,7 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
         />
       </svg>
     </header>
-    <span class="my-auto text-center">Estamos haciendo cambios importantes. Disculpen mas molestias.</span>
+    <span class="my-auto text-center">Estamos haciendo cambios importantes. Disculpen las molestias.</span>
     <!--<router-outlet class="absolute " />
     <s-dynamic-drawer />
     <div
