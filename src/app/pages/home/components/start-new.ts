@@ -38,7 +38,7 @@ import { State } from '../../../core/services/state';
         Ir a mi sunio
       </button>
     } @else {
-      <h2 class="text-xl font-semibold">Inicia un sunio</h2
+      <h2 class="text-xl font-semibold">Inicia un sunio</h2>
       <input
         b-input
         type="text"
