@@ -41,14 +41,13 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
         />
       </svg>
     </header>
-    <span class="my-auto text-center">Estamos haciendo cambios importantes. Disculpen las molestias.</span>
-    <!--<router-outlet class="absolute " />
+    <router-outlet class="absolute " />
     <s-dynamic-drawer />
     <div
       [class]="
         'flex bg-linear-to-t to-transparent fixed bottom-0 left-0 h-22 w-full ' + gradientClass()
       "
-    ></div>-->
+    ></div>
   `,
   host: {
     class: 'h-dvh flex flex-col px-6 gap-6 w-full max-w-md mx-auto relative',
