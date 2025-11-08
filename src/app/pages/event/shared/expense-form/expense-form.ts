@@ -13,12 +13,13 @@ import { SelectField } from '../../../../shared/components/select-field';
   imports: [Input, InputGroup, Button, Field, TranslatePipe, NgIcon, SelectField],
   template: `
     <div class="flex flex-col gap-1.5">
+      @let form = expenseToEdit() ? editForm : createForm;
       <label class="font-semibold">{{ 'event.expenses.form.description' | translate }}</label>
       <input
         b-input
         type="text"
         class="b-size-lg"
-        [field]="expenseToEdit() ? editForm.description : createForm.description"
+        [field]="form.description"
         placeholder="{{ 'event.expenses.form.description-placeholder' | translate }}"
       />
       @if (descriptionError()) {
@@ -35,7 +36,7 @@ import { SelectField } from '../../../../shared/components/select-field';
           type="text"
           inputmode="decimal"
           class="b-size-lg"
-          [field]="expenseToEdit() ? editForm.amount : createForm.amount"
+          [field]="form.amount"
           [placeholder]="'0.00'"
           (blur)="onAmountBlur($event)"
         />
@@ -49,7 +50,9 @@ import { SelectField } from '../../../../shared/components/select-field';
     </div>
     <div class="flex flex-col gap-1.5">
       <label class="font-semibold">{{ 'event.expenses.form.paidBy' | translate }}</label>
+
       <s-select-field
+        [value]="form.payer_id().value() ? [form.payer_id().value()] : []"
         [options]="participantsOptions()!"
         placeholder="Selecciona el pagador..."
         (valueChanged)="onPayerSelected($event)"
@@ -63,6 +66,7 @@ import { SelectField } from '../../../../shared/components/select-field';
     <div class="flex flex-col gap-1.5">
       <label class="font-semibold">{{ 'event.expenses.form.split-between' | translate }}</label>
       <s-select-field
+        [value]="form.consumers().value()"
         [options]="participantsOptions()!"
         placeholder="Selecciona los consumidores..."
         [multiple]="true"
@@ -110,7 +114,7 @@ export class ExpenseForm {
       label: p.name,
     }));
   });
-  expenseToEdit = computed(() => this._state.expenseForm().expense);
+  expenseToEdit = computed(() => this._state.expenseToEdit());
   loggedParticipantId = computed(() => this._state.loggedParticipant()?.id);
 
   selectedPayer = linkedSignal<IParticipant[]>(() => {
@@ -295,7 +299,6 @@ export class ExpenseForm {
       this._state.reloadBalances();
       this._state.reloadExpenses();
       this._state.reloadSettlements();
-      this._state.closeExpenseForm();
       this._state.closeDynamicDrawer();
     }
   }
@@ -343,7 +346,6 @@ export class ExpenseForm {
       this._state.reloadBalances();
       this._state.reloadExpenses();
       this._state.reloadSettlements();
-      this._state.closeExpenseForm();
       this._state.closeDynamicDrawer();
     }
   }

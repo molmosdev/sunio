@@ -38,14 +38,12 @@ import { State } from '../../core/services/state';
   template: `
     <button
       b-button
-      [routerLink]="!isExpenseFormVisible() && !loggedParticipant() ? '/home' : null"
-      (click)="isExpenseFormVisible() ? state.closeExpenseForm() : cleanLoggedParticipant()"
+      [routerLink]="!loggedParticipant() ? '/home' : null"
+      (click)="cleanLoggedParticipant()"
       class="b-variant-outlined b-squared fixed top-6 left-6 z-20"
     >
       <ng-icon
-        [name]="
-          loggedParticipant() && !isExpenseFormVisible() ? 'lucideUserLock' : 'lucideArrowLeft'
-        "
+        [name]="loggedParticipant() ? 'lucideUserLock' : 'lucideArrowLeft'"
         size="16"
         color="currentColor"
       />
@@ -63,11 +61,12 @@ import { State } from '../../core/services/state';
         {{ 'event.go-home' | translate }}
       </button>
     } @else {
-      @if (!isExpenseFormVisible()) {
-        <s-title />
-      }
+      <s-title />
       <div class="flex-1 w-full flex gap-6 flex-col items-cente">
         @if (loggedParticipant()) {
+          <ng-template #expenseFormTpl>
+            <s-expense-form />
+          </ng-template>
           <button
             b-button
             (click)="state.reloadAll()"
@@ -75,39 +74,31 @@ import { State } from '../../core/services/state';
           >
             <ng-icon name="lucideRefreshCcw" size="16" color="currentColor" />
           </button>
-          @if (isExpenseFormVisible()) {
-            <s-expense-form />
-          } @else {
-            <s-balance />
-            @if (selectedTab()[0] === 'expenses') {
-              <s-expenses />
-            } @else if (selectedTab()[0] === 'balances') {
-              <s-balances />
-            } @else if (selectedTab()[0] === 'settlements') {
-              <s-settlements />
-            }
+          <s-balance />
+          @if (selectedTab()[0] === 'expenses') {
+            <s-expenses (editExpenseClicked)="openExpenseFormDrawer(expenseFormTpl)" />
+          } @else if (selectedTab()[0] === 'balances') {
+            <s-balances />
+          } @else if (selectedTab()[0] === 'settlements') {
+            <s-settlements />
           }
-          @if (!isExpenseFormVisible()) {
-            <div class="w-full absolute bottom-6 flex gap-2 items-center z-10">
-              <b-tabs class="b-size-lg flex-1" [(value)]="selectedTab">
-                <b-tab value="expenses" class="flex-1">
-                  {{ 'event.expenses.title' | translate }}
-                </b-tab>
-                <b-tab value="balances" class="flex-1">
-                  {{ 'event.balances.title' | translate }}
-                </b-tab>
-                <b-tab value="settlements" class="flex-1">
-                  {{ 'event.settlements.title' | translate }}
-                </b-tab>
-              </b-tabs>
-              <ng-template #expenseFormTpl>
-                <s-expense-form />
-              </ng-template>
-              <button b-button class="b-squared" (click)="openExpenseFormDrawer(expenseFormTpl)">
-                <ng-icon name="lucidePlus" size="16" color="currentColor" />
-              </button>
-            </div>
-          }
+          <div class="w-full absolute bottom-6 flex gap-2 items-center z-10">
+            <b-tabs class="b-size-lg flex-1" [(value)]="selectedTab">
+              <b-tab value="expenses" class="flex-1">
+                {{ 'event.expenses.title' | translate }}
+              </b-tab>
+              <b-tab value="balances" class="flex-1">
+                {{ 'event.balances.title' | translate }}
+              </b-tab>
+              <b-tab value="settlements" class="flex-1">
+                {{ 'event.settlements.title' | translate }}
+              </b-tab>
+            </b-tabs>
+
+            <button b-button class="b-squared" (click)="openExpenseFormDrawer(expenseFormTpl)">
+              <ng-icon name="lucidePlus" size="16" color="currentColor" />
+            </button>
+          </div>
         } @else {
           <s-login />
         }
@@ -137,8 +128,6 @@ export class Event {
   participants = computed(() => this.state.participants.value());
   loggedParticipant = computed(() => this.state.loggedParticipant());
   selectedTab = signal<('expenses' | 'balances' | 'settlements')[]>(['expenses']);
-
-  isExpenseFormVisible = computed(() => this.state.expenseForm().active);
 
   cleanLoggedParticipant() {
     this.state.setLoggedParticipant(null);

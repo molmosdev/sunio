@@ -109,22 +109,12 @@ export class State {
     this._loggedParticipant.set(participant);
   }
 
-  private _expenseForm = signal<{
-    active: boolean;
-    expense: Expense | undefined;
-  }>({
-    active: false,
-    expense: undefined,
-  });
+  private _expenseToEdit = signal<Expense | null>(null);
+  expenseToEdit = computed(() => this._expenseToEdit());
 
-  expenseForm = computed(() => this._expenseForm());
-
-  openExpenseForm(expense?: Expense): void {
-    this._expenseForm.set({ active: true, expense });
-  }
-
-  closeExpenseForm(): void {
-    this._expenseForm.set({ active: false, expense: undefined });
+  setExpenseToEdit(expenseId: string): void {
+    const expense = this.expenses.value()?.find((e) => e.id === expenseId) || null;
+    this._expenseToEdit.set(expense);
   }
 
   admins = resource({

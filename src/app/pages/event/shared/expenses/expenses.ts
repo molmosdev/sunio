@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { CurrencyPipe, LowerCasePipe } from '@angular/common';
 import { Button, TranslationManager, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -33,7 +33,11 @@ import { State } from '../../../../core/services/state';
               </span>
             </div>
             <div class="flex-1 gap-1 flex justify-end items-center">
-              <button b-button class="b-variant-ghost b-squared" (click)="state.openExpenseForm(e)">
+              <button
+                b-button
+                class="b-variant-ghost b-squared"
+                (click)="onEditExpenseButtonClicked(e.id)"
+              >
                 <ng-icon name="lucidePencil" size="16" color="currentColor" />
               </button>
               <button b-button class="b-variant-ghost b-squared" (click)="deleteExpense(e.id)">
@@ -87,5 +91,12 @@ export class Expenses {
     await this._apiEvents.deleteExpense(eventId, expenseId);
     this.state.reloadExpenses();
     this.state.reloadBalances();
+  }
+
+  editExpenseClicked = output<void>();
+
+  onEditExpenseButtonClicked(expenseId: string) {
+    this.state.setExpenseToEdit(expenseId);
+    this.editExpenseClicked.emit();
   }
 }

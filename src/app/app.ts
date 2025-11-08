@@ -9,7 +9,7 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
   template: `
     <header
       [class]="
-        'flex justify-center items-center h-22 fixed top-0 left-0 w-full bg-linear-to-b to-transparent z-10 ' +
+        'flex justify-center items-center h-22 fixed top-0 left-0 w-full bg-linear-to-b to-transparent z-10 transition-colors duration-150 ' +
         gradientClass()
       "
     >
@@ -45,7 +45,8 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
     <s-dynamic-drawer />
     <div
       [class]="
-        'flex bg-linear-to-t to-transparent fixed bottom-0 left-0 h-22 w-full ' + gradientClass()
+        'flex bg-linear-to-t to-transparent fixed bottom-0 left-0 h-22 w-full transition-colors duration-150 ' +
+        gradientClass()
       "
     ></div>
   `,
