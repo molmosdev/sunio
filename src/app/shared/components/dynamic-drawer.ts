@@ -14,6 +14,7 @@ import { Drawer } from '@basis-ng/primitives';
       [(isOpen)]="state.isDynamicDrawerOpen"
       [style.height]="'auto'"
       class="rounded-t-size-lg! max-w-md!"
+      (closeSheet)="onDrawerClosed()"
     >
       <div class="px-6 pb-6 flex flex-col gap-4">
         <ng-container [ngTemplateOutlet]="content()" />
@@ -24,4 +25,10 @@ import { Drawer } from '@basis-ng/primitives';
 export class DynamicDrawer {
   state = inject(State);
   content = computed(() => this.state.dynamicDrawerContent());
+
+  onDrawerClosed(): void {
+    if (this.state.expenseToEdit() !== null) {
+      this.state.setExpenseToEdit(null);
+    }
+  }
 }

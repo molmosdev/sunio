@@ -300,6 +300,7 @@ export class ExpenseForm {
       this._state.reloadExpenses();
       this._state.reloadSettlements();
       this._state.closeDynamicDrawer();
+      this._state.setExpenseToEdit(null);
     }
   }
 
@@ -347,6 +348,7 @@ export class ExpenseForm {
       this._state.reloadExpenses();
       this._state.reloadSettlements();
       this._state.closeDynamicDrawer();
+      this._state.setExpenseToEdit(null);
     }
   }
 

@@ -112,7 +112,11 @@ export class State {
   private _expenseToEdit = signal<Expense | null>(null);
   expenseToEdit = computed(() => this._expenseToEdit());
 
-  setExpenseToEdit(expenseId: string): void {
+  setExpenseToEdit(expenseId: string | null): void {
+    if (!expenseId) {
+      this._expenseToEdit.set(null);
+      return;
+    }
     const expense = this.expenses.value()?.find((e) => e.id === expenseId) || null;
     this._expenseToEdit.set(expense);
   }
