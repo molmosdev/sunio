@@ -98,7 +98,7 @@ export class Login {
         value: p.id,
         label: p.name,
       }));
-    return [
+    return selectedParticipant().length === 0 ? mappedParticipants : [
       { value: '', label: '' },
       ...mappedParticipants,
     ];
