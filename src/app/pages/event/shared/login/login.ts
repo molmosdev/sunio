@@ -94,12 +94,13 @@ export class Login {
   participantOptions = computed(() => {
     const participants = this.participants();
     if (!participants) return [];
-    return [
-      { value: '', label: '' },
-      ...participants.map((p) => ({
+    const mappedParticipants = participants.map((p) => ({
         value: p.id,
         label: p.name,
-      })),
+      });
+    return [
+      { value: '', label: '' },
+      ...mappedParticipants),
     ];
   });
   selectedParticipantIds = signal<string[]>([]);
