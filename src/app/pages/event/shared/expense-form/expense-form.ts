@@ -6,17 +6,18 @@ import { ApiEvents } from '../../../../core/services/api-events';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucidePlus, lucideSave } from '@ng-icons/lucide';
 import { State } from '../../../../core/services/state';
-import { Participants } from '../../../../shared/components/participants';
+import { SelectField } from '../../../../shared/components/select-field';
 
 @Component({
   selector: 's-expense-form',
-  imports: [Input, InputGroup, Button, Field, Participants, TranslatePipe, NgIcon],
+  imports: [Input, InputGroup, Button, Field, TranslatePipe, NgIcon, SelectField],
   template: `
-    <div class="flex flex-col gap-1.5 items-center">
+    <div class="flex flex-col gap-1.5">
       <label class="font-semibold">{{ 'event.expenses.form.description' | translate }}</label>
       <input
         b-input
         type="text"
+        class="b-size-lg"
         [field]="expenseToEdit() ? editForm.description : createForm.description"
         placeholder="{{ 'event.expenses.form.description-placeholder' | translate }}"
       />
@@ -26,13 +27,14 @@ import { Participants } from '../../../../shared/components/participants';
         </p>
       }
     </div>
-    <div class="flex flex-col gap-1.5 items-center">
+    <div class="flex flex-col gap-1.5">
       <label class="font-semibold">{{ 'event.expenses.form.amount' | translate }}</label>
       <b-input-group>
         <input
           b-input
           type="text"
           inputmode="decimal"
+          class="b-size-lg"
           [field]="expenseToEdit() ? editForm.amount : createForm.amount"
           [placeholder]="'0.00'"
           (blur)="onAmountBlur($event)"
@@ -45,13 +47,12 @@ import { Participants } from '../../../../shared/components/participants';
         </p>
       }
     </div>
-    <div class="flex flex-col gap-0.5 items-center">
+    <div class="flex flex-col gap-1.5">
       <label class="font-semibold">{{ 'event.expenses.form.paidBy' | translate }}</label>
-      <s-participants
-        [participants]="participants()"
-        [(selected)]="selectedPayer"
-        [multiple]="false"
-        (participantSelected)="onPayerSelected()"
+      <s-select-field
+        [options]="participantsOptions()!"
+        placeholder="Selecciona el pagador..."
+        (valueChanged)="onPayerSelected($event)"
       />
       @if (payerError()) {
         <p class="text-sm text-destructive dark:text-destructive-dark mt-1">
@@ -59,13 +60,13 @@ import { Participants } from '../../../../shared/components/participants';
         </p>
       }
     </div>
-    <div class="flex flex-col gap-0.5 items-center">
+    <div class="flex flex-col gap-1.5">
       <label class="font-semibold">{{ 'event.expenses.form.split-between' | translate }}</label>
-      <s-participants
-        [participants]="participants()"
-        [(selected)]="selectedConsumers"
+      <s-select-field
+        [options]="participantsOptions()!"
+        placeholder="Selecciona los consumidores..."
         [multiple]="true"
-        (participantSelected)="onConsumersSelected()"
+        (valueChanged)="onConsumersSelected($event)"
       />
       @if (consumersError()) {
         <p class="text-sm text-destructive dark:text-destructive-dark mt-1">
@@ -73,7 +74,11 @@ import { Participants } from '../../../../shared/components/participants';
         </p>
       }
     </div>
-    <button b-button class="mt-2" (click)="expenseToEdit() ? submitEditForm() : submitCreateForm()">
+    <button
+      b-button
+      class="mt-2 b-size-lg"
+      (click)="expenseToEdit() ? submitEditForm() : submitCreateForm()"
+    >
       @if (expenseToEdit()) {
         <ng-icon name="lucideSave" size="14" color="currentColor" />
         <span>{{ 'event.expenses.update' | translate }}</span>
@@ -84,7 +89,7 @@ import { Participants } from '../../../../shared/components/participants';
     </button>
   `,
   host: {
-    class: 'flex flex-1 flex-col gap-5 justify-center items-center',
+    class: 'flex w-full flex-col gap-5',
   },
   providers: [
     provideIcons({
@@ -99,6 +104,12 @@ export class ExpenseForm {
   private _translateManager = inject(TranslationManager);
 
   participants = computed(() => this._state.participants.value());
+  participantsOptions = computed(() => {
+    return this.participants()?.map((p) => ({
+      value: p.id,
+      label: p.name,
+    }));
+  });
   expenseToEdit = computed(() => this._state.expenseForm().expense);
   loggedParticipantId = computed(() => this._state.loggedParticipant()?.id);
 
@@ -221,18 +232,28 @@ export class ExpenseForm {
       : null;
   });
 
-  onPayerSelected() {
-    const selected = this.selectedPayer();
+  onPayerSelected(selectedValue?: string[]) {
+    if (selectedValue) {
+      // Called from select-field
+      const selectedParticipants = this.participants()?.filter((p) => selectedValue.includes(p.id));
+      this.selectedPayer.set(selectedParticipants || []);
+    }
+    // Update form with current selectedPayer value (works for both select-field and participants)
     const form = this.expenseToEdit() ? this.editForm : this.createForm;
     form.payer_id().markAsDirty();
-    form.payer_id().value.set(selected.length ? selected[0].id : '');
+    form.payer_id().value.set(this.selectedPayer().length ? this.selectedPayer()[0].id : '');
   }
 
-  onConsumersSelected() {
-    const selected = this.selectedConsumers();
+  onConsumersSelected(selectedValue?: string[]) {
+    if (selectedValue) {
+      // Called from select-field
+      const selectedParticipants = this.participants()?.filter((p) => selectedValue.includes(p.id));
+      this.selectedConsumers.set(selectedParticipants || []);
+    }
+    // Update form with current selectedConsumers value (works for both select-field and participants)
     const form = this.expenseToEdit() ? this.editForm : this.createForm;
     form.consumers().markAsDirty();
-    form.consumers().value.set(selected.map((p) => p.id));
+    form.consumers().value.set(selectedValue || []);
   }
 
   createDataModelWithFormattedAmount = computed(() => {
@@ -275,6 +296,7 @@ export class ExpenseForm {
       this._state.reloadExpenses();
       this._state.reloadSettlements();
       this._state.closeExpenseForm();
+      this._state.closeDynamicDrawer();
     }
   }
 
@@ -322,6 +344,7 @@ export class ExpenseForm {
       this._state.reloadExpenses();
       this._state.reloadSettlements();
       this._state.closeExpenseForm();
+      this._state.closeDynamicDrawer();
     }
   }
 

@@ -4,13 +4,13 @@ import { ApiEvents } from '../../../core/services/api-events';
 import { Field, form, required } from '@angular/forms/signals';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideCheckCircle, lucideCopy, lucideLoader } from '@ng-icons/lucide';
-import { FormsModule } from '@angular/forms';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { RouterLink } from '@angular/router';
+import { State } from '../../../core/services/state';
 
 @Component({
   selector: 's-start-new',
-  imports: [Input, Button, NgIcon, FormsModule, CdkCopyToClipboard, Field, RouterLink, InputGroup],
+  imports: [Input, Button, NgIcon, CdkCopyToClipboard, Field, RouterLink, InputGroup],
   template: `
     @if (eventCode()) {
       <div class="flex flex-col items-center gap-2">
@@ -21,7 +21,7 @@ import { RouterLink } from '@angular/router';
         </span>
       </div>
       <b-input-group class="w-full">
-        <input b-input type="text" class="b-size-lg" [ngModel]="eventUrl()" [disabled]="true" />
+        <input b-input type="text" class="b-size-lg" [value]="eventUrl()" [disabled]="true" />
         <button b-button class="b-variant-secondary b-size-md" [cdkCopyToClipboard]="eventUrl()">
           <ng-icon name="lucideCopy" size="20" color="currentColor" />
         </button>
@@ -29,7 +29,12 @@ import { RouterLink } from '@angular/router';
       <button b-button class="b-size-lg b-variant-secondary" (click)="shareOnWhatsApp()">
         Compartir en WhatsApp
       </button>
-      <button b-button class="b-size-lg b-variant-primary" [routerLink]="'/' + eventCode()">
+      <button
+        b-button
+        class="b-size-lg b-variant-primary"
+        [routerLink]="'/' + eventCode()"
+        (click)="onGoToMySunioButtonClick()"
+      >
         Ir a mi sunio
       </button>
     } @else {
@@ -104,5 +109,11 @@ export class StartNew {
 
   shareOnWhatsApp() {
     window.open('https://wa.me/?text=' + this.eventUrl(), '_blank');
+  }
+
+  private _state = inject(State);
+
+  onGoToMySunioButtonClick() {
+    this._state.closeDynamicDrawer();
   }
 }

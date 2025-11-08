@@ -13,14 +13,13 @@ import { Drawer } from '@basis-ng/primitives';
     <b-drawer
       [(isOpen)]="state.isDynamicDrawerOpen"
       [style.height]="'auto'"
-      class="absolute! rounded-t-size-lg!"
+      class="rounded-t-size-lg! max-w-md!"
     >
       <div class="px-6 pb-6 flex flex-col gap-4">
         <ng-container [ngTemplateOutlet]="content()" />
       </div>
     </b-drawer>
   `,
-  host: { class: 'fixed bottom-0 left-1/2 -translate-x-1/2 z-30 w-full max-w-md' },
 })
 export class DynamicDrawer {
   state = inject(State);

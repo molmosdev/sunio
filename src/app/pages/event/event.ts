@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Button, Tab, Tabs, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -16,7 +16,6 @@ import { Login } from './shared/login/login';
 import { Expenses } from './shared/expenses/expenses';
 import { ExpenseForm } from './shared/expense-form/expense-form';
 import { Settlements } from './shared/settlements/settlements';
-import { FormsModule } from '@angular/forms';
 import { State } from '../../core/services/state';
 
 @Component({
@@ -35,7 +34,6 @@ import { State } from '../../core/services/state';
     TranslatePipe,
     Tabs,
     Tab,
-    FormsModule,
   ],
   template: `
     <button
@@ -91,7 +89,7 @@ import { State } from '../../core/services/state';
           }
           @if (!isExpenseFormVisible()) {
             <div class="w-full absolute bottom-6 flex gap-2 items-center z-10">
-              <b-tabs class="b-size-lg flex-1" [(ngModel)]="selectedTab">
+              <b-tabs class="b-size-lg flex-1" [(value)]="selectedTab">
                 <b-tab value="expenses" class="flex-1">
                   {{ 'event.expenses.title' | translate }}
                 </b-tab>
@@ -102,7 +100,10 @@ import { State } from '../../core/services/state';
                   {{ 'event.settlements.title' | translate }}
                 </b-tab>
               </b-tabs>
-              <button b-button class="b-squared" (click)="state.openExpenseForm()">
+              <ng-template #expenseFormTpl>
+                <s-expense-form />
+              </ng-template>
+              <button b-button class="b-squared" (click)="openExpenseFormDrawer(expenseFormTpl)">
                 <ng-icon name="lucidePlus" size="16" color="currentColor" />
               </button>
             </div>
@@ -141,5 +142,9 @@ export class Event {
 
   cleanLoggedParticipant() {
     this.state.setLoggedParticipant(null);
+  }
+
+  openExpenseFormDrawer(template: TemplateRef<unknown>) {
+    this.state.openDynamicDrawer(template);
   }
 }
