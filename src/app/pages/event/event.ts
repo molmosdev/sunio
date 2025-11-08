@@ -82,7 +82,7 @@ import { State } from '../../core/services/state';
           } @else if (selectedTab()[0] === 'settlements') {
             <s-settlements />
           }
-          <div class="w-full absolute bottom-6 flex gap-2 items-center z-10">
+          <div class="w-full absolute bottom-0 flex gap-2 items-center z-10">
             <b-tabs class="b-size-lg flex-1" [(value)]="selectedTab">
               <b-tab value="expenses" class="flex-1">
                 {{ 'event.expenses.title' | translate }}
