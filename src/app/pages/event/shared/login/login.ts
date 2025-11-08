@@ -1,32 +1,44 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
 import { customError, Field, form, required } from '@angular/forms/signals';
-import { Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideForward } from '@ng-icons/lucide';
+import { Input, TranslatePipe, TranslationManager, Button } from '@basis-ng/primitives';
+import { provideIcons } from '@ng-icons/core';
+import { lucideForward, lucideUserPlus } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
-import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { State } from '../../../../core/services/state';
-import { Participants } from '../../../../shared/components/participants';
+import { SelectField } from '../../../../shared/components/select-field';
+import { AddParticipant } from '../add-participant/add-participant';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 's-login',
-  imports: [NgIcon, Input, InputGroup, Participants, TranslatePipe, Field],
+  imports: [Input, TranslatePipe, Field, SelectField, Button, AddParticipant, NgIcon],
   template: `
-    <div class="flex flex-col gap-1 items-center">
-      <div class="font-medium text-center">{{ 'event.login.who-are-you' | translate }}</div>
-      <s-participants
-        [participants]="participants()"
-        [(selected)]="selectedParticipant"
-        (participantSelected)="pinDataModel.set({ pin: '' })"
+    <ng-template #addParticipantTpl>
+      <s-add-participant />
+    </ng-template>
+    @if (participants()?.length === 0) {
+      <p class="text-center">Este sunio aún no tiene participantes registrados.</p>
+      <button
+        b-button
+        class="b-size-lg w-full"
+        (click)="openAddParticipantDrawer(addParticipantTpl)"
+      >
+        Únete al sunio
+      </button>
+    } @else {
+      <s-select-field
+        [options]="participantOptions()!"
+        [placeholder]="'event.login.who-are-you' | translate"
+        [(value)]="selectedParticipantIds"
+        (valueChange)="pinDataModel.set({ pin: '' })"
       />
-    </div>
-    @if (selectedParticipant().length === 1) {
-      <b-input-group>
+      @if (selectedParticipant().length === 1) {
         <input
           b-input
           type="password"
           inputmode="numeric"
           placeholder="PIN"
+          class="b-size-lg w-full"
           [field]="pinForm.pin"
           [placeholder]="
             !selectedParticipant()[0]?.pin
@@ -35,26 +47,41 @@ import { Participants } from '../../../../shared/components/participants';
           "
           (keydown.enter)="submitPin()"
         />
-        <button
-          b-button
-          class="b-size-sm b-squared b-variant-outlined"
-          (click)="submitPin()"
-          [disabled]="isSubmittingPin()"
-        >
-          <ng-icon name="lucideForward" size="13" color="currentColor" />
-        </button>
-      </b-input-group>
-      @if (pinForm.pin().errors().length > 0 && pinForm.pin().dirty()) {
-        <p class="text-sm text-destructive dark:text-destructive-dark">
-          {{ pinForm.pin().errors()[0].message }}
-        </p>
+        @if (pinForm.pin().errors().length > 0 && pinForm.pin().dirty()) {
+          <p class="text-sm text-destructive dark:text-destructive-dark">
+            {{ pinForm.pin().errors()[0].message }}
+          </p>
+        }
+        @if (pinForm.pin().errors().length === 0 && pinForm.pin().dirty()) {
+          <button
+            b-button
+            class="b-size-lg w-full"
+            (click)="submitPin()"
+            [disabled]="isSubmittingPin()"
+          >
+            Acceder
+          </button>
+        }
+      }
+      @if (selectedParticipant().length === 0) {
+        <div class="flex flex-col gap-2 items-center mt-4">
+          <span class="text-sm text-gray-500">¿No te encuentras?</span>
+          <button
+            b-button
+            class="b-variant-secondary b-size-lg"
+            (click)="openAddParticipantDrawer(addParticipantTpl)"
+          >
+            <ng-icon name="lucideUserPlus" size="16" color="currentColor" />
+            Únete
+          </button>
+        </div>
       }
     }
   `,
   host: {
-    class: 'flex-1 flex flex-col gap-6 items-center justify-center',
+    class: 'flex-1 flex flex-col gap-4 items-center justify-center',
   },
-  providers: [provideIcons({ lucideForward })],
+  providers: [provideIcons({ lucideForward, lucideUserPlus })],
 })
 export class Login {
   private _state = inject(State);
@@ -64,8 +91,23 @@ export class Login {
   eventId = computed(() => this._state.eventId());
   loggedParticipant = computed(() => this._state.loggedParticipant());
   participants = computed(() => this._state.participants.value());
+  participantOptions = computed(() => {
+    const participants = this.participants();
+    if (!participants) return [];
+    return [
+      { value: '', label: '' },
+      ...participants.map((p) => ({
+        value: p.id,
+        label: p.name,
+      })),
+    ];
+  });
+  selectedParticipantIds = signal<string[]>([]);
 
-  selectedParticipant = signal<IParticipant[]>([]);
+  selectedParticipant = computed(() => {
+    const ids = this.selectedParticipantIds();
+    return this.participants()?.filter((p) => ids.includes(p.id)) || [];
+  });
   isSubmittingPin = signal(false);
   pinDataModel = signal<{ pin: string }>({ pin: '' });
 
@@ -111,5 +153,9 @@ export class Login {
         this.isSubmittingPin.set(false);
       }
     }
+  }
+
+  openAddParticipantDrawer(template: TemplateRef<unknown>) {
+    this._state.openDynamicDrawer(template);
   }
 }

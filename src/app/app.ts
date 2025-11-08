@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { State } from './core/services/state';
 import { DynamicDrawer } from './shared/components/dynamic-drawer';
 
 @Component({
   selector: 's-root',
-  imports: [RouterOutlet, RouterLink, DynamicDrawer],
+  imports: [RouterOutlet, DynamicDrawer],
   template: `
     <header
       [class]="
@@ -14,8 +14,7 @@ import { DynamicDrawer } from './shared/components/dynamic-drawer';
       "
     >
       <svg
-        class="cursor-pointer outline-none"
-        routerLink="/home"
+        class="outline-none"
         width="30"
         height="30"
         viewBox="0 0 328 328"
