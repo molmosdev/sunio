@@ -97,10 +97,10 @@ export class Login {
     const mappedParticipants = participants.map((p) => ({
         value: p.id,
         label: p.name,
-      });
+      }));
     return [
       { value: '', label: '' },
-      ...mappedParticipants),
+      ...mappedParticipants,
     ];
   });
   selectedParticipantIds = signal<string[]>([]);
