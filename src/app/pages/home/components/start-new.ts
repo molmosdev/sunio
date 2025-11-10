@@ -77,7 +77,7 @@ import { State } from '../../../core/services/state';
     }
   `,
   host: {
-    class: 'flex flex-col gap-4 pt-2',
+    class: 'flex flex-col gap-4',
   },
   providers: [
     provideIcons({
