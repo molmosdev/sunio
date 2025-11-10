@@ -10,11 +10,10 @@ import { State } from '../../../../core/services/state';
   selector: 's-add-participant',
   imports: [Input, Button, Field, NgIcon],
   template: `
-    <h2 class="text-xl font-semibold">Únete al sunio</h2>
     <input
       b-input
       type="text"
-      class="b-size-lg w-full"
+      class="b-size-lg w-full b-rounded-full"
       [field]="participantForm.name"
       placeholder="Tu nombre"
     />
@@ -27,7 +26,7 @@ import { State } from '../../../../core/services/state';
       b-input
       type="password"
       inputmode="numeric"
-      class="b-size-lg w-full"
+      class="b-size-lg w-full b-rounded-full"
       [field]="participantForm.pin"
       placeholder="Crea un PIN"
     />
@@ -39,7 +38,7 @@ import { State } from '../../../../core/services/state';
     <span class="text-sm text-gray-500">
       Introduce tu nombre y crea un PIN para unirte al sunio y empezar a compartir gastos.
     </span>
-    <button b-button class="b-size-lg b-variant-primary" (click)="submitForm()">
+    <button b-button class="b-size-lg b-variant-primary b-rounded-full" (click)="submitForm()">
       @if (isSubmitting()) {
         <ng-icon name="lucideLoader" size="16" color="currentColor" class="animate-spin" />
       } @else {
