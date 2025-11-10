@@ -20,7 +20,7 @@ import { NgIcon } from '@ng-icons/core';
       <p class="text-center">Este sunio aún no tiene participantes registrados.</p>
       <button
         b-button
-        class="b-size-lg w-full"
+        class="b-size-lg w-full b-rounded-full"
         (click)="openAddParticipantDrawer(addParticipantTpl)"
       >
         Únete al sunio
@@ -38,7 +38,7 @@ import { NgIcon } from '@ng-icons/core';
           type="password"
           inputmode="numeric"
           placeholder="PIN"
-          class="b-size-lg w-full"
+          class="b-size-lg w-full b-rounded-full"
           [field]="pinForm.pin"
           [placeholder]="
             !selectedParticipant()[0]?.pin
@@ -55,7 +55,7 @@ import { NgIcon } from '@ng-icons/core';
         @if (pinForm.pin().errors().length === 0 && pinForm.pin().dirty()) {
           <button
             b-button
-            class="b-size-lg w-full"
+            class="b-size-lg w-full b-rounded-full"
             (click)="submitPin()"
             [disabled]="isSubmittingPin()"
           >
@@ -64,17 +64,14 @@ import { NgIcon } from '@ng-icons/core';
         }
       }
       @if (selectedParticipant().length === 0) {
-        <div class="flex flex-col gap-2 items-center mt-4">
-          <span class="text-sm text-gray-500">¿No te encuentras?</span>
-          <button
-            b-button
-            class="b-variant-secondary b-size-lg"
-            (click)="openAddParticipantDrawer(addParticipantTpl)"
-          >
-            <ng-icon name="lucideUserPlus" size="16" color="currentColor" />
-            Únete
-          </button>
-        </div>
+        <button
+          b-button
+          class="b-variant-secondary b-size-lg b-rounded-full w-full"
+          (click)="openAddParticipantDrawer(addParticipantTpl)"
+        >
+          <ng-icon name="lucideUserPlus" size="17" color="currentColor" />
+          Únete
+        </button>
       }
     }
   `,
