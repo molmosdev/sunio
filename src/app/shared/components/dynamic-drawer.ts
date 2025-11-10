@@ -13,7 +13,7 @@ import { Drawer } from '@basis-ng/primitives';
     <b-drawer
       [(isOpen)]="state.isDynamicDrawerOpen"
       [style.height]="'auto'"
-      class="rounded-t-size-lg! max-w-md!"
+      class="rounded-t-3xl! max-w-md!"
       (closeSheet)="onDrawerClosed()"
     >
       <div class="px-6 pb-6 flex flex-col gap-4">
