@@ -67,13 +67,17 @@ import { Join } from './components/join';
       <ng-template #addDrawerTpl>
         <button
           b-button
-          class="b-size-lg b-variant-secondary"
+          class="b-size-lg b-variant-secondary b-rounded-full"
           (click)="openStartNewDrawer(startNewTpl)"
         >
           <ng-icon name="lucideCirclePlus" size="20" />
           Iniciar nuevo sunio
         </button>
-        <button b-button class="b-size-lg b-variant-secondary" (click)="openJoinDrawer(joinTpl)">
+        <button
+          b-button
+          class="b-size-lg b-variant-secondary b-rounded-full"
+          (click)="openJoinDrawer(joinTpl)"
+        >
           <ng-icon name="lucideCloudDownload" size="20" />
           Únete a un sunio existente
         </button>
