@@ -16,7 +16,7 @@ import { Drawer } from '@basis-ng/primitives';
       class="rounded-t-3xl! max-w-md!"
       (closeSheet)="onDrawerClosed()"
     >
-      <div class="px-6 pb-6 flex flex-col gap-4">
+      <div class="px-6 pt-2 pb-6 flex flex-col gap-4">
         <ng-container [ngTemplateOutlet]="content()" />
       </div>
     </b-drawer>
