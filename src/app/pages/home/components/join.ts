@@ -8,11 +8,10 @@ import { State } from '../../../core/services/state';
   selector: 's-join',
   imports: [Input, Button, Field],
   template: `
-    <h2 class="text-xl font-semibold">Únete a un sunio</h2>
     <input
       b-input
       placeholder="Introduce el código del sunio"
-      class="w-full b-size-lg"
+      class="w-full b-size-lg b-rounded-full"
       [field]="eventToJoin.eventId"
     />
     <span class="text-sm text-gray-500"
@@ -21,10 +20,12 @@ import { State } from '../../../core/services/state';
     @if (eventIdError()) {
       <span class="text-sm text-destructive dark:text-destructive-dark">{{ eventIdError() }}</span>
     }
-    <button b-button class="b-size-lg b-variant-primary" (click)="submitForm()">Unirse</button>
+    <button b-button class="b-size-lg b-variant-primary b-rounded-full" (click)="submitForm()">
+      Unirse
+    </button>
   `,
   host: {
-    class: 'flex flex-col gap-4',
+    class: 'flex flex-col gap-4 pt-2',
   },
 })
 export class Join {
