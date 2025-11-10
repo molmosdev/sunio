@@ -8,6 +8,7 @@ import {
   lucideUserLock,
   lucidePlus,
   lucideRefreshCcw,
+  lucideLogOut,
 } from '@ng-icons/lucide';
 import { Balance } from './shared/balance/balance';
 import { Balances } from './shared/balances/balances';
@@ -43,7 +44,7 @@ import { State } from '../../core/services/state';
       class="b-variant-secondary b-squared fixed top-6 left-6 z-20 b-size-lg b-rounded-full"
     >
       <ng-icon
-        [name]="loggedParticipant() ? 'lucideUserLock' : 'lucideArrowLeft'"
+        [name]="loggedParticipant() ? 'lucideLogOut' : 'lucideArrowLeft'"
         size="20"
         color="currentColor"
       />
@@ -75,6 +76,17 @@ import { State } from '../../core/services/state';
             <ng-icon name="lucideRefreshCcw" size="16" color="currentColor" />
           </button>
           <s-balance />
+          <b-tabs class="b-rounded-full" [(value)]="selectedTab">
+            <b-tab value="expenses" class="flex-1 b-rounded-full">
+              {{ 'event.expenses.title' | translate }}
+            </b-tab>
+            <b-tab value="balances" class="flex-1 b-rounded-full">
+              {{ 'event.balances.title' | translate }}
+            </b-tab>
+            <b-tab value="settlements" class="flex-1 b-rounded-full">
+              {{ 'event.settlements.title' | translate }}
+            </b-tab>
+          </b-tabs>
           @if (selectedTab()[0] === 'expenses') {
             <s-expenses (editExpenseClicked)="openExpenseFormDrawer(expenseFormTpl)" />
           } @else if (selectedTab()[0] === 'balances') {
@@ -82,23 +94,13 @@ import { State } from '../../core/services/state';
           } @else if (selectedTab()[0] === 'settlements') {
             <s-settlements />
           }
-          <div class="w-full absolute bottom-0 flex gap-2 items-center z-10">
-            <b-tabs class="b-size-lg flex-1" [(value)]="selectedTab">
-              <b-tab value="expenses" class="flex-1">
-                {{ 'event.expenses.title' | translate }}
-              </b-tab>
-              <b-tab value="balances" class="flex-1">
-                {{ 'event.balances.title' | translate }}
-              </b-tab>
-              <b-tab value="settlements" class="flex-1">
-                {{ 'event.settlements.title' | translate }}
-              </b-tab>
-            </b-tabs>
-
-            <button b-button class="b-squared" (click)="openExpenseFormDrawer(expenseFormTpl)">
-              <ng-icon name="lucidePlus" size="16" color="currentColor" />
-            </button>
-          </div>
+          <button
+            b-button
+            class="b-squared b-rounded-full b-size-lg absolute bottom-6 flex gap-2 items-center z-10 left-1/2 transform -translate-x-1/2 translate-y-1/2 b-variant-primary"
+            (click)="openExpenseFormDrawer(expenseFormTpl)"
+          >
+            <ng-icon name="lucidePlus" size="16" color="currentColor" />
+          </button>
         } @else {
           <s-login />
         }
@@ -116,6 +118,7 @@ import { State } from '../../core/services/state';
       lucideArrowLeft,
       lucidePlus,
       lucideRefreshCcw,
+      lucideLogOut,
     }),
   ],
 })
