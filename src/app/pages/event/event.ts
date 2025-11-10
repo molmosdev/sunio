@@ -40,11 +40,11 @@ import { State } from '../../core/services/state';
       b-button
       [routerLink]="!loggedParticipant() ? '/home' : null"
       (click)="cleanLoggedParticipant()"
-      class="b-variant-outlined b-squared fixed top-6 left-6 z-20"
+      class="b-variant-secondary b-squared fixed top-6 left-6 z-20 b-size-lg b-rounded-full"
     >
       <ng-icon
         [name]="loggedParticipant() ? 'lucideUserLock' : 'lucideArrowLeft'"
-        size="16"
+        size="20"
         color="currentColor"
       />
     </button>
