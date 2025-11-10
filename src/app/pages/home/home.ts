@@ -88,7 +88,7 @@ import { Join } from './components/join';
         class="b-squared b-rounded-full b-size-lg fixed bottom-5 z-10"
         (click)="openAddDrawer(addDrawerTpl)"
       >
-        <ng-icon name="lucidePlus" size="29" />
+        <ng-icon name="lucidePlus" size="24" />
       </button>
     </div>
   `,
