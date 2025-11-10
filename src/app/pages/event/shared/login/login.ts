@@ -95,13 +95,12 @@ export class Login {
     const participants = this.participants();
     if (!participants) return [];
     const mappedParticipants = participants.map((p) => ({
-        value: p.id,
-        label: p.name,
-      }));
-    return this.selectedParticipant().length === 0 ? mappedParticipants : [
-      { value: '', label: '' },
-      ...mappedParticipants,
-    ];
+      value: p.id,
+      label: p.name,
+    }));
+    return this.selectedParticipant().length === 0
+      ? mappedParticipants
+      : [{ value: '', label: '' }, ...mappedParticipants];
   });
   selectedParticipantIds = signal<string[]>([]);
 
