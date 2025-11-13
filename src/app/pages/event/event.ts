@@ -76,31 +76,31 @@ import { State } from '../../core/services/state';
             <ng-icon name="lucideRefreshCcw" size="16" color="currentColor" />
           </button>
           <s-balance />
-          <b-tabs class="b-rounded-full" [(value)]="selectedTab">
-            <b-tab value="expenses" class="flex-1 b-rounded-full">
-              {{ 'event.expenses.title' | translate }}
-            </b-tab>
-            <b-tab value="balances" class="flex-1 b-rounded-full">
-              {{ 'event.balances.title' | translate }}
-            </b-tab>
-            <b-tab value="settlements" class="flex-1 b-rounded-full">
-              {{ 'event.settlements.title' | translate }}
-            </b-tab>
-          </b-tabs>
           @if (selectedTab()[0] === 'expenses') {
             <s-expenses (editExpenseClicked)="openExpenseFormDrawer(expenseFormTpl)" />
           } @else if (selectedTab()[0] === 'balances') {
             <s-balances />
-          } @else if (selectedTab()[0] === 'settlements') {
             <s-settlements />
           }
-          <button
-            b-button
-            class="b-squared b-rounded-full b-size-lg absolute bottom-6 flex gap-2 items-center z-10 left-1/2 transform -translate-x-1/2 translate-y-1/2 b-variant-primary"
-            (click)="openExpenseFormDrawer(expenseFormTpl)"
+          <div
+            class="absolute bottom-6 w-full flex gap-2 items-center z-10 left-1/2 transform -translate-x-1/2 translate-y-1/2"
           >
-            <ng-icon name="lucidePlus" size="16" color="currentColor" />
-          </button>
+            <b-tabs class="b-rounded-full flex-1" [(value)]="selectedTab">
+              <b-tab value="expenses" class="flex-1 b-rounded-full">
+                {{ 'event.expenses.title' | translate }}
+              </b-tab>
+              <b-tab value="balances" class="flex-1 b-rounded-full">
+                {{ 'event.balances.title' | translate }}
+              </b-tab>
+            </b-tabs>
+            <button
+              b-button
+              class="b-squared b-rounded-full b-size-lg b-variant-primary"
+              (click)="openExpenseFormDrawer(expenseFormTpl)"
+            >
+              <ng-icon name="lucidePlus" size="18" color="currentColor" />
+            </button>
+          </div>
         } @else {
           <s-login />
         }
@@ -130,7 +130,7 @@ export class Event {
   hasEventError = computed(() => this.state.event.error());
   participants = computed(() => this.state.participants.value());
   loggedParticipant = computed(() => this.state.loggedParticipant());
-  selectedTab = signal<('expenses' | 'balances' | 'settlements')[]>(['expenses']);
+  selectedTab = signal<('expenses' | 'balances')[]>(['expenses']);
 
   cleanLoggedParticipant() {
     this.state.setLoggedParticipant(null);
