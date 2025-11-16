@@ -38,7 +38,7 @@ import { State } from '../../../../core/services/state';
         @for (e of expensesWithPayers(); track e.id) {
           <div
             (click)="onExpenseClicked(expenseOptionsTpl, e.id)"
-            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
+            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark"
           >
             <div class="flex flex-col gap-0.5">
               <span> {{ e.description }} </span>

@@ -23,7 +23,7 @@ import { State } from '../../../../core/services/state';
       <div class="flex flex-col gap-3 w-full">
         @for (s of settlements(); track s.from + '-' + s.to) {
           <div
-            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
+            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark"
             [class.opacity-50]="s.payment_id"
           >
             <div class="flex flex-col gap-0.5">

@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import { Button, Tab, Tabs, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader, lucidePlus, lucideCog } from '@ng-icons/lucide';
-import { Balance } from './shared/balance/balance';
 import { Balances } from './shared/balances/balances';
 import { Login } from './shared/login/login';
 import { Expenses } from './shared/expenses/expenses';
@@ -19,7 +18,6 @@ import { Settings } from './shared/settings/settings';
     RouterLink,
     NgIcon,
     Login,
-    Balance,
     Balances,
     Expenses,
     ExpenseForm,
@@ -54,7 +52,6 @@ import { Settings } from './shared/settings/settings';
           @if (selectedTab()[0] === 'expenses') {
             <s-expenses (editExpenseClicked)="openExpenseFormDrawer(expenseFormTpl)" />
           } @else if (selectedTab()[0] === 'balances') {
-            <s-balance />
             <s-balances />
             <s-settlements />
           }
