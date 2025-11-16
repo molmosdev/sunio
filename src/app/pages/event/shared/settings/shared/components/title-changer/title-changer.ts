@@ -13,7 +13,7 @@ import { ApiEvents } from '../../../../../../../core/services/api-events';
       type="text"
       [field]="form.name"
       [placeholder]="'event.event-name' | translate"
-      (keydown.enter)="submitEditEvent()"
+      (keydown.enter)="onSaveButtonClicked()"
       class="b-size-lg"
     />
     @if (error()) {
@@ -23,10 +23,17 @@ import { ApiEvents } from '../../../../../../../core/services/api-events';
     }
     <button
       b-button
-      class="b-variant-secondary b-size-lg b-rounded-full"
-      (click)="submitEditEvent()"
+      class="b-variant-primary b-size-lg b-rounded-full"
+      (click)="onSaveButtonClicked()"
     >
       Guardar cambios
+    </button>
+    <button
+      b-button
+      class="b-variant-secondary b-size-lg b-rounded-full"
+      (click)="onCancelButtonClicked()"
+    >
+      Cancelar
     </button>
   `,
   host: {
@@ -51,7 +58,7 @@ export class TitleChanger {
       : null;
   });
 
-  async submitEditEvent() {
+  async onSaveButtonClicked() {
     this.form.name().markAsDirty();
     if (this.form().valid()) {
       const event = this.event();
@@ -73,5 +80,9 @@ export class TitleChanger {
       this._state.reloadEvent();
       this._state.closeDynamicDrawer();
     }
+  }
+
+  onCancelButtonClicked() {
+    this._state.closeDynamicDrawer();
   }
 }

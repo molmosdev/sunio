@@ -1,13 +1,11 @@
 import { Component, inject, TemplateRef } from '@angular/core';
 import { Button } from '@basis-ng/primitives';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideLogOut, lucidePencilLine, lucideRefreshCcw } from '@ng-icons/lucide';
 import { State } from '../../../../core/services/state';
 import { TitleChanger } from './shared/components/title-changer/title-changer';
 
 @Component({
   selector: 's-settings',
-  imports: [Button, NgIcon, TitleChanger],
+  imports: [Button, TitleChanger],
   template: `
     <ng-template #changeNameTpl>
       <s-title-changer />
@@ -17,7 +15,6 @@ import { TitleChanger } from './shared/components/title-changer/title-changer';
       class="b-size-lg b-variant-secondary b-rounded-full"
       (click)="onChangeNameButtonClicked(changeNameTpl)"
     >
-      <ng-icon name="lucidePencilLine" size="18" color="currentColor" />
       Cambiar nombre al Sunio
     </button>
     <button
@@ -25,7 +22,6 @@ import { TitleChanger } from './shared/components/title-changer/title-changer';
       class="b-size-lg b-variant-secondary b-rounded-full"
       (click)="onReloadDataButtonClicked()"
     >
-      <ng-icon name="lucideRefreshCcw" size="18" color="currentColor" />
       Recargar datos
     </button>
     <button
@@ -33,17 +29,9 @@ import { TitleChanger } from './shared/components/title-changer/title-changer';
       class="b-size-lg b-variant-secondary b-rounded-full"
       (click)="onLogoutButtonClicked()"
     >
-      <ng-icon name="lucideLogOut" size="18" color="currentColor" />
       Cerrar sesión
     </button>
   `,
-  providers: [
-    provideIcons({
-      lucidePencilLine,
-      lucideRefreshCcw,
-      lucideLogOut,
-    }),
-  ],
   host: {
     class: 'flex flex-col gap-4',
   },
