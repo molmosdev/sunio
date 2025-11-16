@@ -51,10 +51,10 @@ import { Settings } from './shared/settings/settings';
           <ng-template #expenseFormTpl>
             <s-expense-form />
           </ng-template>
-          <s-balance />
           @if (selectedTab()[0] === 'expenses') {
             <s-expenses (editExpenseClicked)="openExpenseFormDrawer(expenseFormTpl)" />
           } @else if (selectedTab()[0] === 'balances') {
+            <s-balance />
             <s-balances />
             <s-settlements />
           }
