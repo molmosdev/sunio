@@ -52,8 +52,8 @@ import { Settings } from './shared/settings/settings';
           @if (selectedTab()[0] === 'expenses') {
             <s-expenses (editExpenseClicked)="openExpenseFormDrawer(expenseFormTpl)" />
           } @else if (selectedTab()[0] === 'balances') {
-            <s-balances />
             <s-settlements />
+            <s-balances />
           }
 
           <ng-template #settingsTpl>
