@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, TemplateRef } from '@angular/core';
+import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Button, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -98,7 +98,7 @@ import { Join } from './components/join';
     }),
   ],
 })
-export class Home implements OnInit {
+export class Home {
   private _apiEvents = inject(ApiEvents);
   private _router = inject(Router);
   private _translationManager = inject(TranslationManager);
@@ -113,10 +113,6 @@ export class Home implements OnInit {
   isADrawerOpen = computed(() => {
     return this.addDrawerOpen() || this.startNewSunio() || this.loadExistingSunio();
   });
-
-  ngOnInit(): void {
-    this._state.inDebt.set(false);
-  }
 
   goToEvent() {
     this._router.navigateByUrl(`/${this.selectedSunioId()}`);

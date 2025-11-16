@@ -1,12 +1,4 @@
-import {
-  computed,
-  inject,
-  Injectable,
-  linkedSignal,
-  resource,
-  signal,
-  TemplateRef,
-} from '@angular/core';
+import { computed, inject, Injectable, resource, signal, TemplateRef } from '@angular/core';
 import { ApiEvents } from './api-events';
 import { IParticipant } from '../../shared/interfaces/participant.interface';
 import { Expense } from '../../shared/interfaces/expense.interface';
@@ -75,8 +67,6 @@ export class State {
   personalBalance = computed(
     () => this.balances.value()?.[this.loggedParticipant()?.id || ''] || 0,
   );
-
-  inDebt = linkedSignal(() => this.personalBalance() < 0);
 
   participants = resource({
     params: () => ({ id: this.eventId() }),

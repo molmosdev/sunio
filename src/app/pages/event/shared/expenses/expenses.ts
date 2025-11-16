@@ -1,5 +1,5 @@
-import { Component, computed, inject, output, TemplateRef } from '@angular/core';
-import { CurrencyPipe, LowerCasePipe } from '@angular/common';
+import { Component, computed, inject, output, signal, TemplateRef } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { Button, TranslationManager, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader, lucidePencil, lucideTrash } from '@ng-icons/lucide';
@@ -8,7 +8,7 @@ import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-expenses',
-  imports: [NgIcon, CurrencyPipe, Button, TranslatePipe, LowerCasePipe],
+  imports: [NgIcon, CurrencyPipe, Button, TranslatePipe],
   template: `
     @if (isExpensesLoading()) {
       <ng-icon
@@ -18,31 +18,36 @@ import { State } from '../../../../core/services/state';
         class="animate-spin absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       />
     } @else if (expensesHasValue()) {
+      <ng-template #expenseOptionsTpl>
+        <button
+          b-button
+          class="b-size-lg b-variant-secondary b-rounded-full"
+          (click)="onEditExpenseButtonClicked()"
+        >
+          Editar
+        </button>
+        <button
+          b-button
+          class="b-size-lg b-variant-secondary b-rounded-full"
+          (click)="deleteExpense()"
+        >
+          Eliminar
+        </button>
+      </ng-template>
       <div class="flex flex-col gap-3 w-full">
         @for (e of expensesWithPayers(); track e.id) {
           <div
+            (click)="onExpenseClicked(expenseOptionsTpl, e.id)"
             class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-xs"
           >
             <div class="flex flex-col gap-0.5">
-              <span>
-                <strong>{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
-                {{ 'event.expenses.on' | translate }} {{ e.description | lowercase }}
-              </span>
+              <span> {{ e.description }} </span>
               <span class="text-xs opacity-55">
                 {{ 'event.expenses.form.paidBy' | translate }} {{ e.paidBy }}
               </span>
             </div>
             <div class="flex-1 gap-1 flex justify-end items-center">
-              <button
-                b-button
-                class="b-variant-ghost b-squared"
-                (click)="onEditExpenseButtonClicked(e.id)"
-              >
-                <ng-icon name="lucidePencil" size="16" color="currentColor" />
-              </button>
-              <button b-button class="b-variant-ghost b-squared" (click)="deleteExpense(e.id)">
-                <ng-icon name="lucideTrash" size="16" color="currentColor" />
-              </button>
+              <strong>{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
             </div>
           </div>
         }
@@ -68,6 +73,8 @@ export class Expenses {
   private _translationManager = inject<TranslationManager>(TranslationManager);
   state = inject(State);
 
+  selectedExpenseId = signal<string | null>(null);
+
   eventId = computed(() => this.state.eventId());
   participants = computed(() => this.state.participants.value());
   expenses = computed(() => this.state.expenses.value());
@@ -84,9 +91,11 @@ export class Expenses {
     });
   });
 
-  async deleteExpense(expenseId: string) {
+  async deleteExpense() {
     const eventId = this.eventId();
-    if (!eventId) return;
+    const expenseId = this.selectedExpenseId();
+
+    if (!eventId || !expenseId) return;
 
     await this._apiEvents.deleteExpense(eventId, expenseId);
     this.state.reloadExpenses();
@@ -95,12 +104,13 @@ export class Expenses {
 
   editExpenseClicked = output<void>();
 
-  onEditExpenseButtonClicked(expenseId: string) {
-    this.state.setExpenseToEdit(expenseId);
+  onEditExpenseButtonClicked() {
+    this.state.setExpenseToEdit(this.selectedExpenseId());
     this.editExpenseClicked.emit();
   }
 
-  onExpenseClicked(template: TemplateRef<unknown>) {
+  onExpenseClicked(template: TemplateRef<unknown>, expenseId: string) {
+    this.selectedExpenseId.set(expenseId);
     this.state.openDynamicDrawer(template);
   }
 }
