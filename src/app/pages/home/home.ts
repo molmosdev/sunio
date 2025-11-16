@@ -2,16 +2,7 @@ import { Component, computed, inject, OnInit, signal, TemplateRef } from '@angul
 import { Router } from '@angular/router';
 import { Button, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import {
-  lucideArrowRight,
-  lucideBadgePlus,
-  lucideCirclePlus,
-  lucideCloudDownload,
-  lucideLoader,
-  lucidePlus,
-  lucideSquarePlus,
-  lucideTrash,
-} from '@ng-icons/lucide';
+import { lucideLoader, lucidePlus } from '@ng-icons/lucide';
 import { DatePipe } from '@angular/common';
 import { State } from '../../core/services/state';
 import { ApiEvents } from '../../core/services/api-events';
@@ -77,7 +68,6 @@ import { Join } from './components/join';
           class="b-size-lg b-variant-primary b-rounded-full"
           (click)="openStartNewDrawer(startNewTpl)"
         >
-          <ng-icon name="lucideSquarePlus" size="20" />
           Iniciar nuevo sunio
         </button>
         <button
@@ -85,8 +75,7 @@ import { Join } from './components/join';
           class="b-size-lg b-variant-secondary b-rounded-full"
           (click)="openJoinDrawer(joinTpl)"
         >
-          <ng-icon name="lucideCloudDownload" size="20" />
-          Únete a un sunio existente
+          Tengo un código
         </button>
       </ng-template>
 
@@ -104,14 +93,8 @@ import { Join } from './components/join';
   },
   providers: [
     provideIcons({
-      lucideBadgePlus,
       lucidePlus,
-      lucideSquarePlus,
-      lucideCirclePlus,
-      lucideCloudDownload,
       lucideLoader,
-      lucideArrowRight,
-      lucideTrash,
     }),
   ],
 })

@@ -3,14 +3,12 @@ import { customError, Field, form, minLength, required } from '@angular/forms/si
 import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { IParticipant } from '../../../../shared/interfaces/participant.interface';
 import { ApiEvents } from '../../../../core/services/api-events';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucidePlus, lucideSave } from '@ng-icons/lucide';
 import { State } from '../../../../core/services/state';
 import { SelectField } from '../../../../shared/components/select-field';
 
 @Component({
   selector: 's-expense-form',
-  imports: [Input, InputGroup, Button, Field, TranslatePipe, NgIcon, SelectField],
+  imports: [Input, InputGroup, Button, Field, TranslatePipe, SelectField],
   template: `
     <div class="flex flex-col gap-1.5">
       @let form = expenseToEdit() ? editForm : createForm;
@@ -84,10 +82,8 @@ import { SelectField } from '../../../../shared/components/select-field';
       (click)="expenseToEdit() ? submitEditForm() : submitCreateForm()"
     >
       @if (expenseToEdit()) {
-        <ng-icon name="lucideSave" size="14" color="currentColor" />
         <span>{{ 'event.expenses.update' | translate }}</span>
       } @else {
-        <ng-icon name="lucidePlus" size="16" color="currentColor" />
         <span>{{ 'event.expenses.add' | translate }}</span>
       }
     </button>
@@ -95,12 +91,6 @@ import { SelectField } from '../../../../shared/components/select-field';
   host: {
     class: 'flex w-full flex-col gap-5',
   },
-  providers: [
-    provideIcons({
-      lucideSave,
-      lucidePlus,
-    }),
-  ],
 })
 export class ExpenseForm {
   private _apiEvents = inject(ApiEvents);

@@ -1,17 +1,15 @@
 import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
 import { customError, Field, form, required } from '@angular/forms/signals';
 import { Input, TranslatePipe, TranslationManager, Button } from '@basis-ng/primitives';
-import { provideIcons } from '@ng-icons/core';
-import { lucideForward, lucideUserPlus } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
 import { State } from '../../../../core/services/state';
 import { SelectField } from '../../../../shared/components/select-field';
 import { AddParticipant } from '../add-participant/add-participant';
-import { NgIcon } from '@ng-icons/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 's-login',
-  imports: [Input, TranslatePipe, Field, SelectField, Button, AddParticipant, NgIcon],
+  imports: [Input, TranslatePipe, Field, SelectField, Button, AddParticipant, RouterLink],
   template: `
     <ng-template #addParticipantTpl>
       <s-add-participant />
@@ -63,22 +61,29 @@ import { NgIcon } from '@ng-icons/core';
           </button>
         }
       }
-      @if (selectedParticipant().length === 0) {
+      <div class="w-full absolute bottom-0 z-10 flex gap-2">
         <button
           b-button
-          class="b-variant-primary b-size-lg b-rounded-full w-full absolute bottom-0 z-10"
-          (click)="openAddParticipantDrawer(addParticipantTpl)"
+          routerLink="/home"
+          class="b-variant-secondary b-size-lg b-rounded-full flex-1"
         >
-          <ng-icon name="lucideUserPlus" size="17" color="currentColor" />
-          Únete
+          Mis sunios
         </button>
-      }
+        @if (selectedParticipant().length === 0) {
+          <button
+            b-button
+            class="b-variant-primary b-size-lg b-rounded-full flex-1"
+            (click)="openAddParticipantDrawer(addParticipantTpl)"
+          >
+            Únete
+          </button>
+        }
+      </div>
     }
   `,
   host: {
     class: 'flex-1 flex flex-col gap-3 items-center justify-center',
   },
-  providers: [provideIcons({ lucideForward, lucideUserPlus })],
 })
 export class Login {
   private _state = inject(State);
