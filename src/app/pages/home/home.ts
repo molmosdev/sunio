@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal, TemplateRef } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Button, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -9,6 +9,7 @@ import {
   lucideCloudDownload,
   lucideLoader,
   lucidePlus,
+  lucideSquarePlus,
   lucideTrash,
 } from '@ng-icons/lucide';
 import { DatePipe } from '@angular/common';
@@ -19,8 +20,22 @@ import { Join } from './components/join';
 
 @Component({
   selector: 's-home',
-  imports: [RouterLink, Button, NgIcon, DatePipe, StartNew, Join],
+  imports: [Button, NgIcon, DatePipe, StartNew, Join],
   template: `
+    <!-- Sunio Options Drawer Template -->
+    <ng-template #sunioOptionsTpl>
+      <button b-button class="b-size-lg b-variant-primary b-rounded-full" (click)="goToEvent()">
+        Entrar al sunio
+      </button>
+      <button
+        b-button
+        class="b-size-lg b-variant-destructive b-rounded-full"
+        (click)="removeRecentEvent()"
+      >
+        Eliminar
+      </button>
+    </ng-template>
+
     <div class="h-full flex flex-col items-center justify-between">
       <div class="flex flex-col gap-2 w-full max-h-dvh overflow-y-auto py-22">
         @if (isRecentEventsLoading()) {
@@ -33,26 +48,18 @@ import { Join } from './components/join';
         } @else {
           @for (event of recentEvents(); track event.id) {
             <div
-              routerLink="/{{ event.id }}"
+              (click)="onSunioSelected(event.id, sunioOptionsTpl)"
               class="w-full py-3 px-4 rounded-size-lg flex gap-4 cursor-pointer bg-primary/5 dark:bg-primary-dark/5 inset-ring-1 inset-ring-primary/10 dark:inset-ring-primary-dark/10 shadow-x"
             >
               <div class="flex flex-col gap-0.5">
                 <span>{{ event.name }}</span>
                 <span class="text-xs opacity-55"> {{ event.last_active | date: 'short' }} </span>
               </div>
-              <div class="flex-1 gap-2 flex justify-end items-center">
-                <button
-                  b-button
-                  class="b-variant-ghost b-squared"
-                  (click)="removeRecentEvent(event.id); $event.stopPropagation()"
-                >
-                  <ng-icon name="lucideTrash" size="16" />
-                </button>
-              </div>
             </div>
           }
         }
       </div>
+
       <!-- Start New Drawer Template -->
       <ng-template #startNewTpl>
         <s-start-new />
@@ -67,10 +74,10 @@ import { Join } from './components/join';
       <ng-template #addDrawerTpl>
         <button
           b-button
-          class="b-size-lg b-variant-secondary b-rounded-full"
+          class="b-size-lg b-variant-primary b-rounded-full"
           (click)="openStartNewDrawer(startNewTpl)"
         >
-          <ng-icon name="lucideCirclePlus" size="20" />
+          <ng-icon name="lucideSquarePlus" size="20" />
           Iniciar nuevo sunio
         </button>
         <button
@@ -99,6 +106,7 @@ import { Join } from './components/join';
     provideIcons({
       lucideBadgePlus,
       lucidePlus,
+      lucideSquarePlus,
       lucideCirclePlus,
       lucideCloudDownload,
       lucideLoader,
@@ -127,9 +135,17 @@ export class Home implements OnInit {
     this._state.inDebt.set(false);
   }
 
-  async removeRecentEvent(eventId: string): Promise<void> {
-    await this._apiEvents.deleteRecentEvent(eventId);
+  goToEvent() {
+    this._router.navigateByUrl(`/${this.selectedSunioId()}`);
+    this._state.closeDynamicDrawer();
+  }
+
+  async removeRecentEvent(): Promise<void> {
+    const id = this.selectedSunioId();
+    if (!id) return;
+    await this._apiEvents.deleteRecentEvent(id);
     this._state.reloadRecentEvents();
+    this._state.closeDynamicDrawer();
   }
 
   openAddDrawer(template: TemplateRef<unknown>) {
@@ -141,6 +157,13 @@ export class Home implements OnInit {
   }
 
   openJoinDrawer(template: TemplateRef<unknown>) {
+    this._state.openDynamicDrawer(template);
+  }
+
+  selectedSunioId = signal<string | null>(null);
+
+  onSunioSelected(eventId: string, template: TemplateRef<unknown>) {
+    this.selectedSunioId.set(eventId);
     this._state.openDynamicDrawer(template);
   }
 }

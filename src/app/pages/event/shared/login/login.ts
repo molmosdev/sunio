@@ -66,7 +66,7 @@ import { NgIcon } from '@ng-icons/core';
       @if (selectedParticipant().length === 0) {
         <button
           b-button
-          class="b-variant-secondary b-size-lg b-rounded-full w-full"
+          class="b-variant-primary b-size-lg b-rounded-full w-full absolute bottom-0 z-10"
           (click)="openAddParticipantDrawer(addParticipantTpl)"
         >
           <ng-icon name="lucideUserPlus" size="17" color="currentColor" />

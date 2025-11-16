@@ -1,4 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, output, TemplateRef } from '@angular/core';
 import { CurrencyPipe, LowerCasePipe } from '@angular/common';
 import { Button, TranslationManager, TranslatePipe } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -98,5 +98,9 @@ export class Expenses {
   onEditExpenseButtonClicked(expenseId: string) {
     this.state.setExpenseToEdit(expenseId);
     this.editExpenseClicked.emit();
+  }
+
+  onExpenseClicked(template: TemplateRef<unknown>) {
+    this.state.openDynamicDrawer(template);
   }
 }
