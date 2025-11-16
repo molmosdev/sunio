@@ -39,7 +39,7 @@ import { State } from '../../../../core/services/state';
         </b-tabs>
         @if (selectedAllSettlementsTab()[0] === 'old-mine') {
           @if (myPastSettlements().length === 0) {
-            <span class="text-center">No tienes rembolsos pasados.</span>
+            <span class="text-center my-2">No tienes rembolsos pasados.</span>
           } @else {
             @for (s of myPastSettlements(); track s.from + '-' + s.to) {
               <div
@@ -60,22 +60,26 @@ import { State } from '../../../../core/services/state';
             }
           }
         } @else if (selectedAllSettlementsTab()[0] === 'others') {
-          @for (s of othersSuggestedSettlements(); track s.from + '-' + s.to) {
-            <div
-              class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark"
-            >
-              <div class="flex flex-col gap-0.5">
-                <span>
-                  {{ participantMap()[s.from] }}
-                  {{ 'event.settlements.must' | translate }}
-                  <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
-                  {{ participantMap()[s.to] }}
-                </span>
-                <span class="text-xs">
-                  {{ 'event.settlements.unsettled' | translate }}
-                </span>
+          @if (othersSuggestedSettlements().length === 0) {
+            <span class="text-center my-2">No hay rembolsos sugeridos de otros participantes.</span>
+          } @else {
+            @for (s of othersSuggestedSettlements(); track s.from + '-' + s.to) {
+              <div
+                class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark"
+              >
+                <div class="flex flex-col gap-0.5">
+                  <span>
+                    {{ participantMap()[s.from] }}
+                    {{ 'event.settlements.must' | translate }}
+                    <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
+                    {{ participantMap()[s.to] }}
+                  </span>
+                  <span class="text-xs">
+                    {{ 'event.settlements.unsettled' | translate }}
+                  </span>
+                </div>
               </div>
-            </div>
+            }
           }
         }
       </ng-template>
