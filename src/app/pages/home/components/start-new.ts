@@ -20,11 +20,11 @@ import { State } from '../../../core/services/state';
           Comparte el enlace con quien quieras para empezar a gestionar gastos juntos.
         </span>
       </div>
-      <b-input-group class="w-full b-rounded-full">
+      <b-input-group class="w-full">
         <input b-input type="text" class="b-size-lg" [value]="eventUrl()" [disabled]="true" />
         <button
           b-button
-          class="b-variant-secondary b-size-md b-rounded-full"
+          class="b-variant-secondary b-size-md"
           (click)="copied.set(true)"
           [cdkCopyToClipboard]="eventUrl()"
         >
@@ -56,7 +56,7 @@ import { State } from '../../../core/services/state';
         type="text"
         [field]="newEvent.name"
         placeholder="Nombre del sunio"
-        class="w-full b-size-lg b-rounded-full"
+        class="w-full b-size-lg"
       />
       @if (nameError()) {
         <p class="text-sm text-destructive dark:text-destructive-dark">

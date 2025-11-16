@@ -38,7 +38,7 @@ import { NgIcon } from '@ng-icons/core';
           type="password"
           inputmode="numeric"
           placeholder="PIN"
-          class="b-size-lg w-full b-rounded-full"
+          class="b-size-lg w-full"
           [field]="pinForm.pin"
           [placeholder]="
             !selectedParticipant()[0]?.pin
@@ -76,7 +76,7 @@ import { NgIcon } from '@ng-icons/core';
     }
   `,
   host: {
-    class: 'flex-1 flex flex-col gap-4 items-center justify-center',
+    class: 'flex-1 flex flex-col gap-3 items-center justify-center',
   },
   providers: [provideIcons({ lucideForward, lucideUserPlus })],
 })

@@ -11,7 +11,7 @@ import { State } from '../../../core/services/state';
     <input
       b-input
       placeholder="Introduce el código del sunio"
-      class="w-full b-size-lg b-rounded-full"
+      class="w-full b-size-lg"
       [field]="eventToJoin.eventId"
     />
     <span class="text-sm text-gray-500"

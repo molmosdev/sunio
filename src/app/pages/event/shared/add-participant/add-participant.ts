@@ -13,7 +13,7 @@ import { State } from '../../../../core/services/state';
     <input
       b-input
       type="text"
-      class="b-size-lg w-full b-rounded-full"
+      class="b-size-lg w-full"
       [field]="participantForm.name"
       placeholder="Tu nombre"
     />
@@ -26,7 +26,7 @@ import { State } from '../../../../core/services/state';
       b-input
       type="password"
       inputmode="numeric"
-      class="b-size-lg w-full b-rounded-full"
+      class="b-size-lg w-full"
       [field]="participantForm.pin"
       placeholder="Crea un PIN"
     />

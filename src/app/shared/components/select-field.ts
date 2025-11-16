@@ -22,12 +22,7 @@ import {
   ],
   template: `
     <b-select [(value)]="value" [displayWith]="displayFn" (valueChange)="valueChanged.emit($event)">
-      <button
-        b-select-trigger
-        bOverlayOrigin
-        #trigger="bOverlayOrigin"
-        class="b-size-lg b-rounded-full"
-      >
+      <button b-select-trigger bOverlayOrigin #trigger="bOverlayOrigin" class="b-size-lg">
         <b-select-value [placeholder]="placeholder()" />
       </button>
       <ng-template

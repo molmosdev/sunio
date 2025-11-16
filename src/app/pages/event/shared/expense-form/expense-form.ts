@@ -18,7 +18,7 @@ import { SelectField } from '../../../../shared/components/select-field';
       <input
         b-input
         type="text"
-        class="b-size-lg b-rounded-full"
+        class="b-size-lg"
         [field]="form.description"
         placeholder="{{ 'event.expenses.form.description-placeholder' | translate }}"
       />
@@ -30,7 +30,7 @@ import { SelectField } from '../../../../shared/components/select-field';
     </div>
     <div class="flex flex-col gap-1.5">
       <label class="font-semibold">{{ 'event.expenses.form.amount' | translate }}</label>
-      <b-input-group class="b-rounded-full">
+      <b-input-group>
         <input
           b-input
           type="text"
@@ -80,7 +80,7 @@ import { SelectField } from '../../../../shared/components/select-field';
     </div>
     <button
       b-button
-      class="mt-2 b-size-lg"
+      class="mt-2 b-size-lg b-rounded-full"
       (click)="expenseToEdit() ? submitEditForm() : submitCreateForm()"
     >
       @if (expenseToEdit()) {
