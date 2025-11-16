@@ -23,7 +23,9 @@ import { State } from '../../../../core/services/state';
             [class.opacity-50]="balances()![p.id] === 0"
           >
             <span>{{ p.name }}</span>
-            <span>
+            <span
+              [class]="balances()![p.id] < 0 ? 'text-destructive dark:text-destructive-dark' : ''"
+            >
               {{ balances()![p.id] | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}
             </span>
           </div>
