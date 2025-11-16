@@ -23,11 +23,21 @@ import { State } from '../../../../core/services/state';
             [class.opacity-50]="balances()![p.id] === 0"
           >
             <span>{{ p.name }}</span>
-            <span
-              [class]="balances()![p.id] < 0 ? 'text-destructive dark:text-destructive-dark' : ''"
+            <strong
+              [class]="
+                balances()![p.id] < 0
+                  ? 'text-destructive dark:text-destructive-dark'
+                  : balances()![p.id] !== 0
+                    ? 'text-success dark:text-success-dark'
+                    : ' '
+              "
             >
-              {{ balances()![p.id] | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}
-            </span>
+              {{
+                balances()![p.id] > 0
+                  ? '+' + (balances()![p.id] | currency: 'EUR' : 'symbol' : '1.2-2' : 'es')
+                  : (balances()![p.id] | currency: 'EUR' : 'symbol' : '1.2-2' : 'es')
+              }}
+            </strong>
           </div>
         }
       </div>

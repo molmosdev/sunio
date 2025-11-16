@@ -23,13 +23,12 @@
   --color-ring: #e0e0e0;
   --color-destructive: #e53935;
   --color-destructive-foreground: #fff;
-  --color-success: #b7e4c7;
+  --color-success: #10cd76;
   --color-success-foreground: #22543d;
   --color-warning: #fff3cd;
   --color-warning-foreground: #856404;
   --color-info: #e0e0e0;
   --color-info-foreground: #333;
-  --color-balance-negative: #ffbfbf;
 
   /* Dark theme colors */
   --color-background-dark: #0a0a0a;
@@ -42,11 +41,10 @@
   --color-ring-dark: #ffffff26;
   --color-destructive-dark: #ff6659;
   --color-destructive-foreground-dark: #0a0a0a;
-  --color-success-dark: #22543d;
+  --color-success-dark: #10cd76;
   --color-success-foreground-dark: #d1fae5;
   --color-warning-dark: #856404;
   --color-warning-foreground-dark: #ffe066;
   --color-info-dark: #424242;
   --color-info-foreground-dark: #e0e0e0;
-  --color-balance-negative-dark: #3d1616;
 }

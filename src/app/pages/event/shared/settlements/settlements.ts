@@ -38,27 +38,31 @@ import { State } from '../../../../core/services/state';
           <b-tab value="others" class="flex-1 b-rounded-full"> Otros </b-tab>
         </b-tabs>
         @if (selectedAllSettlementsTab()[0] === 'old-mine') {
-          @for (s of myPastSettlements(); track s.from + '-' + s.to) {
-            <div
-              (click)="onSettlementClicked(settlementOptionsTpl, s)"
-              class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark opacity-50"
-            >
-              <div class="flex flex-col gap-0.5">
-                <span>
-                  Le debes
-                  <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
-                  {{ participantMap()[s.to] }}
-                </span>
-                <span class="text-xs">
-                  {{ 'event.settlements.settled' | translate }}
-                </span>
+          @if (myPastSettlements().length === 0) {
+            <span class="text-center">No tienes rembolsos pasados.</span>
+          } @else {
+            @for (s of myPastSettlements(); track s.from + '-' + s.to) {
+              <div
+                (click)="onSettlementClicked(settlementOptionsTpl, s)"
+                class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark opacity-50"
+              >
+                <div class="flex flex-col gap-0.5">
+                  <span>
+                    Le debes
+                    <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
+                    {{ participantMap()[s.to] }}
+                  </span>
+                  <span class="text-xs">
+                    {{ 'event.settlements.settled' | translate }}
+                  </span>
+                </div>
               </div>
-            </div>
+            }
           }
         } @else if (selectedAllSettlementsTab()[0] === 'others') {
           @for (s of othersSuggestedSettlements(); track s.from + '-' + s.to) {
             <div
-              class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary-light dark:bg-secondary-dark"
+              class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark"
             >
               <div class="flex flex-col gap-0.5">
                 <span>
@@ -80,7 +84,7 @@ import { State } from '../../../../core/services/state';
         @for (s of mySuggestedSettlements(); track s.from + '-' + s.to) {
           <div
             (click)="onSettlementClicked(settlementOptionsTpl, s)"
-            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary-light dark:bg-secondary-dark"
+            class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark"
           >
             <div class="flex flex-col gap-0.5">
               <span>
