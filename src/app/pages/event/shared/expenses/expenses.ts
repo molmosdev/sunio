@@ -28,7 +28,7 @@ import { State } from '../../../../core/services/state';
         </button>
         <button
           b-button
-          class="b-size-lg b-variant-secondary b-rounded-full"
+          class="b-size-lg b-variant-destructive b-rounded-full"
           (click)="deleteExpense()"
         >
           Eliminar
