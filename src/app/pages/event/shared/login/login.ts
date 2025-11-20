@@ -1,6 +1,12 @@
 import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
 import { customError, Field, form, required } from '@angular/forms/signals';
-import { Input, TranslatePipe, TranslationManager, Button } from '@basis-ng/primitives';
+import {
+  TranslatePipe,
+  TranslationManager,
+  Button,
+  Otp,
+  OtpDigitDirective,
+} from '@basis-ng/primitives';
 import { ApiEvents } from '../../../../core/services/api-events';
 import { State } from '../../../../core/services/state';
 import { SelectField } from '../../../../shared/components/select-field';
@@ -9,7 +15,16 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 's-login',
-  imports: [Input, TranslatePipe, Field, SelectField, Button, AddParticipant, RouterLink],
+  imports: [
+    TranslatePipe,
+    Field,
+    SelectField,
+    Button,
+    AddParticipant,
+    RouterLink,
+    Otp,
+    OtpDigitDirective,
+  ],
   template: `
     <ng-template #addParticipantTpl>
       <s-add-participant />
@@ -31,20 +46,17 @@ import { RouterLink } from '@angular/router';
         (valueChange)="pinDataModel.set({ pin: '' })"
       />
       @if (selectedParticipant().length === 1) {
-        <input
-          b-input
-          type="password"
-          inputmode="numeric"
-          placeholder="PIN"
-          class="b-size-lg w-full"
+        <b-otp
           [field]="pinForm.pin"
-          [placeholder]="
-            !selectedParticipant()[0]?.pin
-              ? ('event.participants.pin.setup' | translate)
-              : ('event.participants.pin.prompt' | translate)
-          "
+          class="b-size-lg"
           (keydown.enter)="submitPin()"
-        />
+          [dirty]="pinForm.pin().dirty()"
+        >
+          <input b-otp-digit />
+          <input b-otp-digit />
+          <input b-otp-digit />
+          <input b-otp-digit />
+        </b-otp>
         @if (pinForm.pin().errors().length > 0 && pinForm.pin().dirty()) {
           <p class="text-sm text-destructive dark:text-destructive-dark">
             {{ pinForm.pin().errors()[0].message }}
@@ -82,7 +94,7 @@ import { RouterLink } from '@angular/router';
     }
   `,
   host: {
-    class: 'flex-1 flex flex-col gap-3 items-center justify-center',
+    class: 'flex-1 flex flex-col gap-5 items-center justify-center',
   },
 })
 export class Login {
