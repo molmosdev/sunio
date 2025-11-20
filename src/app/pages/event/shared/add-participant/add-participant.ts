@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { customError, Field, form, required } from '@angular/forms/signals';
-import { Button, Input, TranslationManager } from '@basis-ng/primitives';
+import { Button, Input, Otp, OtpDigitDirective, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader, lucideUserPlus } from '@ng-icons/lucide';
 import { ApiEvents } from '../../../../core/services/api-events';
@@ -8,7 +8,7 @@ import { State } from '../../../../core/services/state';
 
 @Component({
   selector: 's-add-participant',
-  imports: [Input, Button, Field, NgIcon],
+  imports: [Input, Button, Field, NgIcon, Otp, OtpDigitDirective],
   template: `
     <input
       b-input
@@ -22,20 +22,18 @@ import { State } from '../../../../core/services/state';
         {{ this.participantForm.name().errors()[0].message }}
       </p>
     }
-    <input
-      b-input
-      type="password"
-      inputmode="numeric"
-      class="b-size-lg w-full"
-      [field]="participantForm.pin"
-      placeholder="Crea un PIN"
-    />
+    <b-otp [field]="participantForm.pin" class="b-size-lg" [dirty]="participantForm.pin().dirty()">
+      <input b-otp-digit />
+      <input b-otp-digit />
+      <input b-otp-digit />
+      <input b-otp-digit />
+    </b-otp>
     @if (this.participantForm.pin().errors().length > 0 && this.participantForm.pin().dirty()) {
       <p class="text-sm text-destructive dark:text-destructive-dark">
         {{ this.participantForm.pin().errors()[0].message }}
       </p>
     }
-    <span class="text-sm text-gray-500">
+    <span class="text-sm text-gray-500 text-center">
       Introduce tu nombre y crea un PIN para unirte al sunio y empezar a compartir gastos.
     </span>
     <button b-button class="b-size-lg b-variant-primary b-rounded-full" (click)="submitForm()">

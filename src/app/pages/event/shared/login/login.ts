@@ -52,10 +52,10 @@ import { RouterLink } from '@angular/router';
           (keydown.enter)="submitPin()"
           [dirty]="pinForm.pin().dirty()"
         >
-          <input b-otp-digit />
-          <input b-otp-digit />
-          <input b-otp-digit />
-          <input b-otp-digit />
+          <input b-otp-digit type="password" />
+          <input b-otp-digit type="password" />
+          <input b-otp-digit type="password" />
+          <input b-otp-digit type="password" />
         </b-otp>
         @if (pinForm.pin().errors().length > 0 && pinForm.pin().dirty()) {
           <p class="text-sm text-destructive dark:text-destructive-dark">
