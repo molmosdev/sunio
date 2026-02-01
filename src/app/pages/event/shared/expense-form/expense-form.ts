@@ -52,7 +52,7 @@ import { SelectField } from '../../../../shared/components/select-field';
       <s-select-field
         [value]="form.payer_id().value() ? [form.payer_id().value()] : []"
         [options]="participantsOptions()!"
-        placeholder="Selecciona el pagador..."
+        [placeholder]="'event.expenses.form.payer-placeholder' | translate"
         (valueChanged)="onPayerSelected($event)"
       />
       @if (payerError()) {
@@ -66,7 +66,7 @@ import { SelectField } from '../../../../shared/components/select-field';
       <s-select-field
         [value]="form.consumers().value()"
         [options]="participantsOptions()!"
-        placeholder="Selecciona los consumidores..."
+        [placeholder]="'event.expenses.form.consumers-placeholder' | translate"
         [multiple]="true"
         (valueChanged)="onConsumersSelected($event)"
       />

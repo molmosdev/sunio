@@ -1,7 +1,25 @@
 {
   "home": {
     "create-event": "Crear evento",
-    "load-event": "Cargar evento"
+    "load-event": "Cargar evento",
+    "new": {
+      "title": "¡Tu sunio está listo para usar!",
+      "description": "Comparte el enlace con quien quieras para empezar a gestionar gastos juntos.",
+      "whatsapp": "Compartir en WhatsApp",
+      "go-to-sunio": "Ir a mi sunio",
+      "placeholder": "Nombre del sunio",
+      "hint": "Ponle un nombre a tu sunio para identificarlo fácilmente. Por ejemplo: \"Viaje a Madrid\" o \"Piso compartido\".",
+      "submitb": "Inicia tu sunio"
+    },
+    "join": {
+      "placeholder": "Introduce el código del sunio",
+      "hint": "Pide el código a quien creó el sunio para unirte y empezar a compartir gastos.",
+      "submitb": "Unirse"
+    },
+    "enter": "Entrar al sunio",
+    "delete": "Eliminar",
+    "start-new": "Iniciar nuevo sunio",
+    "have-code": "Tengo un código"
   },
   "load-event": {
     "event-code": "Código del evento",
@@ -69,6 +87,8 @@
         "amount": "Cantidad",
         "amount-placeholder": "0.00",
         "paidBy": "Pagado por",
+        "payer-placeholder": "Selecciona el pagador...",
+        "consumers-placeholder": "Selecciona los consumidores...",
         "split-between": "Dividir entre",
         "errors": {
           "payer-required": "El pagador es obligatorio",
@@ -100,7 +120,25 @@
       "unsettled": "Pendiente",
       "pay": "Registrar pago",
       "delete-payment": "Eliminar pago",
-      "add-payment": "Añadir pago"
+      "add-payment": "Añadir pago",
+      "empty-past": "No tienes rembolsos pasados.",
+      "empty-others": "No hay rembolsos sugeridos de otros participantes.",
+      "all-settled": "¡Todo saldado por tu parte!",
+      "see-all": "Ver todos los rembolsos sugeridos",
+      "undo-payment": "Deshacer el reembolso",
+      "register-payment": "Saldar reembolso"
+    },
+    "login": {
+      "empty": "Este sunio aún no tiene participantes registrados.",
+      "register": "Únete al sunio",
+      "submitb": "Acceder",
+      "my-sunios": "Mis sunios",
+      "join": "Únete",
+      "who-are-you": "¿Quién eres?"
+    },
+    "settings": {
+      "change-name": "Cambiar nombre al Sunio",
+      "reload": "Recargar datos"
     },
     "auth": {
       "required": "Selecciona un participante y autentícate para ver los gastos y balances."
@@ -122,10 +160,16 @@
       "delete-expense": "Error borrando gasto",
       "auth-pin": "Error al verificar PIN",
       "invalid-pin": "PIN inválido",
-      "pin-required": "El PIN es obligatorio"
+      "pin-required": "El PIN es obligatorio",
+      "name-taken": "Este nombre ya está en uso. Por favor, elige otro."
     },
-    "login": {
-      "who-are-you": "¿Quién eres?"
+    "add-participant": {
+      "placeholder": "Tu nombre",
+      "hint": "Introduce tu nombre y crea un PIN para unirte al sunio y empezar a compartir gastos.",
+      "submitb": "Unirse"
+    },
+    "title-changer": {
+      "submitb": "Guardar cambios"
     }
   }
 }

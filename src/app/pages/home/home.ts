@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { Button, TranslationManager } from '@basis-ng/primitives';
+import { Button, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader, lucidePlus } from '@ng-icons/lucide';
 import { DatePipe } from '@angular/common';
@@ -11,19 +11,19 @@ import { Join } from './components/join';
 
 @Component({
   selector: 's-home',
-  imports: [Button, NgIcon, DatePipe, StartNew, Join],
+  imports: [Button, NgIcon, DatePipe, StartNew, Join, TranslatePipe],
   template: `
     <!-- Sunio Options Drawer Template -->
     <ng-template #sunioOptionsTpl>
       <button b-button class="b-size-lg b-variant-primary b-rounded-full" (click)="goToEvent()">
-        Entrar al sunio
+        {{ 'home.enter' | translate }}
       </button>
       <button
         b-button
         class="b-size-lg b-variant-destructive b-rounded-full"
         (click)="removeRecentEvent()"
       >
-        Eliminar
+        {{ 'home.delete' | translate }}
       </button>
     </ng-template>
 
@@ -68,14 +68,14 @@ import { Join } from './components/join';
           class="b-size-lg b-variant-primary b-rounded-full"
           (click)="openStartNewDrawer(startNewTpl)"
         >
-          Iniciar nuevo sunio
+          {{ 'home.start-new' | translate }}
         </button>
         <button
           b-button
           class="b-size-lg b-variant-secondary b-rounded-full"
           (click)="openJoinDrawer(joinTpl)"
         >
-          Tengo un código
+          {{ 'home.have-code' | translate }}
         </button>
       </ng-template>
 

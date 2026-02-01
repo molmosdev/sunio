@@ -24,14 +24,14 @@ import { State } from '../../../../core/services/state';
           class="b-size-lg b-variant-secondary b-rounded-full"
           (click)="onEditExpenseButtonClicked()"
         >
-          Editar
+          {{ 'event.edit' | translate }}
         </button>
         <button
           b-button
           class="b-size-lg b-variant-destructive b-rounded-full"
           (click)="deleteExpense()"
         >
-          Eliminar
+          {{ 'event.delete' | translate }}
         </button>
       </ng-template>
       <div class="flex flex-col gap-3 w-full">

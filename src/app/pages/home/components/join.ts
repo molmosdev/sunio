@@ -1,27 +1,27 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Field, form, required } from '@angular/forms/signals';
 import { Router } from '@angular/router';
-import { Button, Input, TranslationManager } from '@basis-ng/primitives';
+import { Button, Input, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { State } from '../../../core/services/state';
 
 @Component({
   selector: 's-join',
-  imports: [Input, Button, Field],
+  imports: [Input, Button, Field, TranslatePipe],
   template: `
     <input
       b-input
-      placeholder="Introduce el código del sunio"
+      [placeholder]="'home.join.placeholder' | translate"
       class="w-full b-size-lg"
       [field]="eventToJoin.eventId"
     />
-    <span class="text-sm text-gray-500"
-      >Pide el código a quien creó el sunio para unirte y empezar a compartir gastos.</span
-    >
+    <span class="text-sm text-gray-500">
+      {{ 'home.join.hint' | translate }}
+    </span>
     @if (eventIdError()) {
       <span class="text-sm text-destructive dark:text-destructive-dark">{{ eventIdError() }}</span>
     }
     <button b-button class="b-size-lg b-variant-primary b-rounded-full" (click)="submitForm()">
-      Unirse
+      {{ 'home.join.submitb' | translate }}
     </button>
   `,
   host: {

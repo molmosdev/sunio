@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Button, Input, InputGroup, TranslationManager } from '@basis-ng/primitives';
+import { Button, Input, InputGroup, TranslatePipe, TranslationManager } from '@basis-ng/primitives';
 import { ApiEvents } from '../../../core/services/api-events';
 import { Field, form, required } from '@angular/forms/signals';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -10,14 +10,23 @@ import { State } from '../../../core/services/state';
 
 @Component({
   selector: 's-start-new',
-  imports: [Input, Button, NgIcon, CdkCopyToClipboard, Field, RouterLink, InputGroup],
+  imports: [
+    Input,
+    Button,
+    NgIcon,
+    CdkCopyToClipboard,
+    Field,
+    RouterLink,
+    InputGroup,
+    TranslatePipe,
+  ],
   template: `
     @if (eventCode()) {
       <div class="flex flex-col items-center gap-2">
         <ng-icon name="lucideCheckCircle" size="64" color="#22c55e" />
-        <h3 class="text-lg font-semibold text-center">¡Tu sunio está listo para usar!</h3>
+        <h3 class="text-lg font-semibold text-center">{{ 'home.new.title' | translate }}</h3>
         <span class="text-sm text-gray-500 text-center">
-          Comparte el enlace con quien quieras para empezar a gestionar gastos juntos.
+          {{ 'home.new.description' | translate }}
         </span>
       </div>
       <b-input-group class="w-full">
@@ -40,7 +49,7 @@ import { State } from '../../../core/services/state';
         class="b-size-lg b-variant-secondary  b-rounded-full"
         (click)="shareOnWhatsApp()"
       >
-        Compartir en WhatsApp
+        {{ 'home.new.whatsapp' | translate }}
       </button>
       <button
         b-button
@@ -48,14 +57,14 @@ import { State } from '../../../core/services/state';
         [routerLink]="'/' + eventCode()"
         (click)="onGoToMySunioButtonClick()"
       >
-        Ir a mi sunio
+        {{ 'home.new.go-to-sunio' | translate }}
       </button>
     } @else {
       <input
         b-input
         type="text"
         [field]="newEvent.name"
-        placeholder="Nombre del sunio"
+        [placeholder]="'home.new.placeholder' | translate"
         class="w-full b-size-lg"
       />
       @if (nameError()) {
@@ -64,14 +73,13 @@ import { State } from '../../../core/services/state';
         </p>
       }
       <span class="text-sm text-gray-500">
-        Ponle un nombre a tu sunio para identificarlo fácilmente. Por ejemplo: "Viaje a Madrid" o
-        "Piso compartido".
+        {{ 'home.new.hint' | translate }}
       </span>
       <button b-button class="b-size-lg b-variant-primary b-rounded-full" (click)="submitForm()">
         @if (creatingEvent()) {
           <ng-icon name="lucideLoader" size="16" color="currentColor" class="animate-spin" />
         } @else {
-          Inicia tu sunio
+          {{ 'home.new.submitb' | translate }}
         }
       </button>
     }

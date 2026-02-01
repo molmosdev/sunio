@@ -1,7 +1,25 @@
 {
   "home": {
     "create-event": "Create event",
-    "load-event": "Load event"
+    "load-event": "Load event",
+    "new": {
+      "title": "Your sunio is ready to use!",
+      "description": "Share the link with anyone to start managing expenses together.",
+      "whatsapp": "Share on WhatsApp",
+      "go-to-sunio": "Go to my sunio",
+      "placeholder": "Sunio name",
+      "hint": "Give your sunio a name to easily identify it. For example: \"Madrid Trip\" or \"Shared Apartment\".",
+      "submitb": "Start your sunio"
+    },
+    "join": {
+      "placeholder": "Enter sunio code",
+      "hint": "Ask the person who created the sunio for the code to join and start sharing expenses.",
+      "submitb": "Join"
+    },
+    "enter": "Enter sunio",
+    "delete": "Delete",
+    "start-new": "Start new sunio",
+    "have-code": "I have a code"
   },
   "load-event": {
     "event-code": "Event code",
@@ -12,7 +30,7 @@
   "create-event": {
     "event-name": "Event name",
     "create": "Create event",
-    "copy-the-event-code": "Copy the event code to share it",
+    "copy-the-event-code": "Copy event code to share",
     "go-to-event": "Go to event",
     "errors": {
       "name-required": "Event name is required"
@@ -20,17 +38,17 @@
   },
   "balance": {
     "they-owe-you": "They owe you",
-    "you-owe-them": "You owe them",
+    "you-owe-them": "You owe",
     "all-settled": "All settled"
   },
   "event": {
     "not-found-title": "Event not found",
-    "go-home": "Go home",
+    "go-home": "Go to home",
     "edit": "Edit",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "logout": "Log out",
+    "logout": "Logout",
     "event-name": "Event name",
     "participants": {
       "title": "Participants",
@@ -39,8 +57,8 @@
       "edit": "Edit",
       "delete": "Delete",
       "pin": {
-        "setup": "Create PIN",
-        "prompt": "Enter PIN",
+        "setup": "Create a pin",
+        "prompt": "Enter your pin",
         "submit": "Submit"
       },
       "participant-name": "Participant name"
@@ -59,31 +77,32 @@
       "description": "Description",
       "on": "on",
       "list": {
-        "title": "Expenses list",
+        "title": "Expense list",
         "empty": "No expenses registered yet"
       },
       "form": {
         "title": "New expense",
         "description": "Description",
-        "description-placeholder": "For example, drinks",
+        "description-placeholder": "e.g., drinks",
         "amount": "Amount",
         "amount-placeholder": "0.00",
         "paidBy": "Paid by",
+        "payer-placeholder": "Select payer...",
+        "consumers-placeholder": "Select consumers...",
         "split-between": "Split between",
         "errors": {
           "payer-required": "Payer is required",
           "amount-required": "Amount is required",
           "amount-greater-than-0": "Amount must be greater than 0",
-          "consumers-required": "At least one consumer is required",
+          "consumers-required": "Select at least one consumer",
           "description-required": "Description is required"
         }
       },
-      "add": "Add Expense",
-      "update": "Update Expense",
+      "add": "Add expense",
+      "update": "Update expense",
       "has-paid": "has paid",
       "unknown": "Unknown"
     },
-
     "balances": {
       "title": "Balances",
       "calculate": "Calculate settlements",
@@ -101,9 +120,29 @@
       "unsettled": "Pending",
       "pay": "Register payment",
       "delete-payment": "Delete payment",
-      "add-payment": "Add payment"
+      "add-payment": "Add payment",
+      "empty-past": "You don't have past settlements.",
+      "empty-others": "No suggested settlements from other participants.",
+      "all-settled": "All settled for you!",
+      "see-all": "See all suggested settlements",
+      "undo-payment": "Undo reimbursement",
+      "register-payment": "Settle reimbursement"
     },
-    "auth": { "required": "Select a participant and authenticate to see expenses and balances." },
+    "login": {
+      "empty": "This sunio doesn't have registered participants yet.",
+      "register": "Join sunio",
+      "submitb": "Login",
+      "my-sunios": "My sunios",
+      "join": "Join",
+      "who-are-you": "Who are you?"
+    },
+    "settings": {
+      "change-name": "Change Sunio name",
+      "reload": "Reload data"
+    },
+    "auth": {
+      "required": "Select a participant and authenticate to see expenses and balances."
+    },
     "errors": {
       "payer-required": "Payer is required",
       "invalid-amount": "Amount must be > 0",
@@ -121,10 +160,16 @@
       "delete-expense": "Error deleting expense",
       "auth-pin": "Error verifying PIN",
       "invalid-pin": "Invalid PIN",
-      "pin-required": "PIN is required"
+      "pin-required": "PIN is required",
+      "name-taken": "This name is already in use. Please choose another."
     },
-    "login": {
-      "who-are-you": "Who are you?"
+    "add-participant": {
+      "placeholder": "Your name",
+      "hint": "Enter your name and create a PIN to join the sunio and start sharing expenses.",
+      "submitb": "Join"
+    },
+    "title-changer": {
+      "submitb": "Save changes"
     }
   }
 }

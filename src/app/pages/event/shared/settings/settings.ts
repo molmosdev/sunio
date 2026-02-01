@@ -1,11 +1,11 @@
 import { Component, inject, TemplateRef } from '@angular/core';
-import { Button } from '@basis-ng/primitives';
+import { Button, TranslatePipe } from '@basis-ng/primitives';
 import { State } from '../../../../core/services/state';
 import { TitleChanger } from './shared/components/title-changer/title-changer';
 
 @Component({
   selector: 's-settings',
-  imports: [Button, TitleChanger],
+  imports: [Button, TitleChanger, TranslatePipe],
   template: `
     <ng-template #changeNameTpl>
       <s-title-changer />
@@ -15,21 +15,21 @@ import { TitleChanger } from './shared/components/title-changer/title-changer';
       class="b-size-lg b-variant-secondary b-rounded-full"
       (click)="onChangeNameButtonClicked(changeNameTpl)"
     >
-      Cambiar nombre al Sunio
+      {{ 'event.settings.change-name' | translate }}
     </button>
     <button
       b-button
       class="b-size-lg b-variant-secondary b-rounded-full"
       (click)="onReloadDataButtonClicked()"
     >
-      Recargar datos
+      {{ 'event.settings.reload' | translate }}
     </button>
     <button
       b-button
       class="b-size-lg b-variant-secondary b-rounded-full"
       (click)="onLogoutButtonClicked()"
     >
-      Cerrar sesión
+      {{ 'event.logout' | translate }}
     </button>
   `,
   host: {

@@ -30,13 +30,13 @@ import { RouterLink } from '@angular/router';
       <s-add-participant />
     </ng-template>
     @if (participants()?.length === 0) {
-      <p class="text-center">Este sunio aún no tiene participantes registrados.</p>
+      <p class="text-center">{{ 'event.login.empty' | translate }}</p>
       <button
         b-button
         class="b-size-lg w-full b-rounded-full"
         (click)="openAddParticipantDrawer(addParticipantTpl)"
       >
-        Únete al sunio
+        {{ 'event.login.register' | translate }}
       </button>
     } @else {
       <s-select-field
@@ -69,7 +69,7 @@ import { RouterLink } from '@angular/router';
             (click)="submitPin()"
             [disabled]="isSubmittingPin()"
           >
-            Acceder
+            {{ 'event.login.submitb' | translate }}
           </button>
         }
       }
@@ -79,7 +79,7 @@ import { RouterLink } from '@angular/router';
           routerLink="/home"
           class="b-variant-secondary b-size-lg b-rounded-full flex-1"
         >
-          Mis sunios
+          {{ 'event.login.my-sunios' | translate }}
         </button>
         @if (selectedParticipant().length === 0) {
           <button
@@ -87,7 +87,7 @@ import { RouterLink } from '@angular/router';
             class="b-variant-primary b-size-lg b-rounded-full flex-1"
             (click)="openAddParticipantDrawer(addParticipantTpl)"
           >
-            Únete
+            {{ 'event.login.join' | translate }}
           </button>
         }
       </div>

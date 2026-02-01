@@ -26,14 +26,14 @@ import { ApiEvents } from '../../../../../../../core/services/api-events';
       class="b-variant-primary b-size-lg b-rounded-full"
       (click)="onSaveButtonClicked()"
     >
-      Guardar cambios
+      {{ 'event.title-changer.submitb' | translate }}
     </button>
     <button
       b-button
       class="b-variant-secondary b-size-lg b-rounded-full"
       (click)="onCancelButtonClicked()"
     >
-      Cancelar
+      {{ 'event.cancel' | translate }}
     </button>
   `,
   host: {
