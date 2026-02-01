@@ -45,7 +45,7 @@ import { State } from '../../../../core/services/state';
       }
       <button
         b-button
-        class="b-variant-outlined b-rounded-full b-size-sm w-full mt-4"
+        class="b-size-md b-variant-secondary b-rounded-full self-center"
         (click)="onSeeAllSettlementsButtonClicked(allSettlementsTpl)"
       >
         {{ 'event.settlements.see-all' | translate }}

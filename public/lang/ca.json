@@ -89,6 +89,7 @@
         "paidBy": "Pagat per",
         "payer-placeholder": "Selecciona el pagador...",
         "consumers-placeholder": "Selecciona els consumidors...",
+        "for": "per a",
         "split-between": "Dividir entre",
         "errors": {
           "payer-required": "El pagador és obligatori",

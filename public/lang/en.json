@@ -89,6 +89,7 @@
         "paidBy": "Paid by",
         "payer-placeholder": "Select payer...",
         "consumers-placeholder": "Select consumers...",
+        "for": "for",
         "split-between": "Split between",
         "errors": {
           "payer-required": "Payer is required",

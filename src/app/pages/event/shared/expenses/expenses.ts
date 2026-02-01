@@ -40,13 +40,14 @@ import { State } from '../../../../core/services/state';
             (click)="onExpenseClicked(expenseOptionsTpl, e.id)"
             class="w-full py-3 px-4 rounded-lg flex justify-between gap-4 bg-secondary dark:bg-secondary-dark"
           >
-            <div class="flex flex-col gap-0.5">
-              <span> {{ e.description }} </span>
-              <span class="text-xs opacity-55">
+            <div class="flex flex-col gap-0.5 min-w-0 flex-1">
+              <span class="truncate"> {{ e.description }} </span>
+              <span class="text-xs opacity-55 truncate">
                 {{ 'event.expenses.form.paidBy' | translate }} {{ e.paidBy }}
+                {{ 'event.expenses.form.for' | translate }} {{ e.forNames }}
               </span>
             </div>
-            <div class="flex-1 gap-1 flex justify-end items-center">
+            <div class="gap-1 flex justify-end items-center shrink-0">
               <strong>{{ e.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
             </div>
           </div>
@@ -82,11 +83,22 @@ export class Expenses {
   expensesHasValue = computed(() => this.state.expenses.hasValue());
 
   expensesWithPayers = computed(() => {
+    const participants = this.participants() || [];
+    const participantsMap = new Map(participants.map((p) => [p.id, p.name]));
+
     return this.expenses()?.map((expense) => {
-      const payer = this.participants()?.find((p) => p.id === expense.payer_id);
+      const payerName =
+        participantsMap.get(expense.payer_id) ||
+        this._translationManager.translate('event.expenses.unknown');
+      const consumerNames = expense.consumers
+        .map((id) => participantsMap.get(id))
+        .filter(Boolean)
+        .join(', ');
+
       return {
         ...expense,
-        paidBy: payer ? payer.name : this._translationManager.translate('event.expenses.unknown'),
+        paidBy: payerName,
+        forNames: consumerNames,
       };
     });
   });
