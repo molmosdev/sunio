@@ -48,8 +48,9 @@ import { State } from '../../../../core/services/state';
               >
                 <div class="flex flex-col gap-0.5">
                   <span>
-                    Le debes
+                    {{ 'event.settlements.you-must-past' | translate }}
                     <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
+                    {{ 'event.settlements.to' | translate }}
                     {{ participantMap()[s.to] }}
                   </span>
                   <span class="text-xs">
@@ -72,6 +73,7 @@ import { State } from '../../../../core/services/state';
                     {{ participantMap()[s.from] }}
                     {{ 'event.settlements.must' | translate }}
                     <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
+                    {{ 'event.settlements.to' | translate }}
                     {{ participantMap()[s.to] }}
                   </span>
                   <span class="text-xs">
@@ -92,9 +94,9 @@ import { State } from '../../../../core/services/state';
           >
             <div class="flex flex-col gap-0.5">
               <span>
-                Le debes
-                {{ 'event.settlements.must' | translate }}
+                {{ 'event.settlements.you-must' | translate }}
                 <strong>{{ s.amount | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}</strong>
+                {{ 'event.settlements.to' | translate }}
                 {{ participantMap()[s.to] }}
               </span>
               <span class="text-xs">

@@ -92,6 +92,10 @@
     "settlements": {
       "title": "Liquidaciones",
       "must": "le debe",
+      "you-must": "Debes",
+      "must-past": "le debías",
+      "you-must-past": "Debías",
+      "to": "a",
       "settled": "Saldado",
       "unsettled": "Pendiente",
       "pay": "Registrar pago",

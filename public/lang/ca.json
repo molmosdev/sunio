@@ -93,6 +93,10 @@
     "settlements": {
       "title": "Liquidacions",
       "must": "li deu",
+      "you-must": "Deus",
+      "must-past": "li debies",
+      "you-must-past": "Debies",
+      "to": "a",
       "settled": "Saldat",
       "unsettled": "Pendent",
       "pay": "Registrar pagament",

@@ -93,6 +93,10 @@
     "settlements": {
       "title": "Settlements",
       "must": "owes",
+      "you-must": "You owe",
+      "must-past": "you owed",
+      "you-must-past": "You owed",
+      "to": "to",
       "settled": "Settled",
       "unsettled": "Pending",
       "pay": "Register payment",
